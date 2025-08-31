@@ -1,0 +1,15 @@
+/home/ips/Desktop/Facu/Metodologias/rutinadeldia/2025-UTN-GRUPO-1/rutinadeldiaservidor/bin/Debug/net8.0/rutinadeldiaservidor
+/home/ips/Desktop/Facu/Metodologias/rutinadeldia/2025-UTN-GRUPO-1/rutinadeldiaservidor/bin/Debug/net8.0/rutinadeldiaservidor.deps.json
+/home/ips/Desktop/Facu/Metodologias/rutinadeldia/2025-UTN-GRUPO-1/rutinadeldiaservidor/bin/Debug/net8.0/rutinadeldiaservidor.runtimeconfig.json
+/home/ips/Desktop/Facu/Metodologias/rutinadeldia/2025-UTN-GRUPO-1/rutinadeldiaservidor/bin/Debug/net8.0/rutinadeldiaservidor.dll
+/home/ips/Desktop/Facu/Metodologias/rutinadeldia/2025-UTN-GRUPO-1/rutinadeldiaservidor/bin/Debug/net8.0/rutinadeldiaservidor.pdb
+/home/ips/Desktop/Facu/Metodologias/rutinadeldia/2025-UTN-GRUPO-1/rutinadeldiaservidor/obj/Debug/net8.0/rutinadeldiaservidor.GeneratedMSBuildEditorConfig.editorconfig
+/home/ips/Desktop/Facu/Metodologias/rutinadeldia/2025-UTN-GRUPO-1/rutinadeldiaservidor/obj/Debug/net8.0/rutinadeldiaservidor.AssemblyInfoInputs.cache
+/home/ips/Desktop/Facu/Metodologias/rutinadeldia/2025-UTN-GRUPO-1/rutinadeldiaservidor/obj/Debug/net8.0/rutinadeldiaservidor.AssemblyInfo.cs
+/home/ips/Desktop/Facu/Metodologias/rutinadeldia/2025-UTN-GRUPO-1/rutinadeldiaservidor/obj/Debug/net8.0/rutinadeldiaservidor.csproj.CoreCompileInputs.cache
+/home/ips/Desktop/Facu/Metodologias/rutinadeldia/2025-UTN-GRUPO-1/rutinadeldiaservidor/obj/Debug/net8.0/rutinadeldiaservidor.sourcelink.json
+/home/ips/Desktop/Facu/Metodologias/rutinadeldia/2025-UTN-GRUPO-1/rutinadeldiaservidor/obj/Debug/net8.0/rutinadeldiaservidor.dll
+/home/ips/Desktop/Facu/Metodologias/rutinadeldia/2025-UTN-GRUPO-1/rutinadeldiaservidor/obj/Debug/net8.0/refint/rutinadeldiaservidor.dll
+/home/ips/Desktop/Facu/Metodologias/rutinadeldia/2025-UTN-GRUPO-1/rutinadeldiaservidor/obj/Debug/net8.0/rutinadeldiaservidor.pdb
+/home/ips/Desktop/Facu/Metodologias/rutinadeldia/2025-UTN-GRUPO-1/rutinadeldiaservidor/obj/Debug/net8.0/rutinadeldiaservidor.genruntimeconfig.cache
+/home/ips/Desktop/Facu/Metodologias/rutinadeldia/2025-UTN-GRUPO-1/rutinadeldiaservidor/obj/Debug/net8.0/ref/rutinadeldiaservidor.dll
