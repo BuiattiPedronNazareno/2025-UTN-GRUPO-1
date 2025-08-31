@@ -1,0 +1,6 @@
+@rutinadeldiaservidor_HostAddress = http://localhost:5022
+
+GET {{rutinadeldiaservidor_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
