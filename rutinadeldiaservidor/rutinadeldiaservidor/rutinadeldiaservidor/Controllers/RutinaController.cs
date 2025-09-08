@@ -34,8 +34,18 @@ namespace rutinadeldiaservidor.Controllers
 
         // POST: api/rutina/crearRutina
         [HttpPost("crearRutina")]
-        public async Task<ActionResult<Rutina>> Create(Rutina rutina)
+        public async Task<ActionResult<Rutina>> Create(RutinaCreateDTO rutinaDTO)
         {
+
+            var rutina = new Rutina
+            {
+                Nombre = rutinaDTO.Nombre,
+                Imagen = rutinaDTO.Imagen,
+                Estado = "Activa",             // por defecto, la rutina está activa
+                FechaCreacion = DateTime.UtcNow // fecha actual 
+            };
+
+
             _context.Rutinas.Add(rutina);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetById), new { id = rutina.Id }, rutina);
@@ -43,15 +53,15 @@ namespace rutinadeldiaservidor.Controllers
 
         // PUT api/rutina/actualizarRutina/5
         [HttpPut("actualizarRutina/{id}")]
-        public async Task<IActionResult> Update(int id, Rutina rutina)
+        public async Task<IActionResult> Update(int id, RutinaUpdateDto rutinaDTO)
         {
             var rutinaExistente = await _context.Rutinas.FindAsync(id);
             if (rutinaExistente == null)
                 return NotFound();
 
-            rutinaExistente.Nombre = rutina.Nombre;
-            rutinaExistente.Estado = rutina.Estado;
-            rutinaExistente.Imagen = rutina.Imagen;
+            rutinaExistente.Nombre = rutinaDTO.Nombre;
+            rutinaExistente.Estado = rutinaDTO.Estado;
+            rutinaExistente.Imagen = rutinaDTO.Imagen;
 
             await _context.SaveChangesAsync();
             return NoContent();
@@ -84,8 +94,12 @@ namespace rutinadeldiaservidor.Controllers
         [HttpGet("porFecha")]
         public async Task<ActionResult<IEnumerable<Rutina>>> GetByDate([FromQuery] DateTime fecha)
         {
+            // Defino inicio y fin del día
+            var fechaIniUtc = DateTime.SpecifyKind(fecha.Date, DateTimeKind.Utc);
+            var finUtc = fechaIniUtc.AddDays(1);
+
             var rutinas = await _context.Rutinas
-                .Where(r => r.FechaCreacion.Date == fecha.Date)
+                .Where(r => r.FechaCreacion >= fechaIniUtc && r.FechaCreacion < finUtc)
                 .ToListAsync();
 
             return rutinas.Any() ? Ok(rutinas) : NotFound();
