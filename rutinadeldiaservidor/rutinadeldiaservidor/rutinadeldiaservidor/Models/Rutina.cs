@@ -15,5 +15,8 @@ namespace rutinadeldiaservidor.Models
         public string Estado { get; set; } = "Activa";
         public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
         public string Imagen { get; set; }
+
+        // Relación con pasos
+        public ICollection<Paso> Pasos { get; set; }
     }
 }
