@@ -1,4 +1,8 @@
 
+using Microsoft.EntityFrameworkCore;
+using rutinadeldiaservidor.Data;
+using System;
+
 namespace rutinadeldiaservidor
 {
     public class Program
@@ -6,6 +10,9 @@ namespace rutinadeldiaservidor
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddDbContext<RutinaContext>(options =>
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Add services to the container.
 
