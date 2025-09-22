@@ -9,6 +9,10 @@ namespace rutinadeldiaservidor.Data
         public RutinaContext(DbContextOptions<RutinaContext> options) : base(options) { }
         public DbSet<Rutina> Rutinas { get; set; }
         public DbSet<Paso> Pasos { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<Infante> Infantes { get; set; }
+        public DbSet<InfanteNivel> InfanteNiveles { get; set; }
+        public DbSet<Adulto> Adultos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
