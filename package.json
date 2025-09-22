@@ -3,6 +3,7 @@
     "dev": "concurrently \"cd rutinadeldiaservidor && dotnet run\" \"cd rutinadeldiacliente && npm run dev\""
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "vite": "^6.3.6"
   }
 }
