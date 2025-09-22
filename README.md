@@ -28,7 +28,7 @@ Repositorio del grupo de trabajo número 1, 2025, en la asignatura Metodologías
 
 ### 1. Clonar el repositorio
 #### Desde la terminal de Visual Studio o desde Bash
-- it clone [URL-del-repositorio]
+- git clone [URL-del-repositorio]
 - cd 2025-UTN-GRUPO-1
 
 ### 2. Instalar dependencias en la carpeta raiz
