@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "dev": "concurrently \"cd rutinadeldiaservidor && dotnet run\" \"cd rutinadeldiacliente && npm run dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

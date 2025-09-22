@@ -1,0 +1,70 @@
+@import '../variables.scss';
+@import '../mixins.scss';
+
+.ajustes-adulto {
+  min-height: 100vh;
+  background-color: $background-color;
+  
+  .main-content {
+    padding: $spacing-xl;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .ajustes-options {
+    margin-bottom: $spacing-xl;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+    
+    .ajuste-button {
+      @include button-base;
+      font-size: $font-size-xl;
+      padding: $spacing-xl;
+      border-radius: $border-radius-lg;
+      min-height: 80px;
+      font-weight: 700;
+      
+      &.nino-button {
+        background-color: $secondary-color;
+        color: $white;
+        
+        &:hover {
+          background-color: darken($secondary-color, 10%);
+        }
+      }
+      
+      &.perfil-button {
+        background-color: $secondary-color;
+        color: $white;
+        
+        &:hover {
+          background-color: darken($secondary-color, 10%);
+        }
+      }
+    }
+  }
+  
+  .help-section {
+    margin-bottom: $spacing-xl;
+    
+    .help-button {
+      @include button-help;
+      font-size: $font-size-lg;
+      padding: $spacing-lg $spacing-xl;
+      border-radius: $border-radius-lg;
+      min-width: 200px;
+    }
+  }
+  
+  .back-section {
+    .back-button {
+      @include button-danger;
+      font-size: $font-size-lg;
+      padding: $spacing-md $spacing-lg;
+      border-radius: $border-radius-lg;
+      min-width: 150px;
+    }
+  }
+}

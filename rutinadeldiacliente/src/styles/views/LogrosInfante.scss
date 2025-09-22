@@ -1,0 +1,113 @@
+@use '../variables';
+@use '../mixins';
+
+.logros-infante {
+  min-height: 100vh;
+  background-color: variables.$background-color;
+  
+  .main-content {
+    padding: variables.$spacing-xl;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .nivel-actual {
+    margin-bottom: variables.$spacing-xl;
+    
+    .nivel-badge {
+      background-color: variables.$primary-color;
+      color: variables.$white;
+      padding: variables.$spacing-lg variables.$spacing-xl;
+      border-radius: variables.$border-radius-lg;
+      display: inline-flex;
+      align-items: center;
+      gap: variables.$spacing-sm;
+      font-size: variables.$font-size-lg;
+      font-weight: 700;
+      box-shadow: variables.$shadow-md;
+      
+      .nivel-icon {
+        font-size: variables.$font-size-xl;
+      }
+    }
+  }
+  
+  .achievements-list {
+    margin-bottom: variables.$spacing-xl;
+    display: flex;
+    flex-direction: column;
+    gap: variables.$spacing-md;
+    
+    .achievement-item {
+      background-color: variables.$white;
+      padding: variables.$spacing-lg;
+      border-radius: variables.$border-radius-lg;
+      display: flex;
+      align-items: center;
+      gap: variables.$spacing-md;
+      box-shadow: variables.$shadow-sm;
+      transition: all 0.3s ease;
+      
+      &.completed {
+        background-color: variables.$secondary-color;
+        color: variables.$white;
+        
+        .achievement-icon {
+          background-color: variables.$white;
+          color: variables.$secondary-color;
+        }
+      }
+      
+      &.pending {
+        background-color: variables.$white;
+        color: variables.$text-color;
+        
+        .achievement-icon {
+          background-color: #f0f0f0;
+          color: #999;
+        }
+      }
+      
+      .achievement-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: variables.$font-size-lg;
+      }
+      
+      .achievement-title {
+        font-size: variables.$font-size-lg;
+        font-weight: 600;
+        flex: 1;
+        text-align: left;
+      }
+    }
+  }
+  
+  .help-section {
+    margin-bottom: variables.$spacing-xl;
+    
+    .help-button {
+      @include mixins.button-help;
+      font-size: variables.$font-size-lg;
+      padding: variables.$spacing-lg variables.$spacing-xl;
+      border-radius: variables.$border-radius-lg;
+      min-width: 200px;
+    }
+  }
+  
+  .back-section {
+    .back-button {
+      @include mixins.button-danger;
+      font-size: variables.$font-size-lg;
+      padding: variables.$spacing-md variables.$spacing-lg;
+      border-radius: variables.$border-radius-lg;
+      min-width: 150px;
+    }
+  }
+}

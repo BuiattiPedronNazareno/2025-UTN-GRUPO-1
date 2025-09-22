@@ -1,0 +1,71 @@
+@use "sass:color";
+@use '../variables';
+@use '../mixins';
+
+.ajustes-infante {
+  min-height: 100vh;
+  background-color: variables.$background-color;
+  
+  .main-content {
+    padding: variables.$spacing-xl;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .ajustes-options {
+    margin-bottom: variables.$spacing-xl;
+    display: flex;
+    flex-direction: column;
+    gap: variables.$spacing-lg;
+    
+    .ajuste-button {
+      @include mixins.button-base;
+      font-size: variables.$font-size-xl;
+      padding: variables.$spacing-xl;
+      border-radius: variables.$border-radius-lg;
+      min-height: 80px;
+      font-weight: 700;
+      
+      &.adulto-button {
+        background-color: variables.$secondary-color;
+        color: variables.$white;
+        
+        &:hover {
+          background-color: color.adjust(variables.$secondary-color, $lightness: -10%);
+        }
+      }
+      
+      &.logros-button {
+        background-color: variables.$secondary-color;
+        color: variables.$white;
+        
+        &:hover {
+          background-color: color.adjust(variables.$secondary-color, $lightness: -10%);
+        }
+      }
+    }
+  }
+  
+  .help-section {
+    margin-bottom: variables.$spacing-xl;
+    
+    .help-button {
+      @include mixins.button-help;
+      font-size: variables.$font-size-lg;
+      padding: variables.$spacing-lg variables.$spacing-xl;
+      border-radius: variables.$border-radius-lg;
+      min-width: 200px;
+    }
+  }
+  
+  .back-section {
+    .back-button {
+      @include mixins.button-danger;
+      font-size: variables.$font-size-lg;
+      padding: variables.$spacing-md variables.$spacing-lg;
+      border-radius: variables.$border-radius-lg;
+      min-width: 150px;
+    }
+  }
+}

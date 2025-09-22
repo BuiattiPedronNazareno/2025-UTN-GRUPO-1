@@ -1,0 +1,9 @@
+@use '../variables';
+@use '../mixins';
+
+.help-button {
+  @include mixins.button-help;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
