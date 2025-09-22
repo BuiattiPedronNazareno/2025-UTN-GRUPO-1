@@ -1,39 +1,37 @@
 "use client"
 
 import type React from "react"
+import { useEffect, useState } from "react" 
 import { useNavigate } from "react-router-dom"
 import { Container, Card, CardContent, CardMedia, Typography, Box } from "@mui/material"
 import NavBar from "../components/NavBar"
 import HelpButton from "../components/HelpButton"
 import "../styles/views/InicioInfante.scss"
-
-interface Routine {
-  id: string
-  title: string
-  image: string
-  backgroundColor: string
-}
+import { obtenerRutinas } from "../services/rutinaService"
+import type { Rutina } from "../services/rutinaService"
 
 const InicioInfante: React.FC = () => {
   const navigate = useNavigate()
+  const [routines, setRoutines] = useState<Rutina[]>([])
 
-  const routines: Routine[] = [
-    {
-      id: "1",
-      title: "Lavarse los dientes",
-      image: "/child-brushing-teeth-happily.jpg",
-      backgroundColor: "#4A90A4",
-    },
-    {
-      id: "2",
-      title: "Comer",
-      image: "/happy-child-eating-at-table-with-utensils.jpg",
-      backgroundColor: "#4A90A4",
-    },
-  ]
+  useEffect(() => {
+    const fetchRutinas = async () => {
+      try {
+        const data = await obtenerRutinas()
+        setRoutines(data)
+      } catch (error) {
+        console.error("Error al obtener rutinas:", error)
+      }
+    }
 
-  const handleRoutineClick = (routineId: string) => {
+    fetchRutinas()
+  }, [])
+
+
+
+  const handleRoutineClick = (routineId: number) => {
     console.log(`Iniciando rutina: ${routineId}`)
+    navigate(`/rutina/${routineId}`)
   }
 
   const handleHelpClick = () => {
@@ -80,13 +78,13 @@ const InicioInfante: React.FC = () => {
                 <CardMedia
                   component="img"
                   height="200"
-                  image={routine.image || "/placeholder.svg"}
-                  alt={routine.title}
+                  image={routine.imagen || "/placeholder.svg"}
+                  alt={routine.nombre}
                   className="routine-image"
                 />
                 <CardContent>
                   <Typography variant="h6" component="h3" className="routine-title">
-                    {routine.title}
+                    {routine.nombre}
                   </Typography>
                 </CardContent>
               </Card>
