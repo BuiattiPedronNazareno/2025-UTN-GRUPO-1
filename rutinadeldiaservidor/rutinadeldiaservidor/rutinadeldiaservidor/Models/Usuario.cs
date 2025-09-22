@@ -18,5 +18,8 @@ namespace rutinadeldiaservidor.Models
         [Required]
         public string Telefono { get; set; }
 
+        public virtual Adulto Adulto { get; set; }
+        public virtual ICollection<Infante> Infantes { get; set; }
+
     }
 }

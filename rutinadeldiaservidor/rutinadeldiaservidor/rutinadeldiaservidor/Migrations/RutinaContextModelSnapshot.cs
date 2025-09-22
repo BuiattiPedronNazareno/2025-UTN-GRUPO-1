@@ -22,6 +22,63 @@ namespace rutinadeldiaservidor.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("rutinadeldiaservidor.Models.Adulto", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Pin")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Adultos");
+                });
+
+            modelBuilder.Entity("rutinadeldiaservidor.Models.Infante", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("InfanteNivelId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InfanteNivelId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("Infantes");
+                });
+
+            modelBuilder.Entity("rutinadeldiaservidor.Models.InfanteNivel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("InfanteNiveles");
+                });
+
             modelBuilder.Entity("rutinadeldiaservidor.Models.Paso", b =>
                 {
                     b.Property<int>("Id")
@@ -87,6 +144,61 @@ namespace rutinadeldiaservidor.Migrations
                     b.ToTable("Rutinas");
                 });
 
+            modelBuilder.Entity("rutinadeldiaservidor.Models.Usuario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Clave")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Usuarios");
+                });
+
+            modelBuilder.Entity("rutinadeldiaservidor.Models.Adulto", b =>
+                {
+                    b.HasOne("rutinadeldiaservidor.Models.Usuario", "Usuario")
+                        .WithOne("Adulto")
+                        .HasForeignKey("rutinadeldiaservidor.Models.Adulto", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("rutinadeldiaservidor.Models.Infante", b =>
+                {
+                    b.HasOne("rutinadeldiaservidor.Models.InfanteNivel", "InfanteNivel")
+                        .WithMany()
+                        .HasForeignKey("InfanteNivelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("rutinadeldiaservidor.Models.Usuario", "Usuario")
+                        .WithMany("Infantes")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("InfanteNivel");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("rutinadeldiaservidor.Models.Paso", b =>
                 {
                     b.HasOne("rutinadeldiaservidor.Models.Rutina", "Rutina")
@@ -101,6 +213,14 @@ namespace rutinadeldiaservidor.Migrations
             modelBuilder.Entity("rutinadeldiaservidor.Models.Rutina", b =>
                 {
                     b.Navigation("Pasos");
+                });
+
+            modelBuilder.Entity("rutinadeldiaservidor.Models.Usuario", b =>
+                {
+                    b.Navigation("Adulto")
+                        .IsRequired();
+
+                    b.Navigation("Infantes");
                 });
 #pragma warning restore 612, 618
         }
