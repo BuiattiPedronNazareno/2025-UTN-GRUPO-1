@@ -9,7 +9,7 @@ Repositorio del grupo de trabajo número 1, 2025, en la asignatura Metodologías
 - Pianelli Felipe
 
 # Ejecución en local
-## Ejecutá en la carpeta raíz para correr la aplicación
+### Ejecutá en la carpeta raíz para correr la aplicación
 - npm run dev
 
 - (Esto gracias al uso de concurrently y el package.json en la carpeta raíz)
