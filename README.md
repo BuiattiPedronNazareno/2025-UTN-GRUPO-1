@@ -48,5 +48,5 @@ Repositorio del grupo de trabajo número 1, 2025, en la asignatura Metodologías
 - npm install @types/react-router-dom
 
 #### O instalar con un solo comando
-cd rutinadeldiacliente
+- cd rutinadeldiacliente
 - npm install react react-dom react-router-dom @mui/material @mui/icons-material @emotion/react @emotion/styled bootstrap sass @types/react-router-dom
