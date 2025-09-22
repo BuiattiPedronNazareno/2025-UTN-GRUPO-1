@@ -19,22 +19,40 @@ namespace rutinadeldiaservidor.Controllers
 
         // GET api/rutina/obtenerRutinas
         [HttpGet("obtenerRutinas")]
-        public async Task<ActionResult<IEnumerable<Rutina>>> GetAll()
+        public async Task<ActionResult<IEnumerable<RutinaReadDTO>>> GetAll()
         {
-            return await _context.Rutinas.ToListAsync();
+            var rutinas = await _context.Rutinas
+                .Select(r => new RutinaReadDTO
+                {
+                    Id = r.Id,
+                    Nombre = r.Nombre,
+                    Imagen = r.Imagen
+                })
+                .ToListAsync();
+
+            return Ok(rutinas);
         }
 
         // GET api/rutina/obtenerRutina/5
         [HttpGet("obtenerRutina/{id}")]
-        public async Task<ActionResult<Rutina>> GetById(int id)
+        public async Task<ActionResult<RutinaReadDTO>> GetById(int id)
         {
-            var rutina = await _context.Rutinas.FindAsync(id);
+            var rutina = await _context.Rutinas
+                .Where(r => r.Id == id)
+                .Select(r => new RutinaReadDTO
+                {
+                    Id = r.Id,
+                    Nombre = r.Nombre,
+                    Imagen = r.Imagen
+                })
+                .FirstOrDefaultAsync();
+
             return rutina == null ? NotFound() : Ok(rutina);
         }
 
         // POST: api/rutina/crearRutina
         [HttpPost("crearRutina")]
-        public async Task<ActionResult<Rutina>> Create(RutinaCreateDTO rutinaDTO)
+        public async Task<ActionResult<RutinaReadDTO>> Create(RutinaCreateDTO rutinaDTO)
         {
 
             var rutina = new Rutina
@@ -48,7 +66,15 @@ namespace rutinadeldiaservidor.Controllers
 
             _context.Rutinas.Add(rutina);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = rutina.Id }, rutina);
+
+            var rutinaReadDTO = new RutinaReadDTO
+            {
+                Id = rutina.Id,
+                Nombre = rutina.Nombre,
+                Imagen = rutina.Imagen
+            };
+
+            return CreatedAtAction(nameof(GetById), new { id = rutina.Id }, rutinaReadDTO);
         }
 
         // PUT api/rutina/actualizarRutina/5
@@ -81,10 +107,16 @@ namespace rutinadeldiaservidor.Controllers
 
         // GET: api/rutina/porEstado/Activa
         [HttpGet("porEstado/{estado}")]
-        public async Task<ActionResult<IEnumerable<Rutina>>> GetByStatus(string estado)
+        public async Task<ActionResult<IEnumerable<RutinaReadDTO>>> GetByStatus(string estado)
         {
             var rutinas = await _context.Rutinas
                 .Where(r => r.Estado.ToLower() == estado.ToLower())
+                .Select(r => new RutinaReadDTO
+                {
+                    Id = r.Id,
+                    Nombre = r.Nombre,
+                    Imagen = r.Imagen
+                })
                 .ToListAsync();
 
             return rutinas.Any() ? Ok(rutinas) : NotFound();
@@ -92,7 +124,7 @@ namespace rutinadeldiaservidor.Controllers
 
         // GET: api/rutina/porFecha?fecha=2025-09-08
         [HttpGet("porFecha")]
-        public async Task<ActionResult<IEnumerable<Rutina>>> GetByDate([FromQuery] DateTime fecha)
+        public async Task<ActionResult<IEnumerable<RutinaReadDTO>>> GetByDate([FromQuery] DateTime fecha)
         {
             // Defino inicio y fin del día
             var fechaIniUtc = DateTime.SpecifyKind(fecha.Date, DateTimeKind.Utc);
@@ -100,6 +132,12 @@ namespace rutinadeldiaservidor.Controllers
 
             var rutinas = await _context.Rutinas
                 .Where(r => r.FechaCreacion >= fechaIniUtc && r.FechaCreacion < finUtc)
+                .Select(r => new RutinaReadDTO
+                {
+                    Id = r.Id,
+                    Nombre = r.Nombre,
+                    Imagen = r.Imagen
+                })
                 .ToListAsync();
 
             return rutinas.Any() ? Ok(rutinas) : NotFound();
@@ -107,10 +145,16 @@ namespace rutinadeldiaservidor.Controllers
 
         // GET: api/rutina/porNombre/Lavarse los dientes
         [HttpGet("porNombre/{nombre}")]
-        public async Task<ActionResult<IEnumerable<Rutina>>> GetByName(string nombre)
+        public async Task<ActionResult<IEnumerable<RutinaReadDTO>>> GetByName(string nombre)
         {
             var rutinas = await _context.Rutinas
                 .Where(r => r.Nombre.ToLower() == nombre.ToLower())
+                .Select(r => new RutinaReadDTO
+                {
+                    Id = r.Id,
+                    Nombre = r.Nombre,
+                    Imagen = r.Imagen
+                })
                 .ToListAsync();
 
             return rutinas.Any() ? Ok(rutinas) : NotFound();

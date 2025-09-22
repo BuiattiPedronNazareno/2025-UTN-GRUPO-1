@@ -1,0 +1,44 @@
+// Colores principales
+$primary-color: #4A90A4;
+$secondary-color: #7FB069;
+$accent-color: #3E8596;
+$background-color: #BFDBD8;
+$text-color: #2C3E50;
+$white: #FFFFFF;
+$card-color: #3E8596;
+
+// Colores de estado
+$success-color: #76B875;
+$warning-color: #F39C12;
+$danger-color: #E74C3C;
+$help-color: #87C2D4;
+
+// Espaciado
+$spacing-xs: 0.5rem;
+$spacing-sm: 1rem;
+$spacing-md: 1.5rem;
+$spacing-lg: 2rem;
+$spacing-xl: 3rem;
+
+// Bordes
+$border-radius: 1rem;
+$border-radius-lg: 1.5rem;
+$border-radius-xl: 2rem;
+
+// Fuentes
+$font-family-primary: 'Inter', sans-serif;
+$font-size-sm: 0.875rem;
+$font-size-md: 1rem;
+$font-size-lg: 1.25rem;
+$font-size-xl: 1.5rem;
+$font-size-xxl: 2rem;
+
+// Sombras
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+// Breakpoints
+$mobile: 768px;
+$tablet: 1024px;
+$desktop: 1200px;

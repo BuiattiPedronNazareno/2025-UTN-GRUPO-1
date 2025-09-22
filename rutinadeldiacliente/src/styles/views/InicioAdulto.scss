@@ -1,0 +1,147 @@
+@import '../variables.scss';
+@import '../mixins.scss';
+
+.inicio-adulto {
+  min-height: 100vh;
+  background-color: #B8D4D6;
+  padding-bottom: 2rem;
+
+  .header {
+    background-color: #B8D4D6;
+    padding: 1.5rem 1rem 1rem;
+    text-align: center;
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+
+      .header-title {
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-weight: bold;
+        color: $text-color;
+        flex-grow: 1;
+      }
+
+      .settings-button {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.3);
+        }
+      }
+    }
+
+    .stats {
+      .stats-text {
+        font-size: 0.9rem;
+        color: $text-color;
+        font-weight: 500;
+        margin: 0.2rem 0;
+      }
+    }
+  }
+
+  .main-content {
+    padding-top: 1rem;
+
+    .routines-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+
+      .routine-card {
+        position: relative;
+        box-shadow: $shadow-md;
+        transition: transform 0.2s ease;
+
+        &:hover {
+          transform: translateY(-2px);
+        }
+
+        .routine-image {
+          object-fit: cover;
+        }
+
+        .routine-content {
+          position: relative;
+          padding: 1.5rem;
+
+          .routine-title {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: bold;
+            color: $text-color;
+            margin-bottom: 1rem;
+            text-align: center;
+          }
+
+          .routine-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+
+            .action-button {
+              background-color: rgba(255, 255, 255, 0.8);
+              border-radius: 50%;
+              width: 40px;
+              height: 40px;
+
+              &:hover {
+                background-color: rgba(255, 255, 255, 0.9);
+                transform: scale(1.1);
+              }
+
+              &.notification-button {
+                background-color: rgba(255, 193, 7, 0.8);
+                
+                &:hover {
+                  background-color: rgba(255, 193, 7, 0.9);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+  }
+}
+
+@media (max-width: $mobile) {
+  .inicio-adulto {
+    .header {
+      padding: 1rem 0.5rem;
+
+      .header-content {
+        .header-title {
+          font-size: 1.8rem;
+        }
+      }
+    }
+
+    .main-content {
+      .routines-container {
+        .routine-card {
+          .routine-content {
+            .routine-title {
+              font-size: 1.3rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}

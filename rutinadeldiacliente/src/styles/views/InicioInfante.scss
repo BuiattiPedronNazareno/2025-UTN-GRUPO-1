@@ -1,0 +1,76 @@
+@use '../variables';
+@use '../mixins';
+
+.inicio-infante {
+  min-height: 100vh;
+  background-color: variables.$background-color;
+  
+  .main-content {
+    padding: variables.$spacing-xl;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .routines-grid {
+    @include mixins.grid-responsive(2, variables.$spacing-lg);
+    margin-bottom: variables.$spacing-xl;
+    
+    @media (min-width: variables.$tablet) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: variables.$spacing-xl;
+    }
+  }
+  
+  .routine-card {
+    @include mixins.card;
+    cursor: pointer;
+    text-align: center;
+    padding: variables.$spacing-xl;
+    border-radius: variables.$border-radius-xl;
+    color: variables.$white;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    &:hover {
+      transform: translateY(-8px);
+      box-shadow: variables.$shadow-lg;
+    }
+    
+    .routine-image {
+      width: 100%;
+      height: 200px;
+      margin-bottom: variables.$spacing-lg;
+      border-radius: variables.$border-radius;
+      overflow: hidden;
+      
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: variables.$border-radius;
+      }
+    }
+    
+    .routine-title {
+      font-size: variables.$font-size-xl;
+      font-weight: 700;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+  }
+  
+  .help-section {
+    text-align: center;
+    
+    .help-button {
+      @include mixins.button-help;
+      font-size: variables.$font-size-lg;
+      padding: variables.$spacing-lg variables.$spacing-xl;
+      border-radius: variables.$border-radius-lg;
+      min-width: 200px;
+    }
+  }
+}
