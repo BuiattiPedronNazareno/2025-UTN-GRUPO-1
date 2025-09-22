@@ -1,12 +1,11 @@
+"use client"
 import { RouterProvider } from "react-router-dom"
-import { router } from "./routes/routes"
+import { router } from "../src/routes/routes"
 
-function App() {
+export default function Home() {
   return (
     <div className="app">
       <RouterProvider router={router} />
     </div>
   )
 }
-
-export default App

@@ -1,0 +1,114 @@
+@use "sass:color";
+@use './variables';
+
+// Mixin para botones
+@mixin button-base {
+  padding: variables.$spacing-md variables.$spacing-lg;
+  border: none;
+  border-radius: variables.$border-radius;
+  font-family: variables.$font-family-primary;
+  font-size: variables.$font-size-lg;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: variables.$shadow-sm;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: variables.$shadow-md;
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+@mixin button-primary {
+  @include button-base;
+  background-color: variables.$primary-color;
+  color: variables.$white;
+  
+  &:hover {
+    background-color: color.adjust($primary-color, $lightness: -10%);
+  }
+}
+
+@mixin button-secondary {
+  @include button-base;
+  background-color: variables.$secondary-color;
+  color: variables.$white;
+  
+  &:hover {
+    background-color: color.adjust(variables.$secondary-color, $lightness: -10%);
+  }
+}
+
+@mixin button-help {
+  @include button-base;
+  background-color: variables.$help-color;
+  color: variables.$white;
+  
+  &:hover {
+    background-color: color.adjust(variables.$help-color, $lightness: -10%);
+  }
+}
+
+@mixin button-danger {
+  @include button-base;
+  background-color: variables.$danger-color;
+  color: variables.$white;
+  
+  &:hover {
+    background-color: color.adjust(variables.$danger-color, $lightness: -10%);
+  }
+}
+
+// Mixin para tarjetas
+@mixin card {
+  background-color: variables.$card-color;
+  border-radius: variables.$border-radius-lg;
+  box-shadow: variables.$shadow-md;
+  padding: variables.$spacing-lg;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: variables.$shadow-lg;
+  }
+}
+
+// Mixin para contenedores principales
+@mixin container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 variables.$spacing-md;
+  
+  @media (min-width: variables.$tablet) {
+    padding: 0 variables.$spacing-lg;
+  }
+}
+
+// Mixin para centrar contenido
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// Mixin para grid responsivo
+@mixin grid-responsive($columns: 2, $gap: $spacing-md) {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $gap;
+  
+  @media (min-width: variables.$mobile) {
+    grid-template-columns: repeat($columns, 1fr);
+  }
+}
+
+// Mixin para texto truncado
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
