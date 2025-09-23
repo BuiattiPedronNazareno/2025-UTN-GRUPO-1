@@ -39,7 +39,7 @@ const CrearPaso: React.FC = () => {
       setPasos([...pasos, pasoCreado]);
 
       if (volverInicio) {
-        navigate("/"); // vuelve al inicio
+        navigate("/adulto"); 
       } else {
         setDescripcion("");
         setImagen("");

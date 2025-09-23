@@ -1,43 +1,36 @@
 "use client"
 
 import type React from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Container, Card, CardContent, CardMedia, Typography, Box, Button, IconButton } from "@mui/material"
 import { Settings, Visibility, Edit, NotificationsActive } from "@mui/icons-material"
 import "../styles/views/InicioAdulto.scss"
+import { obtenerRutinas } from "../services/rutinaService"
+import type { Rutina } from "../services/rutinaService"
 
-interface Routine {
-  id: string
-  title: string
-  image: string
-  backgroundColor: string
-  hasNotification?: boolean
-}
 
 const InicioAdulto: React.FC = () => {
   const navigate = useNavigate()
+  const [routines, setRoutines] = useState<Rutina[]>([])
 
-  const routines: Routine[] = [
-    {
-      id: "1",
-      title: "Lavarse los dientes",
-      image: "/child-brushing-teeth-happily.jpg",
-      backgroundColor: "#4A90A4",
-    },
-    {
-      id: "2",
-      title: "Comer",
-      image: "/happy-child-eating-at-table-with-utensils.jpg",
-      backgroundColor: "#4A90A4",
-      hasNotification: true,
-    },
-  ]
+  useEffect(() => {
+    const fetchRutinas = async () => {
+      try {
+        const data = await obtenerRutinas()
+        setRoutines(data)
+      } catch (error) {
+        console.error("Error al obtener rutinas:", error)
+      }
+    }
+    fetchRutinas()
+  }, [])
 
-  const handleRoutineView = (routineId: string) => {
+  const handleRoutineView = (routineId: number) => {
     console.log(`Ver rutina: ${routineId}`)
   }
 
-  const handleRoutineEdit = (routineId: string) => {
+  const handleRoutineEdit = (routineId: number) => {
     console.log(`Editar rutina: ${routineId}`)
   }
 
@@ -78,55 +71,67 @@ const InicioAdulto: React.FC = () => {
 
       <Container component="main" className="main-content" maxWidth="md">
         {/* Routine Cards */}
-        <Box className="routines-container">
+        <Box
+          className="routines-container"
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 3,
+            justifyContent: "center",
+            mt: 4,
+          }}
+        >
           {routines.map((routine) => (
-            <Card
+            <Box
               key={routine.id}
-              className="routine-card"
               sx={{
-                backgroundColor: routine.backgroundColor,
-                borderRadius: "20px",
-                overflow: "hidden",
-                marginBottom: "1.5rem",
+                width: { xs: "100%", sm: "48%" },
+                maxWidth: "400px",
               }}
             >
-              <CardMedia
-                component="img"
-                height="200"
-                image={routine.image}
-                alt={routine.title}
-                className="routine-image"
-              />
-              <CardContent className="routine-content">
-                <Typography variant="h5" component="h3" className="routine-title">
-                  {routine.title}
-                </Typography>
+              <Card
+                className="routine-card"
+                sx={{
+                  backgroundColor: "#4A90A4",
+                  cursor: "pointer",
+                  "&:hover": { transform: "scale(1.02)" },
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  overflow: "hidden",
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  height={200}
+                  image={routine.imagen || "/placeholder.svg"}
+                  alt={routine.nombre}
+                  sx={{ objectFit: "cover" }}
+                />
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Box className="routine-header" sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <Typography variant="h6" component="h3" className="routine-title">
+                      {routine.nombre}
+                    </Typography>
 
-                <Box className="routine-actions">
-                  {routine.hasNotification && (
-                    <IconButton className="action-button notification-button" sx={{ color: "#2C3E50" }}>
-                      <NotificationsActive />
-                    </IconButton>
-                  )}
-                  <IconButton
-                    className="action-button view-button"
-                    onClick={() => handleRoutineView(routine.id)}
-                    sx={{ color: "#2C3E50" }}
-                  >
-                    <Visibility />
-                  </IconButton>
-                  <IconButton
-                    className="action-button edit-button"
-                    onClick={() => handleRoutineEdit(routine.id)}
-                    sx={{ color: "#2C3E50" }}
-                  >
-                    <Edit />
-                  </IconButton>
-                </Box>
-              </CardContent>
-            </Card>
+                    <Box className="routine-actions">
+                      <IconButton onClick={() => handleRoutineView(routine.id)} className="action-button">
+                        <Visibility />
+                      </IconButton>
+                      <IconButton onClick={() => handleRoutineEdit(routine.id)} className="action-button">
+                        <Edit />
+                      </IconButton>
+                      <IconButton className="action-button notification-button">
+                        <NotificationsActive />
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Box>
           ))}
         </Box>
+
 
         {/* Action Buttons */}
         <Box className="action-buttons" sx={{ mt: 4 }}>

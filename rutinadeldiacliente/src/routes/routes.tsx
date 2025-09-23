@@ -11,6 +11,7 @@ import AgregarInfante from "../views/AgregarInfante"
 import ValidarPinAdulto from "../views/ValidarPinAdulto"
 import CrearRutina from "../views/crearRutina"; 
 import CrearPaso from "../views/crearPaso";  
+import RutinaDetalleInfante from "../views/RutinaDetalle";
 
 export const router = createBrowserRouter([
   {
@@ -61,4 +62,8 @@ export const router = createBrowserRouter([
     element: <CrearRutina /> },
   { path: "/crear-paso/:id", 
     element: <CrearPaso /> },
+  {
+    path: "/rutina/:rutinaId/pasos", 
+    element: <RutinaDetalleInfante />,
+  },
 ])

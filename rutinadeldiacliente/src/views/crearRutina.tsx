@@ -91,9 +91,20 @@ const CrearRutina: React.FC = () => {
         </div>
       </div>
 
-      <button className="crear-paso-btn" onClick={handleCrearPaso}>
-        Crear Paso
-      </button>
+      <div className="action-buttons">
+        <button
+          className="volver-btn"
+          onClick={() => navigate("/adulto")}
+        >
+          Volver
+        </button>
+        <button
+          className="crear-paso-btn"
+          onClick={handleCrearPaso}
+        >
+          Crear Paso
+        </button>
+      </div>
     </div>
   );
 };
