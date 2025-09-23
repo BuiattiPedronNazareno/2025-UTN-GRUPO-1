@@ -5,10 +5,12 @@ import LogrosInfante from "../views/LogrosInfante"
 import InicioAdulto from "../views/InicioAdulto"
 import AjustesAdulto from "../views/AjustesAdulto"
 import Register from "../views/Register"
-import Login from "../views/login"
+import Login from "../views/Login"
 import SeleccionPerfil from "../views/SeleccionPerfil"
 import AgregarInfante from "../views/AgregarInfante"
 import ValidarPinAdulto from "../views/ValidarPinAdulto"
+import CrearRutina from "../views/crearRutina"; 
+import CrearPaso from "../views/crearPaso";  
 
 export const router = createBrowserRouter([
   {
@@ -54,5 +56,9 @@ export const router = createBrowserRouter([
   {
     path: "/validar-pin-adulto",
     element: <ValidarPinAdulto/>,
-  }
+  },
+  { path: "/crear-rutina", 
+    element: <CrearRutina /> },
+  { path: "/crear-paso/:id", 
+    element: <CrearPaso /> },
 ])

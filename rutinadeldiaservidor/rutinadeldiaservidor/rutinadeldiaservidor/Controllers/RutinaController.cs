@@ -50,7 +50,7 @@ namespace rutinadeldiaservidor.Controllers
             return rutina == null ? NotFound() : Ok(rutina);
         }
 
-        // POST: api/rutina/crearRutina
+        // POST: Rutina/crearRutina
         [HttpPost("crearRutina")]
         public async Task<ActionResult<RutinaReadDTO>> Create(RutinaCreateDTO rutinaDTO)
         {

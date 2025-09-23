@@ -42,8 +42,8 @@ const InicioAdulto: React.FC = () => {
   }
 
   const handleCreateRoutine = () => {
-    console.log("Crear nueva rutina")
-  }
+  navigate("/crear-rutina");
+  };
 
   const handleAddReminder = () => {
     console.log("Agregar recordatorio")
