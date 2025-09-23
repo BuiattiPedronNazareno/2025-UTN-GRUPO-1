@@ -19,3 +19,8 @@ export const obtenerRutinas = async (): Promise<Rutina[]> => {
   const response = await api.get<Rutina[]>("/Rutina/obtenerRutinas");
   return response.data;
 };
+
+export const obtenerRutinaPorId = async (id: number): Promise<Rutina> => {
+  const response = await api.get<Rutina>(`/Rutina/obtenerRutina/${id}`);
+  return response.data;
+};
