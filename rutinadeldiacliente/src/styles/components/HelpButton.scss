@@ -2,8 +2,25 @@
 @use '../mixins';
 
 .help-button {
-  @include mixins.button-help;
+  background-color: #87C2D4 !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  border-radius: 9999px !important; 
+  text-transform: none !important;
+  font-size: 1.5rem !important; 
+  font-weight: 400 !important;
+  padding: 0.75rem 2rem !important;
+
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+
+  svg {
+    font-size: 2rem; 
+    color: #000000 !important;
+  }
+
+  &:hover {
+    background-color: #76aec1 !important;
+  }
 }
