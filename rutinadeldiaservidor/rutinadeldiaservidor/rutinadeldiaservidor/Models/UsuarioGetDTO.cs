@@ -6,6 +6,6 @@
         public string Email { get; set; }
         public string Telefono { get; set; }
         public int PinAdulto { get; set; }
-        public List<string> Infantes { get; set; } = new List<string>();
+        public List<InfanteGetDTO> Infantes { get; set; }
     }
 }

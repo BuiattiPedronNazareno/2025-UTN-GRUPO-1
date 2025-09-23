@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using rutinadeldiaservidor.Data;
 using rutinadeldiaservidor.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace rutinadeldiaservidor.Controllers
 {
@@ -32,12 +33,14 @@ namespace rutinadeldiaservidor.Controllers
                 return Conflict("El email ya está registrado");
 
             // Crear la cuenta Usuario
+            var passwordHasher = new PasswordHasher<Usuario>();
             var usuario = new Usuario
             {
                 Email = usuarioDTO.Email,
-                Clave = usuarioDTO.Clave, // ⚠ Encriptar luego
-                Telefono = usuarioDTO.Telefono
+                Telefono = usuarioDTO.Telefono,
+                Infantes = new List<Infante>()
             };
+            usuario.Clave = passwordHasher.HashPassword(usuario, usuarioDTO.Clave);
 
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync(); // Genera el Id de usuario
@@ -58,7 +61,12 @@ namespace rutinadeldiaservidor.Controllers
                 Email = usuario.Email,
                 Telefono = usuario.Telefono,
                 PinAdulto = adulto.Pin,
-                Infantes = new List<string>() // vacío recién creado
+                Infantes = usuario.Infantes?.Select(i => new InfanteGetDTO
+                {
+                    Id = i.Id,
+                    Nombre = i.Nombre,
+                    InfanteNivelId = i.InfanteNivelId,
+                }).ToList() ?? new List<InfanteGetDTO>()
             };
 
 
@@ -84,7 +92,12 @@ namespace rutinadeldiaservidor.Controllers
                 Email = usuario.Email,
                 Telefono = usuario.Telefono,
                 PinAdulto = usuario.Adulto?.Pin ?? 0,
-                Infantes = usuario.Infantes.Select(i => i.Nombre).ToList()
+                Infantes = usuario.Infantes.Select(i => new InfanteGetDTO
+                {
+                    Id = i.Id,
+                    Nombre = i.Nombre,
+                    InfanteNivelId = i.InfanteNivelId,
+                }).ToList()
             };
 
             return Ok(dto);
@@ -106,8 +119,11 @@ namespace rutinadeldiaservidor.Controllers
             if (usuario == null)
                 return Unauthorized("Usuario o clave incorrecta");
 
-            // Verificar contraseña (a futuro, encriptar)
-            if (usuario.Clave != loginDTO.Clave)
+            // Verificar contraseña hasheada
+            var passwordHasher = new PasswordHasher<Usuario>();
+            var result = passwordHasher.VerifyHashedPassword(usuario, usuario.Clave, loginDTO.Clave);
+
+            if (result == PasswordVerificationResult.Failed)
                 return Unauthorized("Usuario o clave incorrecta");
 
             // Crear DTO para devolver al cliente
@@ -117,46 +133,15 @@ namespace rutinadeldiaservidor.Controllers
                 Email = usuario.Email,
                 Telefono = usuario.Telefono,
                 PinAdulto = usuario.Adulto?.Pin ?? 0,
-                Infantes = usuario.Infantes.Select(i => i.Nombre).ToList()
+                Infantes = usuario.Infantes?.Select(i => new InfanteGetDTO
+                {
+                    Id = i.Id,
+                    Nombre = i.Nombre,
+                    InfanteNivelId = i.InfanteNivelId,
+                }).ToList() ?? new List<InfanteGetDTO>() 
             };
 
             return Ok(dto);
-        }
-
-        // POST api/usuario/agregarInfante
-        [HttpPost("agregarInfante")]
-        public async Task<ActionResult> AgregarInfante([FromBody] InfanteCreateDTO infanteDTO)
-        {
-            if (infanteDTO == null)
-                return BadRequest("Datos inválidos");
-
-            // Verificar que el usuario exista
-            var usuario = await _context.Usuarios
-                .Include(u => u.Infantes)
-                .FirstOrDefaultAsync(u => u.Id == infanteDTO.UsuarioId);
-
-            if (usuario == null)
-                return NotFound("Usuario no encontrado");
-
-            // Verificar que el InfanteNivel exista
-            var nivel = await _context.InfanteNiveles
-                .FirstOrDefaultAsync(n => n.Id == infanteDTO.InfanteNivelId);
-
-            if (nivel == null)
-                return NotFound("Nivel de infante no encontrado");
-
-            // Crear entidad Infante
-            var infante = new Infante
-            {
-                Nombre = infanteDTO.Nombre,
-                UsuarioId = infanteDTO.UsuarioId,
-                InfanteNivelId = infanteDTO.InfanteNivelId
-            };
-
-            _context.Infantes.Add(infante);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { Mensaje = "Infante agregado correctamente", InfanteId = infante.Id });
         }
 
 

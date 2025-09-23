@@ -18,7 +18,7 @@ namespace rutinadeldiaservidor.Controllers
 
         // POST api/InfanteNivel/crear
         [HttpPost("crear")]
-        public async Task<ActionResult<InfanteNivel>> CrearInfanteNivel([FromBody] InfanteNivelDTO dto)
+        public async Task<ActionResult<InfanteNivel>> CrearInfanteNivel([FromBody] InfanteNivelCreateDTO dto)
         {
             if (dto == null || string.IsNullOrWhiteSpace(dto.Descripcion))
                 return BadRequest("La descripción es obligatoria");
@@ -39,8 +39,9 @@ namespace rutinadeldiaservidor.Controllers
         public async Task<ActionResult<IEnumerable<InfanteNivel>>> ObtenerInfanteNiveles()
         {
             var niveles = await _context.InfanteNiveles
-                .Select(n => new InfanteNivelDTO
+                .Select(n => new InfanteNivelGetDTO
                 {
+                    Id = n.Id,
                     Descripcion = n.Descripcion
                 })
                 .ToListAsync();
@@ -54,8 +55,9 @@ namespace rutinadeldiaservidor.Controllers
         {
             var nivel = await _context.InfanteNiveles
                 .Where(n => n.Id == id)
-                .Select(n => new InfanteNivelDTO
+                .Select(n => new InfanteNivelGetDTO
                 {
+                    Id = n.Id,
                     Descripcion = n.Descripcion
                 })
                 .FirstOrDefaultAsync();

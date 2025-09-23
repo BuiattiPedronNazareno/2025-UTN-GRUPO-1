@@ -10,8 +10,9 @@ import "../styles/views/AjustesAdulto.scss"
 const AjustesAdulto: React.FC = () => {
   const navigate = useNavigate()
 
-  const handleNinoClick = () => {
-    navigate("/")
+  // Cambiar de perfil (ir a selección de perfil)
+  const handleCambiarPerfilClick = () => {
+    navigate("/seleccionperfil") 
   }
 
   const handlePerfilClick = () => {
@@ -35,11 +36,11 @@ const AjustesAdulto: React.FC = () => {
           <Button
             variant="contained"
             size="large"
-            className="ajuste-button nino-button"
-            onClick={handleNinoClick}
+            className="ajuste-button cambiar-perfil-button"
+            onClick={handleCambiarPerfilClick}
             sx={{ backgroundColor: "#8FBC8F", py: 3, fontSize: "1.2rem" }}
           >
-            Vista Niño
+            Cambiar de Perfil
           </Button>
 
           <Button

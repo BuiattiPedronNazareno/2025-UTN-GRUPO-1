@@ -10,8 +10,9 @@ import "../styles/views/AjustesInfante.scss"
 const AjustesInfante: React.FC = () => {
   const navigate = useNavigate()
 
-  const handleAdultoClick = () => {
-    navigate("/adulto")
+  // Cambiar de perfil (ir a selección de perfil)
+  const handleCambiarPerfilClick = () => {
+    navigate("/seleccionperfil")
   }
 
   const handleLogrosClick = () => {
@@ -23,9 +24,8 @@ const AjustesInfante: React.FC = () => {
   }
 
   const handleBackClick = () => {
-    navigate("/")
+    navigate("/") // Volver a InicioInfante
   }
-
 
   return (
     <Box className="ajustes-infante">
@@ -36,11 +36,11 @@ const AjustesInfante: React.FC = () => {
           <Button
             variant="contained"
             size="large"
-            className="ajuste-button adulto-button"
-            onClick={handleAdultoClick}
+            className="ajuste-button cambiar-perfil-button"
+            onClick={handleCambiarPerfilClick}
             sx={{ backgroundColor: "#8FBC8F", py: 3, fontSize: "1.2rem" }}
           >
-            Adulto
+            Cambiar de Perfil
           </Button>
 
           <Button
