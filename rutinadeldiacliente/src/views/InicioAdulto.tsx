@@ -55,7 +55,6 @@ const InicioAdulto: React.FC = () => {
 
   return (
     <Box className="inicio-adulto">
-      {/* Header */}
       <Box className="header">
         <Box className="header-content">
           <Typography variant="h4" component="h1" className="header-title">
@@ -77,7 +76,6 @@ const InicioAdulto: React.FC = () => {
       </Box>
 
       <Container component="main" className="main-content" maxWidth="md">
-        {/* Routine Cards */}
         <Box className="routines-container">
           {routines.map((routine) => (
             <Card
@@ -128,7 +126,6 @@ const InicioAdulto: React.FC = () => {
           ))}
         </Box>
 
-        {/* Action Buttons */}
         <Box className="action-buttons" sx={{ mt: 4 }}>
           <Button
             variant="contained"

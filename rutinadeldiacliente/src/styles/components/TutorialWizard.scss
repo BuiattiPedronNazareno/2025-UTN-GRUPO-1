@@ -1,0 +1,43 @@
+@use "../variables";
+@use "../mixins";
+@use "sass:color";
+
+.tutorial-wizard {
+  .tutorial-title {
+    font-size: variables.$font-size-xl;
+    font-weight: 700;
+    text-align: center;
+    color: variables.$text-color;
+  }
+
+  .tutorial-content {
+    padding: variables.$spacing-lg;
+    text-align: center;
+
+    p {
+      font-size: variables.$font-size-md;
+      line-height: 1.6;
+      color: variables.$text-color;
+    }
+  }
+
+  .tutorial-stepper {
+    margin-top: variables.$spacing-lg;
+  }
+
+  .tutorial-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: variables.$spacing-md variables.$spacing-lg;
+
+    .back-button {
+      @include mixins.button-secondary;
+      min-width: 120px;
+    }
+
+    .next-button {
+      @include mixins.button-primary;
+      min-width: 120px;
+    }
+  }
+}

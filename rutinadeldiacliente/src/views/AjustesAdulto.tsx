@@ -1,26 +1,26 @@
 "use client"
 
-import type React from "react"
+import React, {useState} from "react"
 import { useNavigate } from "react-router-dom"
 import { Container, Box, Button, Stack } from "@mui/material"
 import NavBar from "../components/NavBar"
-import HelpButton from "../components/HelpButton"
 import "../styles/views/AjustesAdulto.scss"
+import TutorialWizard from "../components/TutorialWizard"
 
 const AjustesAdulto: React.FC = () => {
   const navigate = useNavigate()
+   const [tutorialOpen, setTutorialOpen] = useState(false)
 
-  // Cambiar de perfil (ir a selección de perfil)
+  const handleTutorialClick = () => {
+    setTutorialOpen(true)
+  }
+
   const handleCambiarPerfilClick = () => {
     navigate("/seleccionperfil") 
   }
 
   const handlePerfilClick = () => {
     navigate("/perfil-adulto")
-  }
-
-  const handleHelpClick = () => {
-    console.log("Solicitando ayuda...")
   }
 
   const handleBackClick = () => {
@@ -33,6 +33,17 @@ const AjustesAdulto: React.FC = () => {
 
       <Container component="main" className="main-content" maxWidth="sm">
         <Stack spacing={3} className="ajustes-options">
+          
+          <Button
+            variant="contained"
+            size="large"
+            className="ajuste-button nino-button"
+            onClick={handleTutorialClick}
+            sx={{ py: 3, fontSize: "1.2rem" }}
+          >
+            Tutorial Adulto
+          </Button>
+          
           <Button
             variant="contained"
             size="large"
@@ -54,9 +65,7 @@ const AjustesAdulto: React.FC = () => {
           </Button>
         </Stack>
 
-        <Box className="help-section" sx={{ textAlign: "center", mt: 4 }}>
-          <HelpButton onClick={handleHelpClick} />
-        </Box>
+        <TutorialWizard open={tutorialOpen} onClose={() => setTutorialOpen(false)} mode="adulto" />
 
         <Box className="back-section" sx={{ textAlign: "center", mt: 3 }}>
           <Button
