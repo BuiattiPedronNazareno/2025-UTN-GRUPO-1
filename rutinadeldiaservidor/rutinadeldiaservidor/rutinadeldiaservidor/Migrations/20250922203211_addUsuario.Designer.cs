@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using rutinadeldiaservidor.Data;
@@ -11,9 +12,11 @@ using rutinadeldiaservidor.Data;
 namespace rutinadeldiaservidor.Migrations
 {
     [DbContext(typeof(RutinaContext))]
-    partial class RutinaContextModelSnapshot : ModelSnapshot
+    [Migration("20250922203211_addUsuario")]
+    partial class addUsuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,46 +24,6 @@ namespace rutinadeldiaservidor.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("rutinadeldiaservidor.Models.Adulto", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Pin")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Adultos");
-                });
-
-            modelBuilder.Entity("rutinadeldiaservidor.Models.Infante", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("InfanteNivelId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InfanteNivelId");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("Infantes");
-                });
 
             modelBuilder.Entity("rutinadeldiaservidor.Models.InfanteNivel", b =>
                 {
@@ -156,6 +119,11 @@ namespace rutinadeldiaservidor.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
@@ -167,36 +135,32 @@ namespace rutinadeldiaservidor.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Usuarios");
+
+                    b.HasDiscriminator().HasValue("Usuario");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("rutinadeldiaservidor.Models.Adulto", b =>
                 {
-                    b.HasOne("rutinadeldiaservidor.Models.Usuario", "Usuario")
-                        .WithOne("Adulto")
-                        .HasForeignKey("rutinadeldiaservidor.Models.Adulto", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasBaseType("rutinadeldiaservidor.Models.Usuario");
 
-                    b.Navigation("Usuario");
+                    b.Property<int>("Pin")
+                        .HasColumnType("integer");
+
+                    b.HasDiscriminator().HasValue("Adulto");
                 });
 
             modelBuilder.Entity("rutinadeldiaservidor.Models.Infante", b =>
                 {
-                    b.HasOne("rutinadeldiaservidor.Models.InfanteNivel", "InfanteNivel")
-                        .WithMany()
-                        .HasForeignKey("InfanteNivelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasBaseType("rutinadeldiaservidor.Models.Usuario");
 
-                    b.HasOne("rutinadeldiaservidor.Models.Usuario", "Usuario")
-                        .WithMany("Infantes")
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("InfanteNivelId")
+                        .HasColumnType("integer");
 
-                    b.Navigation("InfanteNivel");
+                    b.HasIndex("InfanteNivelId");
 
-                    b.Navigation("Usuario");
+                    b.HasDiscriminator().HasValue("Infante");
                 });
 
             modelBuilder.Entity("rutinadeldiaservidor.Models.Paso", b =>
@@ -210,17 +174,20 @@ namespace rutinadeldiaservidor.Migrations
                     b.Navigation("Rutina");
                 });
 
+            modelBuilder.Entity("rutinadeldiaservidor.Models.Infante", b =>
+                {
+                    b.HasOne("rutinadeldiaservidor.Models.InfanteNivel", "InfanteNivel")
+                        .WithMany()
+                        .HasForeignKey("InfanteNivelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("InfanteNivel");
+                });
+
             modelBuilder.Entity("rutinadeldiaservidor.Models.Rutina", b =>
                 {
                     b.Navigation("Pasos");
-                });
-
-            modelBuilder.Entity("rutinadeldiaservidor.Models.Usuario", b =>
-                {
-                    b.Navigation("Adulto")
-                        .IsRequired();
-
-                    b.Navigation("Infantes");
                 });
 #pragma warning restore 612, 618
         }
