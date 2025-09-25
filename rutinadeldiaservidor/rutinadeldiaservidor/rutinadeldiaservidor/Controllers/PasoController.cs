@@ -16,7 +16,7 @@ namespace rutinadeldiaservidor.Controllers
             _context = context;
         }
 
-        // GET: api/Paso/porRutina/5
+        // GET: Paso/porRutina/5
         [HttpGet("porRutina/{rutinaId}")]
         public async Task<ActionResult<IEnumerable<Paso>>> getByRutinaId(int rutinaId)
         {

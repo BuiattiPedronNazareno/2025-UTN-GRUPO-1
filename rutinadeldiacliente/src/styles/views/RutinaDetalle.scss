@@ -1,0 +1,68 @@
+@use '../variables';
+@use '../mixins';
+
+.rutina-detalle-infante {
+  min-height: 100vh;
+  background-color: variables.$background-color;
+  padding-bottom: 120px; // espacio para botones fijos
+
+  .step-card {
+    margin-bottom: 1rem;
+    background-color: #3e8596; // card azul
+    color: white; // texto visible sobre azul
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .step-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .step-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem; 
+    width: 100%;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+
+    button {
+      border-radius: 25px;
+    }
+  }
+
+  button {
+    border-radius: 25px;
+  }
+
+  .MuiTypography-h5,
+  .MuiTypography-h6 {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-weight: bold;
+  }
+
+  .help-section {
+    text-align: center;
+    margin-top: 1rem;
+  }
+
+  .volver-button {
+    background-color: #64b5f6; // azul suave
+    color: white;
+    border-radius: 16px;
+    padding: 10px 0;
+    margin-bottom: 1rem;
+
+    &:hover {
+      background-color: #42a5f5;
+    }
+  }
+}

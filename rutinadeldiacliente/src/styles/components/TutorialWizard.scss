@@ -3,10 +3,15 @@
 @use "sass:color";
 
 .tutorial-wizard {
+  background-color: variables.$background-color !important;
+  color: variables.$text-color;
+  font-family: variables.$font-family-primary;
+
   .tutorial-title {
-    font-size: variables.$font-size-xl;
-    font-weight: 700;
+    font-size: 2.5rem; 
+    font-weight: 800;
     text-align: center;
+    margin-bottom: variables.$spacing-lg;
     color: variables.$text-color;
   }
 
@@ -15,14 +20,36 @@
     text-align: center;
 
     p {
-      font-size: variables.$font-size-md;
-      line-height: 1.6;
+      font-size: 1.5rem;
+      line-height: 1.8;
       color: variables.$text-color;
+    }
+
+    .tutorial-image {
+      margin-top: variables.$spacing-lg;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      img {
+        width: auto;
+        max-width: 77%; 
+        max-height: 80vh; 
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        object-fit: contain;
+      }
     }
   }
 
   .tutorial-stepper {
-    margin-top: variables.$spacing-lg;
+    margin-top: variables.$spacing-md;
+    .MuiStep-root {
+      padding: 0 4px; 
+    }
+    .MuiStepLabel-label {
+      font-size: 0.85rem;
+    }
   }
 
   .tutorial-actions {

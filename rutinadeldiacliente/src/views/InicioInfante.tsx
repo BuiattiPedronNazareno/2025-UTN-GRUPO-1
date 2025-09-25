@@ -31,7 +31,7 @@ const InicioInfante: React.FC = () => {
 
   const handleRoutineClick = (routineId: number) => {
     console.log(`Iniciando rutina: ${routineId}`)
-    navigate(`/rutina/${routineId}`)
+    navigate(`/rutina/${routineId}/pasos`);
   }
 
   const handleHelpClick = () => {
