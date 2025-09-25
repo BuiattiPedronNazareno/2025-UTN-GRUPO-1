@@ -182,7 +182,9 @@ const TutorialWizard: React.FC<TutorialWizardProps> = ({ open, onClose, mode }) 
                 alignItems: "center",
                 justifyContent: "center",
                 flex: 1,
-                gap: 4,
+                gap: 0,
+                maxWidth: "850px", 
+                margin: "0 auto", 
               }}
             >
               <Box
@@ -191,6 +193,10 @@ const TutorialWizard: React.FC<TutorialWizardProps> = ({ open, onClose, mode }) 
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
+                  minWidth: "350px",
+                  maxWidth: "350px",
+                  mx: 0,
+                  px: 0,
                 }}
               >
                 <img
@@ -210,7 +216,7 @@ const TutorialWizard: React.FC<TutorialWizardProps> = ({ open, onClose, mode }) 
                 sx={{
                   flex: 1,
                   textAlign: "center",
-                  px: 2,
+                  px: 0,
                 }}
               >
                 <Typography
