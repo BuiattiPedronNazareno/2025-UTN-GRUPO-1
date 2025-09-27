@@ -1,17 +1,19 @@
-import { createBrowserRouter } from "react-router-dom"
-import InicioInfante from "../views/InicioInfante"
-import AjustesInfante from "../views/AjustesInfante"
-import LogrosInfante from "../views/LogrosInfante"
-import InicioAdulto from "../views/InicioAdulto"
-import AjustesAdulto from "../views/AjustesAdulto"
-import Register from "../views/Register"
-import Login from "../views/Login"
-import SeleccionPerfil from "../views/SeleccionPerfil"
-import AgregarInfante from "../views/AgregarInfante"
-import ValidarPinAdulto from "../views/ValidarPinAdulto"
-import CrearRutina from "../views/crearRutina"; 
-import CrearPaso from "../views/crearPaso";  
+import { createBrowserRouter } from "react-router-dom";
+import InicioInfante from "../views/InicioInfante";
+import AjustesInfante from "../views/AjustesInfante";
+import LogrosInfante from "../views/LogrosInfante";
+import InicioAdulto from "../views/InicioAdulto";
+import AjustesAdulto from "../views/AjustesAdulto";
+import Register from "../views/Register";
+import Login from "../views/Login";
+import SeleccionPerfil from "../views/SeleccionPerfil";
+import AgregarInfante from "../views/AgregarInfante";
+import ValidarPinAdulto from "../views/ValidarPinAdulto";
+import CrearRutina from "../views/crearRutina";
+import CrearPaso from "../views/crearPaso";
 import RutinaDetalleInfante from "../views/RutinaDetalle";
+import RecordatorioAdulto from "../views/RecordatorioAdulto";
+import ListaRecordatorioAdulto from "../views/ListaRecordatorioAdulto";
 
 export const router = createBrowserRouter([
   {
@@ -44,26 +46,36 @@ export const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <Login/>,
+    element: <Login />,
   },
   {
     path: "/seleccionperfil",
-    element: <SeleccionPerfil/>,
+    element: <SeleccionPerfil />,
   },
   {
     path: "/agregar-infante",
-    element: <AgregarInfante/>,
+    element: <AgregarInfante />,
   },
   {
     path: "/validar-pin-adulto",
-    element: <ValidarPinAdulto/>,
+    element: <ValidarPinAdulto />,
   },
-  { path: "/crear-rutina", 
-    element: <CrearRutina /> },
-  { path: "/crear-paso/:id", 
-    element: <CrearPaso /> },
+  { path: "/crear-rutina", element: <CrearRutina /> },
+  { path: "/crear-paso/:id", element: <CrearPaso /> },
   {
-    path: "/rutina/:rutinaId/pasos", 
+    path: "/rutina/:rutinaId/pasos",
     element: <RutinaDetalleInfante />,
   },
-])
+  {
+    path: "/lista-recordatorio-adulto/:rutinaId",
+    element: <ListaRecordatorioAdulto />,
+  },
+  {
+    path: "/recordatorio-adulto",
+    element: <RecordatorioAdulto />,
+  },
+  {
+    path: "/editar-recordatorio-adulto/:id",
+    element: <RecordatorioAdulto />,
+  },
+]);

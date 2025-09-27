@@ -1,0 +1,235 @@
+// styles/views/ListaRecordatorios.scss
+@use '../variables';
+@use '../mixins';
+
+.lista-recordatorios {
+  min-height: 100vh;
+  background-color: variables.$background-color;
+  padding-top: 0;
+
+  .header {
+    background-color: variables.$white;
+    box-shadow: variables.$shadow-md;
+    padding: variables.$spacing-lg 0;
+    border-bottom: 1px solid rgba(variables.$primary-color, 0.1);
+
+    .header-content {
+      @include mixins.container;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+
+      .back-button {
+        background: rgba(variables.$primary-color, 0.1);
+        transition: all 0.3s ease;
+        color: variables.$primary-color;
+
+        &:hover {
+          background: rgba(variables.$primary-color, 0.2);
+          transform: translateX(-2px);
+        }
+      }
+
+      .header-title {
+        color: variables.$text-color;
+        font-weight: bold;
+        font-size: variables.$font-size-xxl;
+        margin: 0;
+      }
+
+      .rutina-subtitle {
+        color: lighten(variables.$text-color, 20%);
+        font-size: variables.$font-size-lg;
+        font-weight: 500;
+        margin: 0;
+      }
+    }
+
+    .stats {
+      @include mixins.container;
+      display: flex;
+      justify-content: center;
+      gap: variables.$spacing-xl;
+      margin-top: variables.$spacing-md;
+
+      .stats-text {
+        color: variables.$text-color;
+        font-weight: 600;
+        font-size: variables.$font-size-sm;
+        letter-spacing: 0.5px;
+      }
+
+      @media (max-width: variables.$mobile) {
+        flex-direction: column;
+        align-items: center;
+        gap: variables.$spacing-sm;
+      }
+    }
+  }
+
+  .main-content {
+    padding: variables.$spacing-lg;
+    
+    @media (min-width: variables.$tablet) {
+      padding: variables.$spacing-xl;
+    }
+  }
+
+  .recordatorios-container {
+    .recordatorio-card {
+      @include mixins.card;
+      background-color: variables.$primary-color;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(variables.$white, 0.2);
+
+      &.inactivo {
+        background-color: lighten(variables.$text-color, 20%);
+        opacity: 0.8;
+      }
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: variables.$shadow-lg;
+      }
+
+      .recordatorio-title {
+        font-weight: bold;
+        color: variables.$white;
+        font-size: variables.$font-size-lg;
+      }
+
+      .notification-icon {
+        color: variables.$white;
+        margin-right: variables.$spacing-sm;
+        opacity: 0.9;
+      }
+
+      .status-chip {
+        margin-left: variables.$spacing-md;
+        color: variables.$white;
+
+        &.activo {
+          background-color: variables.$secondary-color;
+        }
+
+        &.inactivo {
+          background-color: variables.$danger-color;
+        }
+      }
+
+      .recordatorio-descripcion {
+        color: rgba(variables.$white, 0.8);
+        margin-bottom: variables.$spacing-sm;
+      }
+
+      .schedule-icon {
+        color: variables.$white;
+        margin-right: variables.$spacing-sm;
+        font-size: 18px;
+      }
+
+      .hora-text {
+        color: variables.$white;
+        font-weight: bold;
+      }
+
+      .dias-text {
+        color: rgba(variables.$white, 0.9);
+      }
+
+      .recordatorio-actions {
+        display: flex;
+        gap: variables.$spacing-sm;
+
+        .action-button {
+          background: rgba(variables.$white, 0.1);
+          border-radius: variables.$border-radius;
+          transition: all 0.2s ease;
+          color: variables.$white;
+
+          &:hover {
+            background: rgba(variables.$white, 0.2);
+            transform: scale(1.1);
+          }
+        }
+      }
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: variables.$spacing-md;
+    max-width: 400px;
+    margin: 0 auto;
+    margin-top: variables.$spacing-xl;
+
+    .create-recordatorio-button {
+      @include mixins.button-secondary;
+      width: 100%;
+      border-radius: variables.$border-radius-xl;
+      padding: variables.$spacing-md variables.$spacing-lg;
+      font-size: variables.$font-size-lg;
+      text-transform: none;
+
+      &:hover {
+        transform: translateY(-2px);
+      }
+    }
+  }
+
+  // Responsive Design
+  @media (max-width: variables.$mobile) {
+    .header {
+      .stats {
+        gap: variables.$spacing-md;
+      }
+    }
+
+    .recordatorios-container {
+      .recordatorio-card {
+        .recordatorio-actions {
+          flex-direction: column;
+          gap: variables.$spacing-xs;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    .header {
+      padding: variables.$spacing-md 0;
+
+      .header-content {
+        .header-title {
+          font-size: variables.$font-size-xl;
+        }
+      }
+    }
+  }
+}
+
+// Animaciones adicionales
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.recordatorio-card {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+// Estados específicos para recordatorios inactivos
+.recordatorio-card[data-activo="false"] {
+  opacity: 0.7;
+  
+  .recordatorio-title {
+    text-decoration: line-through;
+  }
+}
