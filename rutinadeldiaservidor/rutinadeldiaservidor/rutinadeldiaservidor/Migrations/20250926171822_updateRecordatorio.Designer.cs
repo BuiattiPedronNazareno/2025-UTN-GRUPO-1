@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using rutinadeldiaservidor.Data;
@@ -11,9 +12,11 @@ using rutinadeldiaservidor.Data;
 namespace rutinadeldiaservidor.Migrations
 {
     [DbContext(typeof(RutinaContext))]
-    partial class RutinaContextModelSnapshot : ModelSnapshot
+    [Migration("20250926171822_updateRecordatorio")]
+    partial class updateRecordatorio
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -153,7 +156,8 @@ namespace rutinadeldiaservidor.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RutinaId");
+                    b.HasIndex("RutinaId")
+                        .IsUnique();
 
                     b.ToTable("Recordatorios");
                 });
@@ -255,8 +259,8 @@ namespace rutinadeldiaservidor.Migrations
             modelBuilder.Entity("rutinadeldiaservidor.Models.Recordatorio", b =>
                 {
                     b.HasOne("rutinadeldiaservidor.Models.Rutina", "Rutina")
-                        .WithMany("Recordatorios")
-                        .HasForeignKey("RutinaId")
+                        .WithOne("Recordatorio")
+                        .HasForeignKey("rutinadeldiaservidor.Models.Recordatorio", "RutinaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -267,7 +271,7 @@ namespace rutinadeldiaservidor.Migrations
                 {
                     b.Navigation("Pasos");
 
-                    b.Navigation("Recordatorios");
+                    b.Navigation("Recordatorio");
                 });
 
             modelBuilder.Entity("rutinadeldiaservidor.Models.Usuario", b =>

@@ -18,5 +18,7 @@ namespace rutinadeldiaservidor.Models
 
         // Relación con pasos
         public ICollection<Paso> Pasos { get; set; }
+        // Relación con recordatorios
+        public ICollection<Recordatorio>? Recordatorios { get; set; } 
     }
 }
