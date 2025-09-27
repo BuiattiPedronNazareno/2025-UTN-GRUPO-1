@@ -1,50 +1,80 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { Container, Card, CardContent, CardMedia, Typography, Box, Button, IconButton } from "@mui/material"
-import { Settings, Visibility, Edit, NotificationsActive } from "@mui/icons-material"
-import "../styles/views/InicioAdulto.scss"
-import { obtenerRutinas } from "../services/rutinaService"
-import type { Rutina } from "../services/rutinaService"
-
+import type React from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Container,
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  Box,
+  Button,
+  IconButton,
+} from "@mui/material";
+import {
+  Settings,
+  Visibility,
+  Edit,
+  NotificationsActive,
+} from "@mui/icons-material";
+import "../styles/views/InicioAdulto.scss";
+import { obtenerRutinas } from "../services/rutinaService";
+import type { Rutina } from "../services/rutinaService";
+import { verificarRecordatorio } from "../services/recordatorioService";
 
 const InicioAdulto: React.FC = () => {
-  const navigate = useNavigate()
-  const [routines, setRoutines] = useState<Rutina[]>([])
+  const navigate = useNavigate();
+  const [routines, setRoutines] = useState<Rutina[]>([]);
+  const [routinesWithReminders, setRoutinesWithReminders] = useState<
+    Set<number>
+  >(new Set());
 
   useEffect(() => {
     const fetchRutinas = async () => {
       try {
-        const data = await obtenerRutinas()
-        setRoutines(data)
+        const data = await obtenerRutinas();
+        setRoutines(data);
+
+        // 🔹 después de obtener rutinas, verificamos recordatorios
+        const results = await Promise.all(
+          data.map(async (routine) => {
+            const tiene = await verificarRecordatorio(routine.id);
+            return tiene ? routine.id : null;
+          }),
+        );
+
+        // guardamos solo los ids que tienen recordatorio
+        setRoutinesWithReminders(new Set(results.filter(Boolean) as number[]));
       } catch (error) {
-        console.error("Error al obtener rutinas:", error)
+        console.error("Error al obtener rutinas:", error);
       }
-    }
-    fetchRutinas()
-  }, [])
+    };
+
+    fetchRutinas();
+  }, []);
 
   const handleRoutineView = (routineId: number) => {
-    console.log(`Ver rutina: ${routineId}`)
-  }
+    console.log(`Ver rutina: ${routineId}`);
+  };
 
   const handleRoutineEdit = (routineId: number) => {
-    console.log(`Editar rutina: ${routineId}`)
-  }
+    console.log(`Editar rutina: ${routineId}`);
+  };
 
   const handleCreateRoutine = () => {
-  navigate("/crear-rutina");
+    navigate("/crear-rutina");
   };
 
   const handleAddReminder = () => {
-    console.log("Agregar recordatorio")
-  }
+    console.log("Agregar recordatorio");
+    navigate("/recordatorio-adulto");
+  };
 
   const handleSettingsClick = () => {
-    navigate("/ajustes-adulto")
-  }
+    navigate("/ajustes-adulto");
+  };
 
   return (
     <Box className="inicio-adulto">
@@ -54,7 +84,11 @@ const InicioAdulto: React.FC = () => {
           <Typography variant="h4" component="h1" className="header-title">
             Mis Rutinas
           </Typography>
-          <IconButton className="settings-button" onClick={handleSettingsClick} sx={{ color: "#2C3E50" }}>
+          <IconButton
+            className="settings-button"
+            onClick={handleSettingsClick}
+            sx={{ color: "#2C3E50" }}
+          >
             <Settings fontSize="large" />
           </IconButton>
         </Box>
@@ -109,21 +143,47 @@ const InicioAdulto: React.FC = () => {
                   sx={{ objectFit: "cover" }}
                 />
                 <CardContent sx={{ flexGrow: 1 }}>
-                  <Box className="routine-header" sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <Typography variant="h6" component="h3" className="routine-title">
+                  <Box
+                    className="routine-header"
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Typography
+                      variant="h6"
+                      component="h3"
+                      className="routine-title"
+                    >
                       {routine.nombre}
                     </Typography>
 
                     <Box className="routine-actions">
-                      <IconButton onClick={() => handleRoutineView(routine.id)} className="action-button">
+                      <IconButton
+                        onClick={() => handleRoutineView(routine.id)}
+                        className="action-button"
+                      >
                         <Visibility />
                       </IconButton>
-                      <IconButton onClick={() => handleRoutineEdit(routine.id)} className="action-button">
+                      <IconButton
+                        onClick={() => handleRoutineEdit(routine.id)}
+                        className="action-button"
+                      >
                         <Edit />
                       </IconButton>
-                      <IconButton className="action-button notification-button">
-                        <NotificationsActive />
-                      </IconButton>
+
+                      {/* 👇 Solo aparece si el backend confirmó recordatorio */}
+                      {routinesWithReminders.has(routine.id) && (
+                        <IconButton
+                          className="action-button notification-button"
+                          onClick={() =>
+                            navigate(`/lista-recordatorio-adulto/${routine.id}`)
+                          }
+                        >
+                          <NotificationsActive />
+                        </IconButton>
+                      )}
                     </Box>
                   </Box>
                 </CardContent>
@@ -131,7 +191,6 @@ const InicioAdulto: React.FC = () => {
             </Box>
           ))}
         </Box>
-
 
         {/* Action Buttons */}
         <Box className="action-buttons" sx={{ mt: 4 }}>
@@ -182,7 +241,7 @@ const InicioAdulto: React.FC = () => {
         </Box>
       </Container>
     </Box>
-  )
-}
+  );
+};
 
-export default InicioAdulto
+export default InicioAdulto;
