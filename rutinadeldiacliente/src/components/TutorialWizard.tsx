@@ -36,6 +36,34 @@ import tutorial19 from '../assets/tutorialinfante19.png'
 import tutorial20 from '../assets/tutorialinfante20.png'
 import tutorial21 from '../assets/tutorialinfante21.png'
 
+import adulto1 from '../assets/tutorialadulto1.png'
+import adulto2 from '../assets/tutorialadulto2.png'
+import adulto3 from '../assets/tutorialadulto3.png'
+import adulto4 from '../assets/tutorialadulto4.png'
+import adulto5 from '../assets/tutorialadulto5.png'
+import adulto6 from '../assets/tutorialadulto6.png'
+import adulto7 from '../assets/tutorialadulto7.png'
+import adulto8 from '../assets/tutorialadulto8.png'
+import adulto9 from '../assets/tutorialadulto9.png'
+import adulto10 from '../assets/tutorialadulto10.png'
+import adulto11 from '../assets/tutorialadulto11.png'
+import adulto12 from '../assets/tutorialadulto12.png'
+import adulto13 from '../assets/tutorialadulto13.png'
+import adulto14 from '../assets/tutorialadulto14.png'
+import adulto15 from '../assets/tutorialadulto15.png'
+import adulto16 from '../assets/tutorialadulto16.png'
+import adulto17 from '../assets/tutorialadulto17.png'
+import adulto18 from '../assets/tutorialadulto18.png'
+import adulto19 from '../assets/tutorialadulto19.png'
+import adulto20 from '../assets/tutorialadulto20.png'
+import adulto21 from '../assets/tutorialadulto21.png'
+import adulto22 from '../assets/tutorialadulto22.png'
+import adulto23 from '../assets/tutorialadulto23.png'
+import adulto24 from '../assets/tutorialadulto24.png'
+import adulto25 from '../assets/tutorialadulto25.png'
+import adulto26 from '../assets/tutorialadulto26.png'
+import adulto27 from '../assets/tutorialadulto27.png'
+
 const tutorialImages = [
   tutorial1, tutorial2, tutorial3, tutorial4, tutorial5,
   tutorial6, tutorial7, tutorial8, tutorial9, tutorial10,
@@ -43,6 +71,15 @@ const tutorialImages = [
   tutorial16, tutorial17, tutorial18, tutorial19, tutorial20,
   tutorial21
 ]
+
+const tutorialImagesAdulto = [
+  adulto1, adulto2, adulto3, adulto4, adulto5, adulto6, adulto7,
+  adulto8, adulto9, adulto10, adulto11, adulto12, adulto13,
+  adulto14, adulto15, adulto16, adulto17, adulto18, adulto19, 
+  adulto20, adulto21, adulto22, adulto23, adulto24, adulto25, 
+  adulto26, adulto27
+]
+
 
 const tutorialContents: string[] = [
   "Al entrar a la aplicación vas a encontrarte con las rutinas 📋 a realizar durante el día ☀️. En ellas tendrás el paso a paso de cómo hacerlas 👣",
@@ -65,8 +102,38 @@ const tutorialContents: string[] = [
   "Para volver a los pasos, toca el botón de atrás ◀️",
   "Para avanzar al siguiente paso, toca el botón de adelante ▶️",
   "Al terminar todos los pasos, habrás completado la Rutina del Día 🎉",
-  "Habrá recordatorios para que sepas cuándo es hora de tus rutinas ⏰",
+  "Habrán recordatorios para que sepas cuándo es hora de tus rutinas ⏰",
 ];
+
+const tutorialContentsAdulto: string[] = [
+  "Al ingresar con el PIN que has registrado podrás ver las rutinas y diferentes opciones para gestionarlas",
+  "Seleccionando la opción de crear rutina...",
+  "Encontrarás todo lo que podrás agregarle a la misma, como una imagen, y una lista de horarios y días en los que se mostrará la rutina en la vista del niño",
+  "Podrás crear una motivación para la rutina",
+  "Esta se activará una vez el niño haya completado la rutina, podrás agregar en la descripción la frase que aparecerá",
+  "Las rutinas tienen un conjunto de pasos, seleccionando la opción de crear un paso...",
+  "Podrás crear paso por paso, agregándole opcionalmente una imagen y/o un audio",
+  "Las rutinas podrán tener hasta 4 pasos. Llegando a ese límite no se podrán crear más pasos",
+  "En cualquier momento podrás editar las rutinas que creaste",
+  "Y modificar la información que contienen",
+  "Además de poder editar los pasos de la rutina",
+  "Y cambiar los datos de cada paso",
+  "Tienes la opción de ocultar los pasos",
+  "Al ocultar un paso ya no se verá en la vista del niño",
+  "Solo puedes crear hasta 5 rutinas para evitar la invasión visual",
+  "Desde ajustes tendrás varias opciones",
+  "Entre ellas: activar o desactivar las notificaciones de recordatorios, cambiar el PIN, cambiar los colores de los botones y demás elementos",
+  "Al activarlos te habiliará la opción para agregar un recordatorio de una rutina",
+  "Con el que podrás seleccionar distintos datos como la frecuencia, color, sonido, entre otros",
+  "Las rutinas con recordatorio tendrán el ícono de la campanita para abrir la opción de editar el recordatorio",
+  "Y así cambiar los datos del recordatorio a decisión",
+  "Al seleccionar ese botón podrás ocultar la rutina en la vista del niño",
+  "Podrás desactivarlo cuando quieras",
+  "El niño tendrá la opción de cancelar rutinas, para ello tendás un historial para poder hacer un seguimiento",
+  "Al entrar podrás ver todas las rutinas canceladas",
+  "De igual forma, la notificación de cancelación te llegará vía WhatsApp",
+  "Lo mismo para el caso de que el niño apriete el botón de ayuda que aparece en su vista",
+]
 
 
 interface TutorialWizardProps {
@@ -80,25 +147,6 @@ interface Step {
   content: string
   image?: string 
 }
-
-const stepsAdulto: Step[] = [
-  {
-    title: "Bienvenido al tutorial adulto",
-    content: "Aquí aprenderás a crear y gestionar rutinas paso a paso.",
-  },
-  {
-    title: "Crear rutinas",
-    content: "Accede a la sección de rutinas y presiona 'Nueva rutina'.",
-  },
-  {
-    title: "Gestionar rutinas",
-    content: "Edita, elimina o reorganiza tus rutinas según tus necesidades.",
-  },
-  {
-    title: "Resumen",
-    content: "Ya conoces las funciones principales. ¡Estás listo!",
-  },
-]
 
 const stepsInfante: Step[] = [
   {
@@ -117,6 +165,26 @@ const stepsInfante: Step[] = [
   {
     title: "🎉 Bienvenido a Rutina Del Día 🌞📱",
     content: "¡Ya sabes cómo usar la app! Disfruta organizando tus días con facilidad",
+  },
+]
+
+const stepsAdulto: Step[] = [
+  {
+    title: "👋 Bienvenido al tutorial adulto",
+    content: "Aquí aprenderás a crear y gestionar rutinas paso a paso",
+  },
+  ...tutorialImagesAdulto.map((img, i) => ({
+    title: `Paso ${i + 1}`,
+    content: tutorialContentsAdulto[i],
+    image: img,
+  })),
+  {
+    title: "🔁 Recordatorio",
+    content: "Puedes repetir este tutorial en cualquier momento desde los ajustes ✨📖",
+  },
+  {
+    title: "🎉 Listo 🎉",
+    content: "Ya conoces todas las funciones principales. ¡Estás preparado!",
   },
 ]
 
@@ -139,10 +207,15 @@ const TutorialWizard: React.FC<TutorialWizardProps> = ({ open, onClose, mode }) 
     }
   }
 
-  const isTextOnlyStep = () => {
-    if (mode === "infante") {
-      return activeStep === 0 || activeStep === 22 || activeStep === 23 // pasos 1, 23 y 24
+  const isTextOnlyStep = (mode: 'infante' | 'adulto', activeStep: number) => {
+    if (mode === 'infante') {
+      return activeStep === 0 || activeStep === 22 || activeStep === 23
     }
+
+    if (mode === 'adulto') {
+      return activeStep === 0 || activeStep === 28 || activeStep === 29
+    }
+
     return false
   }
 
@@ -174,7 +247,7 @@ const TutorialWizard: React.FC<TutorialWizardProps> = ({ open, onClose, mode }) 
             px: 2,
           }}
         >
-          {!isTextOnlyStep() ? (
+          {!isTextOnlyStep(mode, activeStep) ? (
             <Box
               sx={{
                 display: "flex",
