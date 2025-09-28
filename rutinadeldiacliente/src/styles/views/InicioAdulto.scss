@@ -1,5 +1,5 @@
-@import '../variables.scss';
-@import '../mixins.scss';
+@use '../variables.scss';
+@use '../mixins.scss';
 
 .inicio-adulto {
   min-height: 100vh;
@@ -20,7 +20,7 @@
       .header-title {
         font-family: 'Comic Sans MS', cursive, sans-serif;
         font-weight: bold;
-        color: $text-color;
+        color: variables.$text-color;
         flex-grow: 1;
         text-align: center;
       }
@@ -38,7 +38,7 @@
     .stats {
       .stats-text {
         font-size: 0.9rem;
-        color: $text-color;
+        color: variables.$text-color;
         font-weight: 500;
         margin: 0.2rem 0;
         text-align: center;
@@ -60,7 +60,7 @@
         width: 100%;
         max-width: 400px;
         position: relative;
-        box-shadow: $shadow-md;
+        box-shadow: variables.$shadow-md;
         border-radius: 20px;
         overflow: hidden;
         transition: transform 0.2s ease;
@@ -83,7 +83,7 @@
           .routine-title {
             font-family: 'Comic Sans MS', cursive, sans-serif;
             font-weight: bold;
-            color: $text-color;
+            color: variables.$text-color;
             margin-bottom: 0.5rem;
           }
 
@@ -127,7 +127,7 @@
   }
 }
 
-@media (max-width: $mobile) {
+@media (max-width: variables.$mobile) {
   .inicio-adulto {
     .header {
       padding: 1rem 0.5rem;

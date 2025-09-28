@@ -1,5 +1,6 @@
 "use client";
 
+
 import type React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +24,7 @@ import "../styles/views/InicioAdulto.scss";
 import { obtenerRutinas } from "../services/rutinaService";
 import type { Rutina } from "../services/rutinaService";
 import { verificarRecordatorio } from "../services/recordatorioService";
+
 
 const InicioAdulto: React.FC = () => {
   const navigate = useNavigate();
@@ -78,7 +80,6 @@ const InicioAdulto: React.FC = () => {
 
   return (
     <Box className="inicio-adulto">
-      {/* Header */}
       <Box className="header">
         <Box className="header-content">
           <Typography variant="h4" component="h1" className="header-title">
@@ -104,7 +105,7 @@ const InicioAdulto: React.FC = () => {
       </Box>
 
       <Container component="main" className="main-content" maxWidth="md">
-        {/* Routine Cards */}
+
         <Box
           className="routines-container"
           sx={{
@@ -192,7 +193,6 @@ const InicioAdulto: React.FC = () => {
           ))}
         </Box>
 
-        {/* Action Buttons */}
         <Box className="action-buttons" sx={{ mt: 4 }}>
           <Button
             variant="contained"

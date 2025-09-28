@@ -1,16 +1,20 @@
 "use client"
 
-import type React from "react"
+import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Container, Box, Button, Stack } from "@mui/material"
 import NavBar from "../components/NavBar"
 import HelpButton from "../components/HelpButton"
 import "../styles/views/AjustesInfante.scss"
+import TutorialWizard from "../components/TutorialWizard"
 
 const AjustesInfante: React.FC = () => {
   const navigate = useNavigate()
+  const [tutorialOpen, setTutorialOpen] = useState(false)
 
-  // Cambiar de perfil (ir a selección de perfil)
+  const handleTutorialClick = () => {
+    setTutorialOpen(true)
+  }
   const handleCambiarPerfilClick = () => {
     navigate("/seleccionperfil")
   }
@@ -24,7 +28,7 @@ const AjustesInfante: React.FC = () => {
   }
 
   const handleBackClick = () => {
-    navigate("/") // Volver a InicioInfante
+    navigate("/") 
   }
 
   return (
@@ -33,6 +37,17 @@ const AjustesInfante: React.FC = () => {
 
       <Container component="main" className="main-content" maxWidth="sm">
         <Stack spacing={3} className="ajustes-options">
+          
+          <Button
+            variant="contained"
+            size="large"
+            className="ajuste-button adulto-button"
+            onClick={handleTutorialClick}
+            sx={{ py: 3, fontSize: "1.2rem" }}
+          >
+            Tutorial Niño
+          </Button>
+          
           <Button
             variant="contained"
             size="large"
@@ -53,6 +68,8 @@ const AjustesInfante: React.FC = () => {
             Mis logros
           </Button>
         </Stack>
+
+        <TutorialWizard open={tutorialOpen} onClose={() => setTutorialOpen(false)} mode="infante" />
 
         <Box className="help-section" sx={{ textAlign: "center", mt: 4 }}>
           <HelpButton onClick={handleHelpClick} />
