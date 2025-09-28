@@ -1,6 +1,6 @@
-// styles/views/ListaRecordatorios.scss
 @use '../variables';
 @use '../mixins';
+@use "sass:color";
 
 .lista-recordatorios {
   min-height: 100vh;
@@ -38,7 +38,7 @@
       }
 
       .rutina-subtitle {
-        color: lighten(variables.$text-color, 20%);
+        color: color.adjust(variables.$text-color, $lightness: 20%);
         font-size: variables.$font-size-lg;
         font-weight: 500;
         margin: 0;
@@ -83,7 +83,7 @@
       border: 1px solid rgba(variables.$white, 0.2);
 
       &.inactivo {
-        background-color: lighten(variables.$text-color, 20%);
+        background-color: color.adjust(variables.$text-color, $lightness: 20%);
         opacity: 0.8;
       }
 

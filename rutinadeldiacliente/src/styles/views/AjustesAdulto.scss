@@ -1,69 +1,70 @@
-@import '../variables.scss';
-@import '../mixins.scss';
+@use '../variables.scss';
+@use '../mixins.scss';
+@use "sass:color";
 
 .ajustes-adulto {
   min-height: 100vh;
-  background-color: $background-color;
+  background-color: variables.$background-color;
   
   .main-content {
-    padding: $spacing-xl;
+    padding: variables.$spacing-xl;
     max-width: 600px;
     margin: 0 auto;
     text-align: center;
   }
   
   .ajustes-options {
-    margin-bottom: $spacing-xl;
+    margin-bottom: variables.$spacing-xl;
     display: flex;
     flex-direction: column;
-    gap: $spacing-lg;
+    gap: variables.$spacing-lg;
     
     .ajuste-button {
-      @include button-base;
-      font-size: $font-size-xl;
-      padding: $spacing-xl;
-      border-radius: $border-radius-lg;
+      @include mixins.button-base;
+      font-size: variables.$font-size-xl;
+      padding: variables.$spacing-xl;
+      border-radius: variables.$border-radius-lg;
       min-height: 80px;
       font-weight: 700;
       
       &.nino-button {
-        background-color: $secondary-color;
-        color: $white;
+        background-color: variables.$secondary-color;
+        color: variables.$white;
         
         &:hover {
-          background-color: darken($secondary-color, 10%);
+          background-color: color.adjust(variables.$secondary-color, $lightness: -10%);
         }
       }
       
       &.perfil-button {
-        background-color: $secondary-color;
-        color: $white;
+        background-color: variables.$secondary-color;
+        color: variables.$white;
         
         &:hover {
-          background-color: darken($secondary-color, 10%);
+          background-color: color.adjust(variables.$secondary-color, $lightness: -10%);
         }
       }
     }
   }
   
   .help-section {
-    margin-bottom: $spacing-xl;
+    margin-bottom: variables.$spacing-xl;
     
     .help-button {
-      @include button-help;
-      font-size: $font-size-lg;
-      padding: $spacing-lg $spacing-xl;
-      border-radius: $border-radius-lg;
+      @include mixins.button-help;
+      font-size: variables.$font-size-lg;
+      padding: variables.$spacing-lg variables.$spacing-xl;
+      border-radius: variables.$border-radius-lg;
       min-width: 200px;
     }
   }
   
   .back-section {
     .back-button {
-      @include button-danger;
-      font-size: $font-size-lg;
-      padding: $spacing-md $spacing-lg;
-      border-radius: $border-radius-lg;
+      @include mixins.button-danger;
+      font-size: variables.$font-size-lg;
+      padding: variables.$spacing-md variables.$spacing-lg;
+      border-radius: variables.$border-radius-lg;
       min-width: 150px;
     }
   }
