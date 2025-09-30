@@ -31,3 +31,8 @@ export const actualizarPaso = async (
   const response = await api.put<Paso>(`/Paso/actualizarPaso/${id}`, paso);
   return response.data;
 };
+
+// Eliminar paso
+export const eliminarPaso = async (id: number): Promise<void> => {
+  await api.delete(`/Paso/eliminarPaso/${id}`);
+};

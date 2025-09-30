@@ -28,8 +28,9 @@ export const obtenerRutinaPorId = async (id: number): Promise<Rutina> => {
 // Actualizar rutina
 export const actualizarRutina = async (
   id: number,
-  rutina: Omit<Rutina, "id" | "fechaCreacion" >
+  rutina: Omit<Rutina, "id" | "fechaCreacion">
 ): Promise<Rutina> => {
-  const response = await api.put<Rutina>(`/Paso/actualizarPaso/${id}`, rutina);
+  const response = await api.put<Rutina>(`/Rutina/actualizarRutina/${id}`, rutina);
   return response.data;
 };
+

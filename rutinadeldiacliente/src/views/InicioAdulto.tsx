@@ -62,7 +62,7 @@ const InicioAdulto: React.FC = () => {
   };
 
   const handleRoutineEdit = (routineId: number) => {
-    console.log(`Editar rutina: ${routineId}`);
+  navigate(`/editar-rutina/${routineId}`);
   };
 
   const handleCreateRoutine = () => {
