@@ -24,3 +24,12 @@ export const obtenerRutinaPorId = async (id: number): Promise<Rutina> => {
   const response = await api.get<Rutina>(`/Rutina/obtenerRutina/${id}`);
   return response.data;
 };
+
+// Actualizar rutina
+export const actualizarRutina = async (
+  id: number,
+  rutina: Omit<Rutina, "id" | "fechaCreacion" >
+): Promise<Rutina> => {
+  const response = await api.put<Rutina>(`/Paso/actualizarPaso/${id}`, rutina);
+  return response.data;
+};
