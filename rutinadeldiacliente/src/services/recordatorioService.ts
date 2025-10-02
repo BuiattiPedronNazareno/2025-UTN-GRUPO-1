@@ -64,7 +64,7 @@ export const eliminarRecordatorio = async (
     const res = await api.delete(
       `/Recordatorio/eliminarRecordatorio/${recordatorioId}`,
     );
-    return res.status === 200;
+    return res.status === 200 || res.status === 204;
   } catch (error) {
     console.error("Error eliminando recordatorio:", error);
     return false;
