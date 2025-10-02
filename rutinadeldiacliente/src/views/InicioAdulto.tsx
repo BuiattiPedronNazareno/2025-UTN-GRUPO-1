@@ -17,11 +17,12 @@ import {
 import {
   Settings,
   Visibility,
+  VisibilityOff,
   Edit,
   NotificationsActive,
 } from "@mui/icons-material";
 import "../styles/views/InicioAdulto.scss";
-import { obtenerRutinas } from "../services/rutinaService";
+import { obtenerRutinas, cambiarVisibilidadRutina } from "../services/rutinaService";
 import type { Rutina } from "../services/rutinaService";
 import { verificarRecordatorio } from "../services/recordatorioService";
 
@@ -37,9 +38,10 @@ const InicioAdulto: React.FC = () => {
     const fetchRutinas = async () => {
       try {
         const data = await obtenerRutinas();
+        
         setRoutines(data);
 
-        // 🔹 después de obtener rutinas, verificamos recordatorios
+        // después de obtener rutinas, verificamos recordatorios
         const results = await Promise.all(
           data.map(async (routine) => {
             const tiene = await verificarRecordatorio(routine.id);
@@ -57,12 +59,9 @@ const InicioAdulto: React.FC = () => {
     fetchRutinas();
   }, []);
 
-  const handleRoutineView = (routineId: number) => {
-    console.log(`Ver rutina: ${routineId}`);
-  };
 
   const handleRoutineEdit = (routineId: number) => {
-    console.log(`Editar rutina: ${routineId}`);
+  navigate(`/editar-rutina/${routineId}`);
   };
 
   const handleCreateRoutine = () => {
@@ -76,6 +75,24 @@ const InicioAdulto: React.FC = () => {
 
   const handleSettingsClick = () => {
     navigate("/ajustes-adulto");
+  };
+
+  const handleCambiarEstadoRutina = async (routineId: number, estadoActual: string) => {
+  try {
+    const estadoNuevo = estadoActual.trim().toLowerCase() === "activa" ? "Oculta" : "Activa";
+
+    const rutinaActualizada = await cambiarVisibilidadRutina(routineId, {
+      estado: estadoNuevo,
+    });
+
+    setRoutines((prev) =>
+      prev.map((r) =>
+        r.id === routineId ? { ...r, estado: rutinaActualizada.estado } : r
+      )
+    );
+  } catch (error) {
+    console.error("Error al actualizar rutina:", error);
+  }
   };
 
   return (
@@ -117,6 +134,7 @@ const InicioAdulto: React.FC = () => {
           }}
         >
           {routines.map((routine) => (
+            
             <Box
               key={routine.id}
               sx={{
@@ -161,11 +179,13 @@ const InicioAdulto: React.FC = () => {
                     </Typography>
 
                     <Box className="routine-actions">
-                      <IconButton
-                        onClick={() => handleRoutineView(routine.id)}
+                     <IconButton
+                        onClick={() =>
+                          handleCambiarEstadoRutina(routine.id, routine.estado ?? "Activa")
+                        }
                         className="action-button"
                       >
-                        <Visibility />
+                        {routine.estado === "Activa" ? <Visibility /> : <VisibilityOff />}
                       </IconButton>
                       <IconButton
                         onClick={() => handleRoutineEdit(routine.id)}

@@ -14,6 +14,9 @@ import CrearPaso from "../views/crearPaso";
 import RutinaDetalleInfante from "../views/RutinaDetalle";
 import RecordatorioAdulto from "../views/RecordatorioAdulto";
 import ListaRecordatorioAdulto from "../views/ListaRecordatorioAdulto";
+import EditarRutina from "../views/EditarRutina";
+import PasoForm from "../views/PasoForm";
+
 
 export const router = createBrowserRouter([
   {
@@ -62,6 +65,11 @@ export const router = createBrowserRouter([
   },
   { path: "/crear-rutina", element: <CrearRutina /> },
   { path: "/crear-paso/:id", element: <CrearPaso /> },
+
+  { path: "/editar-rutina/:rutinaId", element: <EditarRutina /> },
+  { path: "/rutina/:rutinaId/paso", element: <PasoForm /> },
+  { path: "/rutina/:rutinaId/paso/:pasoId?", element: <PasoForm /> },
+
   {
     path: "/rutina/:rutinaId/pasos",
     element: <RutinaDetalleInfante />,
