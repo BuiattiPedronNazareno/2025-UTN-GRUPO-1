@@ -5,6 +5,7 @@ import { actualizarRutina, obtenerRutinaPorId } from "../services/rutinaService"
 import type { Paso } from "../services/pasoService";
 import type { Rutina } from "../services/rutinaService";
 import "../styles/views/CrearRutina.scss";
+import "../styles/views/EditarRutina.scss";
 
 const EditarRutina: React.FC = () => {
   const { rutinaId } = useParams<{ rutinaId: string }>();
@@ -38,14 +39,16 @@ const EditarRutina: React.FC = () => {
       const rutinaActualizada = await actualizarRutina(Number(rutinaId), {
         nombre,
         imagen,
-        estado: rutina?.estado ?? "Activo", // 👈 lo que corresponda
+        estado: rutina?.estado ?? "Activa",
       });
       setRutina(rutinaActualizada);
       alert("Rutina actualizada con éxito");
+      navigate("/adulto")
     } catch (error) {
       console.error("Error al actualizar rutina:", error);
     }
   };
+
 
   const handleEliminarPaso = async (id: number) => {
     if (!rutinaId) return;
@@ -97,12 +100,12 @@ const EditarRutina: React.FC = () => {
         <ul>
           {pasos.map((p) => (
             <li key={p.id}>
-              {p.descripcion} ({p.imagen}, {p.audio})
-              <div>
+              <span>
+                {p.descripcion}
+              </span>
+              <div className="paso-actions">
                 <button
-                  onClick={() =>
-                    navigate(`/rutina/${rutinaId}/paso/${p.id}`)
-                  }
+                  onClick={() => navigate(`/rutina/${rutinaId}/paso/${p.id}`)}
                 >
                   Editar
                 </button>
@@ -122,6 +125,8 @@ const EditarRutina: React.FC = () => {
         </button>
       </div>
     </div>
+
+    
   );
 };
 

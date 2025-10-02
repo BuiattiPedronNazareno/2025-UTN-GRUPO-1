@@ -26,7 +26,8 @@ namespace rutinadeldiaservidor.Controllers
                 {
                     Id = r.Id,
                     Nombre = r.Nombre,
-                    Imagen = r.Imagen
+                    Imagen = r.Imagen,
+                    Estado = r.Estado
                 })
                 .ToListAsync();
 
@@ -43,7 +44,8 @@ namespace rutinadeldiaservidor.Controllers
                 {
                     Id = r.Id,
                     Nombre = r.Nombre,
-                    Imagen = r.Imagen
+                    Imagen = r.Imagen,
+                    Estado = r.Estado
                 })
                 .FirstOrDefaultAsync();
 
@@ -59,7 +61,7 @@ namespace rutinadeldiaservidor.Controllers
             {
                 Nombre = rutinaDTO.Nombre,
                 Imagen = rutinaDTO.Imagen,
-                Estado = "Activa",             // por defecto, la rutina está activa
+                Estado = "Activa",
                 FechaCreacion = DateTime.UtcNow // fecha actual 
             };
 
@@ -79,7 +81,7 @@ namespace rutinadeldiaservidor.Controllers
 
         // PUT api/rutina/actualizarRutina/5
         [HttpPut("actualizarRutina/{id}")]
-        public async Task<IActionResult> Update(int id, RutinaUpdateDto rutinaDTO)
+        public async Task<IActionResult> Update(int id, RutinaUpdateDTO rutinaDTO)
         {
             var rutinaExistente = await _context.Rutinas.FindAsync(id);
             if (rutinaExistente == null)
@@ -90,7 +92,21 @@ namespace rutinadeldiaservidor.Controllers
             rutinaExistente.Imagen = rutinaDTO.Imagen;
 
             await _context.SaveChangesAsync();
-            return NoContent();
+            return Ok(rutinaExistente);
+        }
+
+        // PUT api/rutina/cambiarEstadoRutina
+        [HttpPut("cambiarVisibilidadRutina/{id}")]
+        public async Task<IActionResult> UpdateState(int id, RutinaEstadoUpdateDTO rutinaDTO)
+        {
+            var rutinaExistente = await _context.Rutinas.FindAsync(id);
+            if (rutinaExistente == null)
+                return NotFound();
+         
+            rutinaExistente.Estado = rutinaDTO.Estado;
+
+            await _context.SaveChangesAsync();
+            return Ok(rutinaExistente);
         }
 
         // DELETE: api/rutina/eliminarRutina/5
