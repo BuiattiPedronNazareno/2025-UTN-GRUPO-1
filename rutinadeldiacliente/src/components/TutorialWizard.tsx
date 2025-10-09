@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,9 @@ import {
   Stepper,
   Step,
   StepLabel,
+  List,
+  ListItemButton,
+  ListItemText,
 } from "@mui/material"
 import "../styles/components/TutorialWizard.scss"
 import tutorial1 from '../assets/tutorialinfante1.png'
@@ -101,7 +104,7 @@ const tutorialContents: string[] = [
   "Si te equivocas, no te preocupes, siempre puedes volver a empezar 😊",
   "Para volver a los pasos, toca el botón de atrás ◀️",
   "Para avanzar al siguiente paso, toca el botón de adelante ▶️",
-  "Al terminar todos los pasos, habrás completado la Rutina del Día 🎉",
+  "Al terminar todos los pasos anteriores, habrás completado la Rutina del Día 🎉",
   "Habrán recordatorios para que sepas cuándo es hora de tus rutinas ⏰",
 ];
 
@@ -135,6 +138,54 @@ const tutorialContentsAdulto: string[] = [
   "Lo mismo para el caso de que el niño apriete el botón de ayuda que aparece en su vista",
 ]
 
+interface StepData {
+  title: string
+  content: string
+  image?: string
+}
+
+const stepsInfante: StepData[] = [
+  { title: "😎 Bienvenido al tutorial", content: "Aquí aprenderás cómo completar tus rutinas..." },
+  ...tutorialImages.map((img, i) => ({
+    title: `Paso ${i + 1}`,
+    content: tutorialContents[i],
+    image: img,
+  })),
+  { title: "🎉 Fin del tutorial", content: "¡Ya sabes cómo usar la app! 🎉" },
+]
+
+const stepsAdulto: StepData[] = [
+  { title: "👋 Bienvenido al tutorial adulto", content: "Aquí aprenderás a crear y gestionar rutinas paso a paso" },
+  ...tutorialImagesAdulto.map((img, i) => ({
+    title: `Paso ${i + 1}`,
+    content: tutorialContentsAdulto[i],
+    image: img,
+  })),
+  { title: "🎉 Fin del tutorial", content: "Ya conoces todas las funciones principales. ¡Estás preparado!" },
+]
+
+const tutorialModulesInfante = [
+  { id: 1, title: "🧭 Introducción y entorno general", mandatory: true, steps: stepsInfante.slice(0, 5) },
+  { id: 2, title: "⚙️ Ajustes y logros", steps: stepsInfante.slice(5, 10) },
+  { id: 3, title: "🧑‍🤝‍🧑 Ayuda y apoyo", steps: stepsInfante.slice(10, 12) },
+  { id: 4, title: "📋 Uso de rutinas y recordatorios", steps: stepsInfante.slice(12, 23) },
+]
+
+const tutorialModulesAdulto = [
+  { id: 1, title: "🧭 Introducción y creación básica", mandatory: true, steps: stepsAdulto.slice(0, 6) },
+  { id: 2, title: "🪜 Gestión de pasos", steps: stepsAdulto.slice(6, 13) },
+  { id: 3, title: "🧩 Gestión general", steps: stepsAdulto.slice(13, 16) },
+  { id: 4, title: "🔔 Notificaciones", steps: stepsAdulto.slice(16, 22) },
+  { id: 5, title: "👀 Control y seguimiento", steps: stepsAdulto.slice(22, 30) },
+]
+
+const saveProgress = (mode: "adulto" | "infante", moduleId: number) => {
+  localStorage.setItem(`tutorialProgress_${mode}`, moduleId.toString())
+}
+
+const getProgress = (mode: "adulto" | "infante") => {
+  return parseInt(localStorage.getItem(`tutorialProgress_${mode}`) || "0")
+}
 
 interface TutorialWizardProps {
   open: boolean
@@ -142,212 +193,176 @@ interface TutorialWizardProps {
   mode: "adulto" | "infante"
 }
 
-interface Step {
-  title: string
-  content: string
-  image?: string 
-}
-
-const stepsInfante: Step[] = [
-  {
-    title: "😎 Bienvenido al tutorial",
-    content: "Aquí aprenderás cómo completar tus rutinas y pedir ayuda cuando lo necesites",
-  },
-  ...tutorialImages.map((img, i) => ({
-    title: `Paso ${i + 1}`,
-    content: tutorialContents[i],
-    image: img,
-  })),
-  {
-    title: "🔁 Recordatorio",
-    content: "Puedes repetir este tutorial en cualquier momento desde los ajustes ✨📖",
-  },
-  {
-    title: "🎉 Bienvenido a Rutina Del Día 🌞📱",
-    content: "¡Ya sabes cómo usar la app! Disfruta organizando tus días con facilidad",
-  },
-]
-
-const stepsAdulto: Step[] = [
-  {
-    title: "👋 Bienvenido al tutorial adulto",
-    content: "Aquí aprenderás a crear y gestionar rutinas paso a paso",
-  },
-  ...tutorialImagesAdulto.map((img, i) => ({
-    title: `Paso ${i + 1}`,
-    content: tutorialContentsAdulto[i],
-    image: img,
-  })),
-  {
-    title: "🔁 Recordatorio",
-    content: "Puedes repetir este tutorial en cualquier momento desde los ajustes ✨📖",
-  },
-  {
-    title: "🎉 Listo 🎉",
-    content: "Ya conoces todas las funciones principales. ¡Estás preparado!",
-  },
-]
-
 const TutorialWizard: React.FC<TutorialWizardProps> = ({ open, onClose, mode }) => {
-  const steps = mode === "adulto" ? stepsAdulto : stepsInfante
+  const modules = mode === "adulto" ? tutorialModulesAdulto : tutorialModulesInfante
+  const [activeModule, setActiveModule] = useState<number | null>(null)
   const [activeStep, setActiveStep] = useState(0)
+  const [progress, setProgress] = useState<number>(0)
+
+  useEffect(() => {
+    setProgress(getProgress(mode))
+  }, [mode])
 
   const handleNext = () => {
-    if (activeStep < steps.length - 1) {
+    if (!activeModule) return
+    const currentSteps = modules.find(m => m.id === activeModule)!.steps
+    if (activeStep < currentSteps.length - 1) {
       setActiveStep(prev => prev + 1)
     } else {
-      onClose()
+      if (activeModule > progress) {
+        saveProgress(mode, activeModule)
+        setProgress(activeModule)
+      }
+      setActiveModule(null)
       setActiveStep(0)
     }
   }
 
   const handleBack = () => {
-    if (activeStep > 0) {
-      setActiveStep(prev => prev - 1)
-    }
+    if (activeStep > 0) setActiveStep(prev => prev - 1)
   }
 
-  const isTextOnlyStep = (mode: 'infante' | 'adulto', activeStep: number) => {
-    if (mode === 'infante') {
-      return activeStep === 0 || activeStep === 22 || activeStep === 23
-    }
-
-    if (mode === 'adulto') {
-      return activeStep === 0 || activeStep === 28 || activeStep === 29
-    }
-
-    return false
+  if (!activeModule) {
+    return (
+      <Dialog open={open} onClose={onClose} fullScreen>
+        <DialogTitle sx={{ textAlign: "center", py: 2 }}>
+          {mode === "adulto" ? "Tutorial Adulto" : "Tutorial Niño"}
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="h6" sx={{ mb: 2, textAlign: "center" }}>
+            {progress === 0
+              ? "Debes completar el primer módulo obligatorio antes de continuar."
+              : "Selecciona un módulo para continuar o repasar:"}
+          </Typography>
+          <List>
+            {modules.map(mod => (
+              <ListItemButton
+                key={mod.id}
+                disabled={mod.mandatory && progress < 1 && mod.id !== 1}
+                onClick={() => setActiveModule(mod.id)}
+              >
+                <ListItemText
+                  primary={mod.title}
+                  secondary={
+                    progress >= mod.id
+                      ? "✅ Completado"
+                      : mod.mandatory && mod.id === 1
+                      ? "🟢 Obligatorio"
+                      : "Opcional"
+                  }
+                />
+              </ListItemButton>
+            ))}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose}>Cerrar</Button>
+        </DialogActions>
+      </Dialog>
+    )
   }
+
+  const module = modules.find(m => m.id === activeModule)!
+  const step = module.steps[activeStep]
 
   return (
     <Dialog
-        open={open}
-        onClose={onClose}
-        fullScreen
-        className="tutorial-wizard"
-        PaperProps={{
-            sx: {
-            backgroundColor: '#BFDBD8', 
-            boxShadow: 'none',
-            }
-        }}
+      open={open}
+      fullScreen
+      className="tutorial-wizard"
+      PaperProps={{
+        sx: { backgroundColor: "#BFDBD8", boxShadow: "none" },
+      }}
     >
-        <DialogTitle className="tutorial-title pb-2 mb-0" sx={{ textAlign: "center", py: 2 }}>
-            {steps[activeStep].title}
-        </DialogTitle>
+      <DialogTitle className="tutorial-title pb-2 mb-0" sx={{ textAlign: "center", py: 2 }}>
+        {step.title}
+      </DialogTitle>
 
-        <DialogContent
-          className="tutorial-content pb-0"
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            height: "calc(100vh - 120px)", 
-            overflow: "hidden",
-            px: 2,
-          }}
-        >
-          {!isTextOnlyStep(mode, activeStep) ? (
+      <DialogContent
+        className="tutorial-content pb-0"
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          height: "calc(100vh - 120px)",
+          overflow: "hidden",
+          px: 2,
+        }}
+      >
+        {step.image ? (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              flex: 1,
+              gap: 0,
+              maxWidth: "850px",
+              margin: "0 auto",
+            }}
+          >
             <Box
               sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
                 flex: 1,
-                gap: 0,
-                maxWidth: "850px", 
-                margin: "0 auto", 
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                minWidth: "350px",
+                maxWidth: "350px",
               }}
             >
-              <Box
-                sx={{
-                  flex: 1,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  minWidth: "350px",
+              <img
+                src={step.image}
+                alt={`Paso ${activeStep + 1}`}
+                style={{
+                  width: "100%",
                   maxWidth: "350px",
-                  mx: 0,
-                  px: 0,
+                  maxHeight: "60vh",
+                  borderRadius: "12px",
+                  objectFit: "contain",
                 }}
-              >
-                <img
-                  src={steps[activeStep].image}
-                  alt={`Tutorial paso ${activeStep + 1}`}
-                  style={{
-                    width: "100%",
-                    maxWidth: "350px",
-                    maxHeight: "60vh",
-                    borderRadius: "12px",
-                    objectFit: "contain",
-                  }}
-                />
-              </Box>
-
-              <Box
-                sx={{
-                  flex: 1,
-                  textAlign: "center",
-                  px: 0,
-                }}
-              >
-                <Typography
-                  variant="body1"
-                  sx={{
-                    fontSize: "1.5rem",
-                    fontWeight: 400,
-                  }}
-                >
-                  {steps[activeStep].content}
-                </Typography>
-              </Box>
+              />
             </Box>
-          ) : (
-            <Box
-              sx={{
-                flex: 1,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                textAlign: "center",
-                px: 2,
-              }}
-            >
-              <Typography
-                variant="body1"
-                sx={{
-                  fontSize: "2rem",
-                  fontWeight: 700,
-                  fontFamily: "'Inter', sans-serif",
-                }}
-              >
-                {steps[activeStep].content}
+            <Box sx={{ flex: 1, textAlign: "center", px: 0 }}>
+              <Typography variant="body1" sx={{ fontSize: "1.5rem", fontWeight: 400 }}>
+                {step.content}
               </Typography>
             </Box>
-          )}
-
-          <Box className="tutorial-stepper" sx={{ mt: 4, width: "100%" }}>
-            <Stepper activeStep={activeStep} alternativeLabel sx={{ minHeight: 30 }}>
-              {steps.map((_, index) => (
-                <Step key={index}>
-                  <StepLabel sx={{ px: 0, "& span.MuiStepLabel-label": { fontSize: 12 } }} />
-                </Step>
-              ))}
-            </Stepper>
           </Box>
-        </DialogContent>
+        ) : (
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              textAlign: "center",
+              px: 2,
+            }}
+          >
+            <Typography variant="body1" sx={{ fontSize: "2rem", fontWeight: 700 }}>
+              {step.content}
+            </Typography>
+          </Box>
+        )}
 
-        <DialogActions className="tutorial-actions" sx={{ justifyContent: "space-between", px: 3, py: 1 }}>
-            <Button onClick={handleBack} disabled={activeStep === 0}>
-            Atrás
-            </Button>
-            <Button onClick={handleNext}>
-            {activeStep === steps.length - 1 ? "Finalizar" : "Siguiente"}
-            </Button>
-        </DialogActions>
+        <Box className="tutorial-stepper" sx={{ mt: 4, width: "100%" }}>
+          <Stepper activeStep={activeStep} alternativeLabel sx={{ minHeight: 30 }}>
+            {module.steps.map((_, i) => (
+              <Step key={i}><StepLabel /></Step>
+            ))}
+          </Stepper>
+        </Box>
+      </DialogContent>
+
+      <DialogActions className="tutorial-actions" sx={{ justifyContent: "space-between", px: 3, py: 1 }}>
+        <Button onClick={handleBack} disabled={activeStep === 0}>Atrás</Button>
+        <Button onClick={handleNext}>
+          {activeStep === module.steps.length - 1 ? "Finalizar módulo" : "Siguiente"}
+        </Button>
+      </DialogActions>
     </Dialog>
-
   )
 }
 
