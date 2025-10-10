@@ -1,4 +1,6 @@
-﻿namespace rutinadeldiaservidor.Models
+﻿using static rutinadeldiaservidor.DTOs.InfanteDTO;
+
+namespace rutinadeldiaservidor.Models
 {
     public class UsuarioGetDTO
     {

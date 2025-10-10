@@ -12,6 +12,7 @@ namespace rutinadeldiaservidor.Data
         public DbSet<Rutina> Rutinas { get; set; }
         public DbSet<Paso> Pasos { get; set; }
         public DbSet<Recordatorio> Recordatorios { get; set; }
+        public DbSet<Categoria> Categorias { get; set; }
         
         // 👥 Entidades del dominio "Usuarios"  
         public DbSet<Usuario> Usuarios { get; set; }

@@ -6,6 +6,8 @@ export interface Rutina {
   imagen: string;
   estado?: string;
   fechaCreacion?: string;
+  categoriaId?: number;
+  infanteId?: number;
 }
 
 export const crearRutina = async (

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using rutinadeldiaservidor.Data;
 using rutinadeldiaservidor.Models;
+using static rutinadeldiaservidor.DTOs.InfanteDTO;
 
 namespace rutinadeldiaservidor.Controllers
 {
@@ -50,6 +51,29 @@ namespace rutinadeldiaservidor.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { Mensaje = "Infante agregado correctamente", InfanteId = infante.Id });
+        }
+
+        // GET: /Infante/obtenerInfantesPorUsuario/{usuarioId}
+        [HttpGet("obtenerInfantesPorUsuario/{usuarioId}")]
+        public async Task<ActionResult<IEnumerable<InfanteReadDTO>>> ObtenerInfantesPorUsuario(int usuarioId)
+        {
+            var infantes = await _context.Infantes
+                .Where(i => i.UsuarioId == usuarioId)
+                .Select(i => new InfanteReadDTO
+                {
+                    Id = i.Id,
+                    Nombre = i.Nombre,
+                    UsuarioId = i.UsuarioId,
+                    InfanteNivelId = i.InfanteNivelId
+                })
+                .ToListAsync();
+
+            if (infantes.Count == 0)
+            {
+                return NotFound("No se encontraron infantes para este usuario.");
+            }
+
+            return Ok(infantes);
         }
     }
 }
