@@ -5,6 +5,8 @@
     {
         public string Nombre { get; set; }
         public string Imagen { get; set; }
+        public int? InfanteId { get; set; }
+        public int? CategoriaId { get; set; }
     }
 
     // Lectura -> hereda lo común y agrega Id

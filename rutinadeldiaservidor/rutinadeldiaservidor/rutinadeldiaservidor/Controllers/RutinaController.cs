@@ -27,7 +27,9 @@ namespace rutinadeldiaservidor.Controllers
                     Id = r.Id,
                     Nombre = r.Nombre,
                     Imagen = r.Imagen,
-                    Estado = r.Estado
+                    Estado = r.Estado,
+                    CategoriaId = r.CategoriaId,
+                    InfanteId = r.InfanteId
                 })
                 .ToListAsync();
 
@@ -45,7 +47,9 @@ namespace rutinadeldiaservidor.Controllers
                     Id = r.Id,
                     Nombre = r.Nombre,
                     Imagen = r.Imagen,
-                    Estado = r.Estado
+                    Estado = r.Estado,
+                    CategoriaId = r.CategoriaId,
+                    InfanteId = r.InfanteId
                 })
                 .FirstOrDefaultAsync();
 
@@ -62,7 +66,9 @@ namespace rutinadeldiaservidor.Controllers
                 Nombre = rutinaDTO.Nombre,
                 Imagen = rutinaDTO.Imagen,
                 Estado = "Activa",
-                FechaCreacion = DateTime.UtcNow // fecha actual 
+                FechaCreacion = DateTime.UtcNow, // fecha actual 
+                InfanteId = rutinaDTO.InfanteId,
+                CategoriaId = rutinaDTO.CategoriaId
             };
 
 
@@ -73,7 +79,9 @@ namespace rutinadeldiaservidor.Controllers
             {
                 Id = rutina.Id,
                 Nombre = rutina.Nombre,
-                Imagen = rutina.Imagen
+                Imagen = rutina.Imagen,
+                InfanteId = rutina.InfanteId,
+                CategoriaId = rutina.CategoriaId,
             };
 
             return CreatedAtAction(nameof(GetById), new { id = rutina.Id }, rutinaReadDTO);
@@ -90,6 +98,8 @@ namespace rutinadeldiaservidor.Controllers
             rutinaExistente.Nombre = rutinaDTO.Nombre;
             rutinaExistente.Estado = rutinaDTO.Estado;
             rutinaExistente.Imagen = rutinaDTO.Imagen;
+            rutinaExistente.InfanteId = rutinaDTO.InfanteId;
+            rutinaExistente.CategoriaId = rutinaDTO.CategoriaId;
 
             await _context.SaveChangesAsync();
             return Ok(rutinaExistente);
