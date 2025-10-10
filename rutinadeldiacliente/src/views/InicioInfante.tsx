@@ -9,6 +9,8 @@ import HelpButton from "../components/HelpButton"
 import "../styles/views/InicioInfante.scss"
 import { obtenerRutinas } from "../services/rutinaService"
 import type { Rutina } from "../services/rutinaService"
+import "../styles/components/RoutineCard.scss";
+import "../styles/components/MainActionButton.scss";
 
 const InicioInfante: React.FC = () => {
   const navigate = useNavigate()
@@ -65,27 +67,10 @@ const InicioInfante: React.FC = () => {
                 maxWidth: '400px'
               }}
             >
-              <Card
-                className="routine-card"
-                onClick={() => handleRoutineClick(routine.id)}
-                sx={{
-                  backgroundColor: "#3E8596",
-                  cursor: "pointer",
-                  "&:hover": { transform: "scale(1.02)" },
-                  height: '100%'
-                }}
-              >
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={routine.imagen || "/placeholder.svg"}
-                  alt={routine.nombre}
-                  className="routine-image"
-                />
+              <Card className="routine-card" onClick={() => handleRoutineClick(routine.id)}>
+                <CardMedia component="img" className="routine-image" image={routine.imagen || "/placeholder.svg"} />
                 <CardContent>
-                  <Typography variant="h6" component="h3" className="routine-title">
-                    {routine.nombre}
-                  </Typography>
+                  <Typography className="routine-title">{routine.nombre}</Typography>
                 </CardContent>
               </Card>
             </Box>

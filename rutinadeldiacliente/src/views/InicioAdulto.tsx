@@ -25,7 +25,8 @@ import "../styles/views/InicioAdulto.scss";
 import { obtenerRutinas, cambiarVisibilidadRutina } from "../services/rutinaService";
 import type { Rutina } from "../services/rutinaService";
 import { verificarRecordatorio } from "../services/recordatorioService";
-
+import "../styles/components/RoutineCard.scss";
+import "../styles/components/MainActionButton.scss";
 
 const InicioAdulto: React.FC = () => {
   const navigate = useNavigate();
@@ -142,34 +143,17 @@ const InicioAdulto: React.FC = () => {
                 maxWidth: "400px",
               }}
             >
-              <Card
-                className="routine-card"
-                sx={{
-                  backgroundColor: "#4A90A4",
-                  cursor: "pointer",
-                  "&:hover": { transform: "scale(1.02)" },
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  overflow: "hidden",
-                }}
-              >
+              <Card className="routine-card">
                 <CardMedia
                   component="img"
-                  height={200}
+                  className="routine-image"
                   image={routine.imagen || "/placeholder.svg"}
                   alt={routine.nombre}
-                  sx={{ objectFit: "cover" }}
                 />
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Box
-                    className="routine-header"
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
+                <CardContent>
+                  <Typography className="routine-title">{routine.nombre}</Typography>
+
+                  <Box className="routine-actions">
                     <Typography
                       variant="h6"
                       component="h3"
@@ -213,48 +197,20 @@ const InicioAdulto: React.FC = () => {
           ))}
         </Box>
 
-        <Box className="action-buttons" sx={{ mt: 4 }}>
+        <Box className="action-buttons" sx={{ mt: 4, textAlign: "center" }}>
           <Button
-            variant="contained"
-            size="large"
-            className="create-routine-button"
-            onClick={handleCreateRoutine}
-            sx={{
-              backgroundColor: "#7FB069",
-              color: "white",
-              borderRadius: "25px",
-              py: 2,
-              px: 4,
-              fontSize: "1.1rem",
-              fontWeight: "bold",
-              mb: 2,
-              width: "100%",
-              "&:hover": {
-                backgroundColor: "#6FA055",
-              },
-            }}
+          variant="contained"
+          className="main-action-button"
+          onClick={handleCreateRoutine}
           >
             Crear Rutina
           </Button>
 
           <Button
             variant="contained"
-            size="large"
-            className="add-reminder-button"
+            className="main-action-button"
             onClick={handleAddReminder}
-            sx={{
-              backgroundColor: "#7FB069",
-              color: "white",
-              borderRadius: "25px",
-              py: 2,
-              px: 4,
-              fontSize: "1.1rem",
-              fontWeight: "bold",
-              width: "100%",
-              "&:hover": {
-                backgroundColor: "#6FA055",
-              },
-            }}
+            sx={{ mt: 2 }}
           >
             Agregar Recordatorio
           </Button>

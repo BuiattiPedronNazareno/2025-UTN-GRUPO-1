@@ -1,0 +1,21 @@
+@use "../variables";
+@use "../mixins";
+
+.main-action-button {
+  background-color: #76B875 !important;
+  color: #000000 !important;
+  border: 1px solid #000000 !important;
+  border-radius: 9999px !important;
+  text-transform: none !important;
+  font-size: 1.5rem !important;
+  font-weight: 500 !important;
+  padding: 0.75rem 2rem !important;
+  width: 100%;
+  max-width: 350px;
+  margin: 0 auto !important;
+  display: block;
+
+  &:hover {
+    background-color: #6aa966 !important;
+  }
+}
