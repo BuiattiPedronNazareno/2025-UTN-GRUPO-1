@@ -16,6 +16,7 @@ import RecordatorioAdulto from "../views/RecordatorioAdulto";
 import ListaRecordatorioAdulto from "../views/ListaRecordatorioAdulto";
 import EditarRutina from "../views/EditarRutina";
 import PasoForm from "../views/PasoForm";
+import CrearRutinaPrecargada from "../views/crearRutinaPrecargada";
 
 
 export const router = createBrowserRouter([
@@ -86,4 +87,8 @@ export const router = createBrowserRouter([
     path: "/editar-recordatorio-adulto/:id",
     element: <RecordatorioAdulto />,
   },
+  { path: "/crear-rutina-precargada",
+    element: <CrearRutinaPrecargada />
+  },
+
 ]);

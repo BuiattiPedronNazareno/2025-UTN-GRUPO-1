@@ -1,23 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { crearRutina} from "../services/rutinaService";
-import { obtenerCategorias} from "../services/categoriaService";
+import { crearRutina } from "../services/rutinaService";
+import { obtenerCategorias } from "../services/categoriaService";
 import type { Categoria } from "../services/categoriaService";
-import { obtenerInfantesPorUsuario} from "../services/infanteService";
-import type { InfanteReadDTO } from "../services/infanteService";
-import { useAppContext } from "../context/AppContext";
 import "../styles/views/CrearRutina.scss";
 
-const CrearRutina: React.FC = () => {
+const crearRutinaPrecargada: React.FC = () => {
   const navigate = useNavigate();
-  const { usuarioActivo } = useAppContext();
 
   const [nombre, setNombre] = useState("");
   const [imagen, setImagen] = useState("");
   const [categoriaId, setCategoriaId] = useState<number | "">("");
-  const [infanteId, setInfanteId] = useState<number | "">("");
   const [categorias, setCategorias] = useState<Categoria[]>([]);
-  const [infantes, setInfantes] = useState<InfanteReadDTO[]>([]);
   const [dia, setDia] = useState("");
   const [hora, setHora] = useState("");
   const [programaciones, setProgramaciones] = useState<{ dia: string; hora: string }[]>([]);
@@ -31,7 +25,6 @@ const CrearRutina: React.FC = () => {
   ];
 
   useEffect(() => {
-    // Obtener categorías
     const fetchCategorias = async () => {
       try {
         const cats = await obtenerCategorias();
@@ -41,21 +34,8 @@ const CrearRutina: React.FC = () => {
       }
     };
 
-    // Obtener infantes del usuario activo
-    const fetchInfantes = async () => {
-      if (usuarioActivo) {
-        try {
-          const infs = await obtenerInfantesPorUsuario(usuarioActivo.id);
-          setInfantes(infs);
-        } catch (error) {
-          console.error("Error cargando infantes:", error);
-        }
-      }
-    };
-
     fetchCategorias();
-    fetchInfantes();
-  }, [usuarioActivo]);
+  }, []);
 
   const agregarProgramacion = () => {
     if (dia && hora) {
@@ -75,7 +55,7 @@ const CrearRutina: React.FC = () => {
         nombre,
         imagen,
         categoriaId: categoriaId === "" ? undefined : categoriaId,
-        infanteId: infanteId === "" ? undefined : infanteId
+        infanteId: undefined // siempre undefined para rutinas precargadas
       });
       navigate(`/crear-paso/${nuevaRutina.id}`);
     } catch (error) {
@@ -114,16 +94,6 @@ const CrearRutina: React.FC = () => {
             <option value="">-- Selecciona una categoría --</option>
             {categorias.map(c => (
               <option key={c.id} value={c.id}>{c.descripcion}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="form-group">
-          <label>Seleccionar Infante:</label>
-          <select value={infanteId} onChange={(e) => setInfanteId(Number(e.target.value))}>
-            <option value="">-- Selecciona un infante --</option>
-            {infantes.map(i => (
-              <option key={i.id} value={i.id}>{i.nombre}</option>
             ))}
           </select>
         </div>
@@ -172,4 +142,4 @@ const CrearRutina: React.FC = () => {
   );
 };
 
-export default CrearRutina;
+export default crearRutinaPrecargada;
