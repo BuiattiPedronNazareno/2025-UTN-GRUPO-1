@@ -10,6 +10,7 @@ namespace rutinadeldiaservidor.Models
 
         [Required]
         public string Nombre { get; set; }
+        public bool HasSeenInfantTutorial { get; set; } = false;
 
         [Required]
         public int UsuarioId { get; set; }

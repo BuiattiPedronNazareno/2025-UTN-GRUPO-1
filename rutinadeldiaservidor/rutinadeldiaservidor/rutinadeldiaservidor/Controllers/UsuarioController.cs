@@ -145,6 +145,32 @@ namespace rutinadeldiaservidor.Controllers
             return Ok(dto);
         }
 
+        [HttpGet("tutorial-status/{usuarioId}")]
+        public IActionResult GetTutorialStatus(int usuarioId)
+        {
+            var usuario = _context.Usuarios.FirstOrDefault(u => u.Id == usuarioId);
+            if (usuario == null) return NotFound();
+
+            return Ok(new
+            {
+                showAdultTutorial = !usuario.HasSeenAdultTutorial
+            });
+        }
+
+        [HttpPost("tutorial-completed/{usuarioId}")]
+        public IActionResult MarkAdultTutorialCompleted(int usuarioId)
+        {
+            var usuario = _context.Usuarios.FirstOrDefault(u => u.Id == usuarioId);
+            if (usuario == null) return NotFound();
+
+            usuario.HasSeenAdultTutorial = true;
+            _context.SaveChanges();
+            return Ok();
+        }
+
+
+
+
 
     }
 }
