@@ -9,10 +9,13 @@ import HelpButton from "../components/HelpButton"
 import "../styles/views/InicioInfante.scss"
 import { obtenerRutinas } from "../services/rutinaService"
 import type { Rutina } from "../services/rutinaService"
+import { obtenerTutorialStatusInfante, completarTutorialInfante } from "../services/infanteService"
+import { useAppContext } from "../context/AppContext";
 
 const InicioInfante: React.FC = () => {
   const navigate = useNavigate()
   const [routines, setRoutines] = useState<Rutina[]>([])
+  const { infanteActivo } = useAppContext();
 
   useEffect(() => {
     const fetchRutinas = async () => {
@@ -27,6 +30,24 @@ const InicioInfante: React.FC = () => {
     fetchRutinas()
   }, [])
 
+ useEffect(() => {
+    const checkTutorial = async () => {
+      if (!infanteActivo) return;
+
+      try {
+        const status = await obtenerTutorialStatusInfante(infanteActivo.id);
+
+        if (status.showInfantTutorial) {
+          alert("¡Es la primera vez que ingresas como infante, mostrando tutorial!");
+          await completarTutorialInfante(infanteActivo.id);
+        }
+      } catch (error) {
+        console.error("Error verificando tutorial infante:", error);
+      }
+    };
+
+    checkTutorial();
+  }, [infanteActivo]);
 
 
   const handleRoutineClick = (routineId: number) => {

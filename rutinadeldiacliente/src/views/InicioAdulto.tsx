@@ -25,7 +25,8 @@ import "../styles/views/InicioAdulto.scss";
 import { obtenerRutinas, cambiarVisibilidadRutina } from "../services/rutinaService";
 import type { Rutina } from "../services/rutinaService";
 import { verificarRecordatorio } from "../services/recordatorioService";
-
+import { obtenerTutorialStatus, completarTutorial } from "../services/UsuarioService";
+import { useAppContext } from "../context/AppContext";
 
 const InicioAdulto: React.FC = () => {
   const navigate = useNavigate();
@@ -33,6 +34,7 @@ const InicioAdulto: React.FC = () => {
   const [routinesWithReminders, setRoutinesWithReminders] = useState<
     Set<number>
   >(new Set());
+   const { usuarioActivo } = useAppContext();
 
   useEffect(() => {
     const fetchRutinas = async () => {
@@ -59,6 +61,23 @@ const InicioAdulto: React.FC = () => {
     fetchRutinas();
   }, []);
 
+useEffect(() => {
+    const checkTutorial = async () => {
+      if (!usuarioActivo) return;
+
+      try {
+        const status = await obtenerTutorialStatus(usuarioActivo.id);
+        if (status.showAdultTutorial) {
+          alert("Es la primera vez que ingresas como adulto, ¡mostrando tutorial!");
+          await completarTutorial(usuarioActivo.id);
+        }
+      } catch (error) {
+        console.error("Error verificando tutorial adulto:", error);
+      }
+    };
+
+    checkTutorial();
+  }, [usuarioActivo]);
 
   const handleRoutineEdit = (routineId: number) => {
   navigate(`/editar-rutina/${routineId}`);
