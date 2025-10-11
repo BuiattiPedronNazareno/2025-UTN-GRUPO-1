@@ -33,7 +33,7 @@ const AjustesInfante: React.FC = () => {
 
   return (
     <Box className="ajustes-infante">
-      <NavBar title="Ajustes" showBackButton={true} onBackClick={handleBackClick} />
+      <NavBar title="Ajustes" showBackButton={true} onBackClick={handleBackClick} alignLevel="right" />
 
       <Container component="main" className="main-content" maxWidth="sm">
         <Stack spacing={3} className="ajustes-options">

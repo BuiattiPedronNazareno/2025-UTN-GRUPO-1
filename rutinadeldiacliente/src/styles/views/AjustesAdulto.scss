@@ -1,49 +1,28 @@
 @use '../variables.scss';
 @use '../mixins.scss';
+@use '../components/MainActionButton';
 @use "sass:color";
 
 .ajustes-adulto {
   min-height: 100vh;
   background-color: variables.$background-color;
-  
+
   .main-content {
+    text-align: center;
     padding: variables.$spacing-xl;
     max-width: 600px;
     margin: 0 auto;
-    text-align: center;
   }
   
   .ajustes-options {
     margin-bottom: variables.$spacing-xl;
     display: flex;
+    align-items: center;
     flex-direction: column;
     gap: variables.$spacing-lg;
     
     .ajuste-button {
-      @include mixins.button-base;
-      font-size: variables.$font-size-xl;
-      padding: variables.$spacing-xl;
-      border-radius: variables.$border-radius-lg;
-      min-height: 80px;
-      font-weight: 700;
-      
-      &.nino-button {
-        background-color: variables.$secondary-color;
-        color: variables.$white;
-        
-        &:hover {
-          background-color: color.adjust(variables.$secondary-color, $lightness: -10%);
-        }
-      }
-      
-      &.perfil-button {
-        background-color: variables.$secondary-color;
-        color: variables.$white;
-        
-        &:hover {
-          background-color: color.adjust(variables.$secondary-color, $lightness: -10%);
-        }
-      }
+      @extend .main-action-button;
     }
   }
   
@@ -60,12 +39,19 @@
   }
   
   .back-section {
+    display: flex;
+    justify-content: center;
+    gap: variables.$spacing-lg;
+    margin-top: variables.$spacing-lg;
+
     .back-button {
-      @include mixins.button-danger;
-      font-size: variables.$font-size-lg;
-      padding: variables.$spacing-md variables.$spacing-lg;
-      border-radius: variables.$border-radius-lg;
-      min-width: 150px;
+      @extend .volver-button;
+      max-width: 150px;
+    }
+
+    .guardar-button {
+      @extend .guardar-button;
+      max-width: 150px;
     }
   }
 }

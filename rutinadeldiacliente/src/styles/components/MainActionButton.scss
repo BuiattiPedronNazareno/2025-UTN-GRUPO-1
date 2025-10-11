@@ -19,3 +19,21 @@
     background-color: #6aa966 !important;
   }
 }
+
+.volver-button {
+  @extend .main-action-button;
+  background-color: #C76E6E !important;
+
+  &:hover {
+    background-color: darken(#C76E6E, 10%) !important;
+  }
+}
+
+.guardar-button {
+  @extend .main-action-button;
+  background-color: #1FC44B !important;
+
+  &:hover {
+    background-color: darken(#1FC44B, 10%) !important;
+  }
+}

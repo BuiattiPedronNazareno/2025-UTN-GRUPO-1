@@ -46,7 +46,7 @@ const InicioInfante: React.FC = () => {
 
   return (
     <Box className="inicio-infante">
-      <NavBar title="Mis Rutinas" showSettingsButton={true} onSettingsClick={handleSettingsClick} />
+      <NavBar title="Mis Rutinas" showSettingsButton={true} onSettingsClick={handleSettingsClick} alignLevel="left" />
 
       <Container component="main" className="main-content" maxWidth="md">
         <Box 

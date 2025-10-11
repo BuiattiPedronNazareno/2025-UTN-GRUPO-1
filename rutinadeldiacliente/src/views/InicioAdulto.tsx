@@ -100,7 +100,7 @@ const InicioAdulto: React.FC = () => {
     <Box className="inicio-adulto">
       <Box className="header">
         <Box className="header-content">
-          <Typography variant="h4" component="h1" className="header-title">
+          <Typography variant="h4" component="h1" className="header-title mt-2">
             Mis Rutinas
           </Typography>
           <IconButton
