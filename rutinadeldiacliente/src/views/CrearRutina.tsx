@@ -7,6 +7,10 @@ import { obtenerInfantesPorUsuario} from "../services/infanteService";
 import type { InfanteReadDTO } from "../services/infanteService";
 import { useAppContext } from "../context/AppContext";
 import "../styles/views/CrearRutina.scss";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import ChevronRight from "@mui/icons-material/ChevronRight";
+import ChevronLeft from "@mui/icons-material/ChevronLeft";
 
 const CrearRutina: React.FC = () => {
   const navigate = useNavigate();
@@ -85,11 +89,19 @@ const CrearRutina: React.FC = () => {
 
   return (
     <div className="crear-rutina-container">
-      <h2>Crear Rutina</h2>
+      <button
+        className="volver-btn-superior"
+        onClick={() => navigate("/adulto")}
+      >
+        <ChevronLeft className="volver-icon" />
+        <span className="volver-text">Volver</span>
+      </button>      
+
+      <h2 className="create-routine-title">Crear Rutina</h2>
 
       <div className="form-row">
         <div className="form-group">
-          <label>Nombre de la Rutina:</label>
+          <label>Nombre de la Rutina</label>
           <input
             type="text"
             value={nombre}
@@ -99,7 +111,7 @@ const CrearRutina: React.FC = () => {
         </div>
 
         <div className="form-group">
-          <label>Seleccionar Imagen:</label>
+          <label>Seleccionar Imagen</label>
           <select value={imagen} onChange={(e) => setImagen(e.target.value)}>
             <option value="">-- Selecciona una imagen --</option>
             <option value="lavarse-las-manos.jpg">Lavarse las manos</option>
@@ -109,7 +121,7 @@ const CrearRutina: React.FC = () => {
         </div>
 
         <div className="form-group">
-          <label>Seleccionar Categoría:</label>
+          <label>Seleccionar Categoría</label>
           <select value={categoriaId} onChange={(e) => setCategoriaId(Number(e.target.value))}>
             <option value="">-- Selecciona una categoría --</option>
             {categorias.map(c => (
@@ -119,7 +131,7 @@ const CrearRutina: React.FC = () => {
         </div>
 
         <div className="form-group">
-          <label>Seleccionar Infante:</label>
+          <label>Seleccionar Infante</label>
           <select value={infanteId} onChange={(e) => setInfanteId(Number(e.target.value))}>
             <option value="">-- Selecciona un infante --</option>
             {infantes.map(i => (
@@ -130,15 +142,20 @@ const CrearRutina: React.FC = () => {
       </div>
 
       <div className="form-group">
-        <label>Programar activación:</label>
+        <label>Programar activación</label>
         <div className="programacion-inputs">
+          <div className="hora-select-wrapper">
+            <select value={hora} onChange={(e) => setHora(e.target.value)}>
+              <option value="">Hora</option>
+              {horas.map((h) => (
+                <option key={h} value={h}>{h}</option>
+              ))}
+            </select>
+            <AccessTimeIcon className="hora-icon" />
+          </div>
           <select value={dia} onChange={(e) => setDia(e.target.value)}>
             <option value="">Día</option>
             {dias.map((d) => <option key={d} value={d}>{d}</option>)}
-          </select>
-          <select value={hora} onChange={(e) => setHora(e.target.value)}>
-            <option value="">Hora</option>
-            {horas.map((h) => <option key={h} value={h}>{h}</option>)}
           </select>
           <button type="button" onClick={agregarProgramacion}>+</button>
         </div>
@@ -148,26 +165,26 @@ const CrearRutina: React.FC = () => {
           {programaciones.map((p, index) => (
             <div key={index} className="programacion-item">
               <span>{p.hora} hs - {p.dia}</span>
-              <button onClick={() => eliminarProgramacion(index)}>X</button>
+              <button
+                className="trash-btn"
+                onClick={() => eliminarProgramacion(index)}
+                aria-label="Eliminar programación"
+              >
+                <DeleteIcon />
+              </button>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="action-buttons">
-        <button
-          className="volver-btn"
-          onClick={() => navigate("/adulto")}
-        >
-          Volver
-        </button>
-        <button
-          className="crear-paso-btn"
-          onClick={handleCrearPaso}
-        >
-          Crear Paso
-        </button>
-      </div>
+
+      <button
+        className="crear-paso-btn-inferior"
+        onClick={handleCrearPaso}
+      >
+        <span className="crear-paso-text">Crear Paso</span>
+        <ChevronRight className="crear-paso-icon"/>
+      </button>
     </div>
   );
 };

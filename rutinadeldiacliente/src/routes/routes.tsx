@@ -9,14 +9,14 @@ import Login from "../views/Login";
 import SeleccionPerfil from "../views/SeleccionPerfil";
 import AgregarInfante from "../views/AgregarInfante";
 import ValidarPinAdulto from "../views/ValidarPinAdulto";
-import CrearRutina from "../views/crearRutina";
-import CrearPaso from "../views/crearPaso";
+import CrearRutina from "../views/CrearRutina";
+import CrearPaso from "../views/CrearPaso";
 import RutinaDetalleInfante from "../views/RutinaDetalle";
 import RecordatorioAdulto from "../views/RecordatorioAdulto";
 import ListaRecordatorioAdulto from "../views/ListaRecordatorioAdulto";
 import EditarRutina from "../views/EditarRutina";
 import PasoForm from "../views/PasoForm";
-import CrearRutinaPrecargada from "../views/crearRutinaPrecargada";
+import CrearRutinaPrecargada from "../views/CrearRutinaPrecargada";
 
 
 export const router = createBrowserRouter([
