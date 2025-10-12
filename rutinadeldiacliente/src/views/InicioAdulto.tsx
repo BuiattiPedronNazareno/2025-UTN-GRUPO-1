@@ -27,6 +27,7 @@ import type { Rutina } from "../services/rutinaService";
 import { verificarRecordatorio } from "../services/recordatorioService";
 import { obtenerTutorialStatus, completarTutorial } from "../services/UsuarioService";
 import { useAppContext } from "../context/AppContext";
+import TutorialWizard from "../components/TutorialWizard";
 
 const InicioAdulto: React.FC = () => {
   const navigate = useNavigate();
@@ -34,7 +35,12 @@ const InicioAdulto: React.FC = () => {
   const [routinesWithReminders, setRoutinesWithReminders] = useState<
     Set<number>
   >(new Set());
-   const { usuarioActivo } = useAppContext();
+  const { usuarioActivo } = useAppContext();
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialMode, setTutorialMode] = useState<"adulto" | "infante">("adulto");
+  const [autoStartTutorial, setAutoStartTutorial] = useState(false);
+  const [firstMandatoryModule, setFirstMandatoryModule] = useState<number>(1)
+
 
   useEffect(() => {
     const fetchRutinas = async () => {
@@ -62,22 +68,30 @@ const InicioAdulto: React.FC = () => {
   }, []);
 
 useEffect(() => {
-    const checkTutorial = async () => {
-      if (!usuarioActivo) return;
+  const checkTutorial = async () => {
+    if (!usuarioActivo) return;
 
-      try {
-        const status = await obtenerTutorialStatus(usuarioActivo.id);
-        if (status.showAdultTutorial) {
-          alert("Es la primera vez que ingresas como adulto, ¡mostrando tutorial!");
-          await completarTutorial(usuarioActivo.id);
-        }
-      } catch (error) {
-        console.error("Error verificando tutorial adulto:", error);
+    try {
+      const status = await obtenerTutorialStatus(usuarioActivo.id);
+      if (status.showAdultTutorial) {
+        setTutorialMode("adulto");
+        setShowTutorial(true);
+        setAutoStartTutorial(true);
+
+        // El primer módulo obligatorio ya está definido por defecto
+        // Se marca como completado en el backend
+        await completarTutorial(usuarioActivo.id);
       }
-    };
+    } catch (error) {
+      console.error("Error verificando tutorial adulto:", error);
+    }
+  };
 
-    checkTutorial();
-  }, [usuarioActivo]);
+  checkTutorial();
+}, [usuarioActivo]);
+
+
+
 
   const handleRoutineEdit = (routineId: number) => {
   navigate(`/editar-rutina/${routineId}`);
@@ -279,6 +293,16 @@ useEffect(() => {
           </Button>
         </Box>
       </Container>
+
+      <TutorialWizard
+        open={showTutorial}
+        onClose={() => setShowTutorial(false)}
+        mode={tutorialMode}
+        autoStart={autoStartTutorial}
+        initialModule={firstMandatoryModule ?? undefined}
+        navigate={navigate}
+      />
+
     </Box>
   );
 };
