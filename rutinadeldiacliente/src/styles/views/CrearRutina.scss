@@ -39,6 +39,7 @@
       border-radius: 6px;
       border: 1px solid #888;
       font-size: 1rem;
+      height: 2.5rem;
     }
 
     .programacion-inputs {
@@ -84,7 +85,7 @@
 
       .hora-select-wrapper {
         position: relative;
-        flex: 1;
+        flex: 1.1;
 
         select {
           width: 100%;
@@ -107,6 +108,11 @@
           font-size: 1.3rem;
         }
       }
+
+        select:not(.hora-select-wrapper select) {
+          flex: 0.9;
+        }
+
     }
   }
 
@@ -151,6 +157,7 @@
 
     .empty {
       display: flex;
+      font-weight: bold;
       justify-content: center;
       align-items: center;
       height: 100%;
@@ -172,7 +179,7 @@
     font-size: 1.1rem;
     border: 1px solid #000000 !important;
     border-radius: 8px;
-    padding: 0.8rem 1rem 0.8rem 3rem; 
+    padding: 0.8rem 1rem 0.8rem 2.5rem; 
     cursor: pointer;
     text-align: center;
     justify-content: center;
@@ -208,7 +215,7 @@
     background-color: #43A047;
     color: #000000 !important;
     border: 1px solid #000000 !important;
-    padding: 0.8rem 3rem 0.8rem 1rem;
+    padding: 0.8rem 3rem 0.8rem 0.5rem;
     border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
