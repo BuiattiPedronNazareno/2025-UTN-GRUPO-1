@@ -1,5 +1,6 @@
 @use "../variables";
 @use "../mixins";
+@use "sass:color";
 
 .main-action-button {
   background-color: #76B875 !important;
@@ -25,7 +26,7 @@
   background-color: #C76E6E !important;
 
   &:hover {
-    background-color: darken(#C76E6E, 10%) !important;
+    background-color: color.adjust(#C76E6E, $lightness: -10%) !important;
   }
 }
 
@@ -34,6 +35,6 @@
   background-color: #1FC44B !important;
 
   &:hover {
-    background-color: darken(#1FC44B, 10%) !important;
+    background-color: color.adjust(#1FC44B, $lightness: -10%) !important;
   }
 }
