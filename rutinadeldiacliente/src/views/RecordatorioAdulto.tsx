@@ -3,21 +3,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import {
-  AppBar,
-  Toolbar,
-  IconButton,
   Typography,
-  TextField,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-  Button,
   Box,
   CircularProgress,
 } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import ChevronLeft from "@mui/icons-material/ChevronLeft";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { obtenerRutinas } from "../services/rutinaService";
 import type { Rutina } from "../services/rutinaService";
 import {
@@ -26,6 +17,9 @@ import {
   actualizarRecordatorio,
   eliminarRecordatorio,
 } from "../services/recordatorioService";
+import "../styles/views/RecordatorioAdulto.scss";
+import ChevronRight from "@mui/icons-material/ChevronRight";
+
 
 const frequencies = ["Diaria", "Semanal"];
 const daysOfWeek = [
@@ -48,7 +42,7 @@ const RecordatorioAdulto: React.FC = () => {
   const [day, setDay] = useState(daysOfWeek[0]);
   const [time, setTime] = useState("08:00");
   const [description, setDescription] = useState("");
-  const [color, setColor] = useState("#ff0000");
+  const [color, setColor] = useState("#4A90A4");
   const [sound, setSound] = useState(sounds[0]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -79,7 +73,7 @@ const RecordatorioAdulto: React.FC = () => {
       setDay(rec.diaSemana || daysOfWeek[0]);
       setTime(rec.hora || "08:00");
       setDescription(rec.descripcion || "");
-      setColor(rec.color || "#ff0000");
+      setColor(rec.color || "#4A90A4");
       setSound(rec.sonido || sounds[0]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error desconocido");
@@ -186,7 +180,6 @@ const RecordatorioAdulto: React.FC = () => {
     return (
       <Box
         sx={{
-          bgcolor: "#cce5e5",
           height: "100vh",
           display: "flex",
           justifyContent: "center",
@@ -199,24 +192,14 @@ const RecordatorioAdulto: React.FC = () => {
   }
 
   return (
-    <Box sx={{ bgcolor: "#cce5e5", height: "100vh", p: 2 }}>
-      {/* AppBar con volver */}
-      <AppBar position="static" sx={{ bgcolor: "orange" }}>
-        <Toolbar>
-          <IconButton
-            edge="start"
-            color="inherit"
-            onClick={() => navigate("/adulto")}
-          >
-            <ArrowBackIcon />
-          </IconButton>
-          <Typography variant="h6">Volver</Typography>
-        </Toolbar>
-      </AppBar>
+    <Box className="recordatorio-adulto-container">
 
-      <Typography variant="h5" sx={{ mt: 2, mb: 2 }}>
-        {title}
-      </Typography>
+      <button className="volver-btn-superior" onClick={() => navigate("/adulto")}>
+        <ChevronLeft className="volver-icon" />
+        <span className="volver-text">Volver</span>
+      </button>
+
+      <h2 className="add-reminder-title">Agregar Recordatorio</h2>
 
       {/* Mostrar error si existe */}
       {error && (
@@ -227,128 +210,98 @@ const RecordatorioAdulto: React.FC = () => {
 
       {/* Rutina */}
       {!isEditing && (
-        <FormControl fullWidth sx={{ mb: 2 }}>
-          <InputLabel shrink>Rutina</InputLabel>
-          <Select
-            label="Rutina"
+        <div className="form-group">
+          <label>Seleccionar Rutina</label>
+          <select
             value={routine}
-            onChange={(e) => setRoutine(e.target.value ? e.target.value : "")}
+            onChange={(e) => setRoutine(e.target.value)}
           >
-            {routines?.map((r: Rutina) => (
-              <MenuItem key={r.id} value={r.id}>
-                {r.nombre}
-              </MenuItem>
+            <option value="">-- Selecciona una rutina --</option>
+            {routines.map((r) => (
+              <option key={r.id} value={r.id}>{r.nombre}</option>
             ))}
-          </Select>
-        </FormControl>
+          </select>
+        </div>
       )}
 
       {/* Frecuencia */}
-      <FormControl fullWidth sx={{ mb: 2 }}>
-        <InputLabel shrink>Frecuencia</InputLabel>
-        <Select
-          label="Frecuencia"
-          value={frequency}
-          onChange={(e) => setFrequency(e.target.value)}
-        >
+      <div className="form-group">
+        <label>Frecuencia</label>
+        <select value={frequency} onChange={(e) => setFrequency(e.target.value)}>
           {frequencies.map((f) => (
-            <MenuItem key={f} value={f}>
-              {f}
-            </MenuItem>
+            <option key={f} value={f}>{f}</option>
           ))}
-        </Select>
-      </FormControl>
+        </select>
+      </div>
 
-      {/* Día + Hora */}
-      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-        <FormControl fullWidth>
-          <InputLabel shrink>Día Semana</InputLabel>
-          <Select
-            label="Dia semana"
+      {/* Día y Hora */}
+      <div className="form-row">
+        <div className="form-group">
+          <label>Día de la semana</label>
+          <select
             value={day}
             onChange={(e) => setDay(e.target.value)}
             disabled={frequency === "Diaria"}
           >
             {daysOfWeek.map((d) => (
-              <MenuItem key={d} value={d}>
-                {d}
-              </MenuItem>
+              <option key={d} value={d}>{d}</option>
             ))}
-          </Select>
-        </FormControl>
-        <TextField
-          label="Hora"
-          type="time"
-          value={time}
-          onChange={(e) => setTime(e.target.value)}
-          InputLabelProps={{ shrink: true }}
-          inputProps={{ step: 300 }}
-          fullWidth
-          InputProps={{
-            endAdornment: <AccessTimeIcon />,
-          }}
-        />
-      </Box>
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label>Hora</label>
+          <input
+            type="time"
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
+          />
+        </div>
+      </div>
 
       {/* Descripción */}
-      <TextField
-        label="Descripción"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        fullWidth
-        sx={{ mb: 2 }}
-        InputLabelProps={{ shrink: true }}
-      />
+      <div className="form-group">
+        <label>Descripción</label>
+        <input
+          type="text"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Escribe una descripción"
+        />
+      </div>
 
       {/* Color */}
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
-        <Typography>Color</Typography>
+      <div className="form-group color-picker">
+        <label>Color</label>
         <input
           type="color"
           value={color}
           onChange={(e) => setColor(e.target.value)}
-          style={{ width: "100%", height: "40px", border: "none" }}
         />
-      </Box>
+      </div>
 
       {/* Sonido */}
-      <FormControl fullWidth sx={{ mb: 2 }}>
-        <InputLabel shrink>Sonido</InputLabel>
-        <Select
-          label="Sonido"
-          value={sound}
-          onChange={(e) => setSound(e.target.value)}
-        >
+      <div className="form-group">
+        <label>Sonido</label>
+        <select value={sound} onChange={(e) => setSound(e.target.value)}>
           {sounds.map((s) => (
-            <MenuItem key={s} value={s}>
-              {s}
-            </MenuItem>
+            <option key={s} value={s}>{s}</option>
           ))}
-        </Select>
-      </FormControl>
+        </select>
+      </div>
 
       {/* Botón Guardar */}
-      <Button
-        variant="contained"
-        fullWidth
-        sx={{ bgcolor: "green", color: "white", fontSize: "16px" }}
-        onClick={handleSave}
-        disabled={loading}
-      >
-        {loading ? <CircularProgress size={24} /> : "Guardar"}
-      </Button>
+      <button className="guardar-btn" onClick={handleSave} disabled={loading}>
+        <span className="guardar-text">{loading ? "Guardando..." : "Guardar"}</span>
+        {!loading && <ChevronRight className="guardar-icon" />}
+      </button>
 
       {/* Botón Eliminar */}
       {isEditing && (
-        <Button
-          variant="contained"
-          fullWidth
-          sx={{ bgcolor: "red", color: "white", fontSize: "16px", mt: 2 }}
-          onClick={handleDelete}
-          disabled={loading}
-        >
-          {loading ? <CircularProgress size={24} /> : "Eliminar"}
-        </Button>
+        <button className="eliminar-btn" onClick={handleDelete} disabled={loading}>
+          <span className="eliminar-text">{loading ? "Eliminando..." : "Eliminar"}</span>
+          {!loading && <DeleteIcon className="eliminar-icon" />}
+        </button>
       )}
     </Box>
   );

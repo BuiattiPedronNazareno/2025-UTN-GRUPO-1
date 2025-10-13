@@ -1,7 +1,7 @@
 @use '../variables';
 
 .crear-rutina-container {
-  max-width: 800px; // más ancho para escritorio
+  max-width: 800px; 
   margin: 2rem auto;
   padding: 0 2rem 0 2rem;
   display: flex;
@@ -41,73 +41,73 @@
       font-size: 1rem;
     }
 
-  .programacion-inputs {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background-color: #E8F0F0;
-    border: 1px solid #cccccc;
-    border-radius: 8px;
-    padding: 0.6rem;
-    margin-top: 0.5rem;
-
-    select {
-      flex: 1;
-      border: 1px solid #888;
-      border-radius: 6px;
-      padding: 0.4rem 0.6rem;
-      font-size: 1rem;
-      background-color: #fff;
-      color: #333;
-      appearance: none;
-    }
-
-    button {
-      color: #000000;
-      border: 1px solid #000000 !important;
-      border-radius: 50%;
-      font-weight: bold;
-      cursor: pointer;
-      width: 32px;
-      height: 32px;
-      font-size: 1.2rem;
-      line-height: 1;
+    .programacion-inputs {
       display: flex;
       align-items: center;
-      justify-content: center;
-      transition: background-color 0.2s ease;
-
-      &:hover {
-        background-color: #aaa;;
-      }
-    }
-
-    .hora-select-wrapper {
-      position: relative;
-      flex: 1;
+      gap: 0.5rem;
+      background-color: #E8F0F0;
+      border: 1px solid #cccccc;
+      border-radius: 8px;
+      padding: 0.6rem;
+      margin-top: 0.5rem;
 
       select {
-        width: 100%;
-        padding: 0.4rem 2.2rem 0.4rem 0.6rem;
+        flex: 1;
         border: 1px solid #888;
         border-radius: 6px;
+        padding: 0.4rem 0.6rem;
         font-size: 1rem;
         background-color: #fff;
         color: #333;
         appearance: none;
       }
 
-      .hora-icon {
-        position: absolute;
-        right: 0.6rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #555;
-        pointer-events: none;
-        font-size: 1.3rem;
-      }
-}
+      button {
+        color: #000000;
+        border: 1px solid #000000 !important;
+        border-radius: 50%;
+        font-weight: bold;
+        cursor: pointer;
+        width: 32px;
+        height: 32px;
+        font-size: 1.2rem;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s ease;
 
+        &:hover {
+          background-color: #aaa;;
+        }
+      }
+
+      .hora-select-wrapper {
+        position: relative;
+        flex: 1;
+
+        select {
+          width: 100%;
+          padding: 0.4rem 2.2rem 0.4rem 0.6rem;
+          border: 1px solid #888;
+          border-radius: 6px;
+          font-size: 1rem;
+          background-color: #fff;
+          color: #333;
+          appearance: none;
+        }
+
+        .hora-icon {
+          position: absolute;
+          right: 0.6rem;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #555;
+          pointer-events: none;
+          font-size: 1.3rem;
+        }
+      }
+    }
   }
 
   .programaciones-list {
@@ -236,6 +236,6 @@
     }
 
   }
-}
+
 
 
