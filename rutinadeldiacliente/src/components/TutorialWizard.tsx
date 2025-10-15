@@ -202,6 +202,12 @@ const TutorialWizard: React.FC<TutorialWizardProps> = ({ open, onClose, mode, au
   const [progress, setProgress] = useState<number>(0)
 
   useEffect(() => {
+    localStorage.removeItem("tutorialProgress_adulto")
+    localStorage.removeItem("tutorialProgress_infante")
+    setProgress(0)
+  }, [])
+
+  useEffect(() => {
   console.log("El valor de mode es:", mode);
 }, [mode]);
 
