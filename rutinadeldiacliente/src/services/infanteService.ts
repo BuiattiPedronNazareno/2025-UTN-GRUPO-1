@@ -34,3 +34,24 @@ export const obtenerInfantesPorUsuario = async (usuarioId: number): Promise<Infa
     throw error;
   }
 };
+
+// Obtener estado del tutorial para el infante
+export const obtenerTutorialStatusInfante = async (infanteId: number): Promise<{ showInfantTutorial: boolean }> => {
+  try {
+    const response = await api.get<{ showInfantTutorial: boolean }>(`/Infante/tutorial-status/${infanteId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error obteniendo estado de tutorial infante:", error);
+    throw error;
+  }
+};
+
+// Marcar tutorial infante como completado
+export const completarTutorialInfante = async (infanteId: number): Promise<void> => {
+  try {
+    await api.post(`/Infante/tutorial-completed/${infanteId}`);
+  } catch (error) {
+    console.error("Error marcando tutorial infante como completado:", error);
+    throw error;
+  }
+};
