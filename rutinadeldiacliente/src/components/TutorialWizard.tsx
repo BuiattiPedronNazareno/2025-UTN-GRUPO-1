@@ -191,8 +191,7 @@ interface TutorialWizardProps {
   mode: "adulto" | "infante"
   autoStart?: boolean
   initialModule?: number;
-  navigate: (to: string, options?: { replace?: boolean; state?: { prop1: string; prop2: number } }) => void
-
+  navigate: (to: string, options?: { replace?: boolean; state?: any }) => void
 }
 
 const TutorialWizard: React.FC<TutorialWizardProps> = ({ open, onClose, mode, autoStart, initialModule, navigate }) => {
