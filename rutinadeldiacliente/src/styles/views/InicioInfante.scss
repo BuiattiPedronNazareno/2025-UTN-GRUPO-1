@@ -62,8 +62,10 @@
     }
     
     .routine-title {
-      font-size: variables.$font-size-xl !important;
-      font-weight: 700;
+      font-family: 'Comic Sans MS', sans-serif;
+      font-weight: bold;
+      color: #000;
+      font-size: 1.5rem;
       margin: 0;
       text-shadow: 0 2px 4px rgba(49, 49, 49, 0.3);
     }

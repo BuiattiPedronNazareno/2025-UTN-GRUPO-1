@@ -184,33 +184,47 @@ useEffect(() => {
                   display: "flex",
                   flexDirection: "column",
                   overflow: "hidden",
+                  paddingBottom: "0rem",
                 }}
               >
                 <CardMedia
+                  className="routine-image"
                   component="img"
                   height={200}
                   image={routine.imagen || "/placeholder.svg"}
                   alt={routine.nombre}
                   sx={{ objectFit: "cover" }}
                 />
-                <CardContent sx={{ flexGrow: 1 }}>
+                <CardContent className="routine-content" sx={{ flexGrow: 1, width: "100%", padding: 0, paddingBottom: 0, }}>
                   <Box
                     className="routine-header"
                     sx={{
                       display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
+                      flexDirection: "column",
+                      width: "100%",
                     }}
                   >
                     <Typography
                       variant="h6"
                       component="h3"
                       className="routine-title"
+                      sx={{ 
+                        textAlign: "left",
+                        mb: 1 
+                      }}
                     >
                       {routine.nombre}
                     </Typography>
 
-                    <Box className="routine-actions">
+                    <Box 
+                      className="routine-actions"
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        width: "100%",
+                        gap: 1
+                      }}
+                    >
                      <IconButton
                         onClick={() =>
                           handleCambiarEstadoRutina(routine.id, routine.estado ?? "Activa")
@@ -249,7 +263,7 @@ useEffect(() => {
           <Button
             variant="contained"
             size="large"
-            className="create-routine-button"
+            className="inicio-button create-routine-button"
             onClick={handleCreateRoutine}
             sx={{
               backgroundColor: "#7FB069",
@@ -272,7 +286,7 @@ useEffect(() => {
           <Button
             variant="contained"
             size="large"
-            className="add-reminder-button"
+            className="inicio-button add-reminder-button"
             onClick={handleAddReminder}
             sx={{
               backgroundColor: "#7FB069",
