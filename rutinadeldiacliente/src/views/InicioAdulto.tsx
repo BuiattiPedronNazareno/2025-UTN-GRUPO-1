@@ -154,13 +154,6 @@ const InicioAdulto: React.FC = () => {
                   <Typography className="routine-title">{routine.nombre}</Typography>
 
                   <Box className="routine-actions">
-                    <Typography
-                      variant="h6"
-                      component="h3"
-                      className="routine-title"
-                    >
-                      {routine.nombre}
-                    </Typography>
 
                     <Box className="routine-actions">
                      <IconButton

@@ -56,7 +56,7 @@ const InicioInfante: React.FC = () => {
             flexWrap: 'wrap',
             gap: 3,
             justifyContent: 'center',
-            mt: 4
+            mt: 0
           }}
         >
           {routines.map((routine) => (
@@ -69,7 +69,7 @@ const InicioInfante: React.FC = () => {
             >
               <Card className="routine-card" onClick={() => handleRoutineClick(routine.id)}>
                 <CardMedia component="img" className="routine-image" image={routine.imagen || "/placeholder.svg"} />
-                <CardContent>
+                <CardContent className="routine-content">
                   <Typography className="routine-title">{routine.nombre}</Typography>
                 </CardContent>
               </Card>
@@ -77,10 +77,11 @@ const InicioInfante: React.FC = () => {
           ))}
         </Box>
 
-        <Box className="help-section" sx={{ textAlign: "center", mt: 4 }}>
-          <HelpButton onClick={handleHelpClick} />
-        </Box>
+
       </Container>
+       <Box className="help-section my-4" sx={{ textAlign: "center", mt: 4 }}>
+        <HelpButton onClick={handleHelpClick} />
+      </Box>
     </Box>
   )
 }

@@ -27,14 +27,13 @@
   }
   
   .help-section {
-    margin-bottom: variables.$spacing-xl;
-    
     .help-button {
       @include mixins.button-help;
       font-size: variables.$font-size-lg;
       padding: variables.$spacing-lg variables.$spacing-xl;
       border-radius: variables.$border-radius-lg;
       min-width: 200px;
+      margin-bottom: variables.$spacing-xl !important;
     }
   }
   
