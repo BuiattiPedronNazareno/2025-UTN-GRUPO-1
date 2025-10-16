@@ -58,3 +58,24 @@ export const loginUsuario = async (login: UsuarioLoginDTO): Promise<UsuarioGetDT
     throw error;
   }
 };
+
+// Obtener estado del tutorial para el adulto
+export const obtenerTutorialStatus = async (usuarioId: number): Promise<{ showAdultTutorial: boolean }> => {
+  try {
+    const response = await api.get<{ showAdultTutorial: boolean }>(`/Usuario/tutorial-status/${usuarioId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error obteniendo estado de tutorial adulto:", error);
+    throw error;
+  }
+};
+
+// Marcar tutorial adulto como completado
+export const completarTutorial = async (usuarioId: number): Promise<void> => {
+  try {
+    await api.post(`/Usuario/tutorial-completed/${usuarioId}`);
+  } catch (error) {
+    console.error("Error marcando tutorial adulto como completado:", error);
+    throw error;
+  }
+};

@@ -1,5 +1,3 @@
-"use client"
-
 import React, { useState, useEffect } from "react"
 import {
   Dialog,
@@ -191,17 +189,42 @@ interface TutorialWizardProps {
   open: boolean
   onClose: () => void
   mode: "adulto" | "infante"
+  autoStart?: boolean
+  initialModule?: number;
+  navigate: (to: string, options?: { replace?: boolean; state?: any }) => void
+
 }
 
-const TutorialWizard: React.FC<TutorialWizardProps> = ({ open, onClose, mode }) => {
+const TutorialWizard: React.FC<TutorialWizardProps> = ({ open, onClose, mode, autoStart, initialModule, navigate }) => {
   const modules = mode === "adulto" ? tutorialModulesAdulto : tutorialModulesInfante
-  const [activeModule, setActiveModule] = useState<number | null>(null)
+  const [activeModule, setActiveModule] = useState<number | null>(initialModule ?? null)
   const [activeStep, setActiveStep] = useState(0)
   const [progress, setProgress] = useState<number>(0)
 
   useEffect(() => {
-    setProgress(getProgress(mode))
-  }, [mode])
+    localStorage.removeItem("tutorialProgress_adulto")
+    localStorage.removeItem("tutorialProgress_infante")
+    setProgress(0)
+  }, [])
+
+  useEffect(() => {
+  console.log("El valor de mode es:", mode);
+}, [mode]);
+
+
+useEffect(() => {
+  const progressValue = getProgress(mode)
+  setProgress(progressValue)
+
+  if (open && autoStart && progressValue === 0) {
+    // Buscamos el primer módulo obligatorio
+    const firstMandatoryModule = modules.find(m => m.mandatory)?.id || 1
+    setActiveModule(firstMandatoryModule)
+    setActiveStep(0)
+  }
+}, [mode, open, autoStart, modules])
+
+
 
   const handleNext = () => {
     if (!activeModule) return
@@ -356,11 +379,49 @@ const TutorialWizard: React.FC<TutorialWizardProps> = ({ open, onClose, mode }) 
         </Box>
       </DialogContent>
 
-      <DialogActions className="tutorial-actions" sx={{ justifyContent: "space-between", px: 3, py: 1 }}>
-        <Button onClick={handleBack} disabled={activeStep === 0}>Atrás</Button>
-        <Button onClick={handleNext}>
-          {activeStep === module.steps.length - 1 ? "Finalizar módulo" : "Siguiente"}
+      <DialogActions
+        className="tutorial-actions"
+        sx={{ justifyContent: "space-between", px: 3, py: 1 }}
+      >
+        <Button onClick={handleBack} disabled={activeStep === 0}>
+          Atrás
         </Button>
+
+        {/* Si es la primera vez y está en el último paso, mostramos las dos opciones */}
+        {activeStep === module.steps.length - 1 && autoStart ? (
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                // Hace lo mismo que "Finalizar módulo"
+                handleNext()
+              }}
+            >
+              Completar tutorial
+            </Button>
+
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => {
+              onClose(); // Cerramos el modal
+              if (mode === "adulto") {
+                navigate("/adulto");
+              } else {
+                navigate("/inicio");
+              }
+            }}
+          >
+            Comenzar sin completar tutorial
+          </Button>
+          </Box>
+        ) : (
+          // Si no es la primera vez o no está en el último paso, comportamiento normal
+          <Button onClick={handleNext}>
+            {activeStep === module.steps.length - 1 ? "Finalizar módulo" : "Siguiente"}
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   )

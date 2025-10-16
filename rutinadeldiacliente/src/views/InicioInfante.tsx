@@ -9,10 +9,20 @@ import HelpButton from "../components/HelpButton"
 import "../styles/views/InicioInfante.scss"
 import { obtenerRutinas } from "../services/rutinaService"
 import type { Rutina } from "../services/rutinaService"
+import { obtenerTutorialStatusInfante, completarTutorialInfante } from "../services/infanteService"
+import { useAppContext } from "../context/AppContext";
+import TutorialWizard from "../components/TutorialWizard";
 
 const InicioInfante: React.FC = () => {
   const navigate = useNavigate()
   const [routines, setRoutines] = useState<Rutina[]>([])
+  const { infanteActivo } = useAppContext();
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialMode, setTutorialMode] = useState<"adulto" | "infante">("infante");
+  const [autoStartTutorial, setAutoStartTutorial] = useState(false);
+  const [firstMandatoryModule, setFirstMandatoryModule] = useState<number>(1)
+
+
 
   useEffect(() => {
     const fetchRutinas = async () => {
@@ -27,6 +37,28 @@ const InicioInfante: React.FC = () => {
     fetchRutinas()
   }, [])
 
+useEffect(() => {
+  const checkTutorial = async () => {
+    if (!infanteActivo) return;
+
+    try {
+      const status = await obtenerTutorialStatusInfante(infanteActivo.id);
+      if (status.showInfantTutorial) {
+        setTutorialMode("infante");
+        setShowTutorial(true);
+        setAutoStartTutorial(true);
+
+        // El primer módulo obligatorio ya está definido por defecto
+        // Se marca como completado en el backend
+        await completarTutorialInfante(infanteActivo.id);
+      }
+    } catch (error) {
+      console.error("Error verificando tutorial infante:", error);
+    }
+  };
+
+  checkTutorial();
+}, [infanteActivo]);
 
 
   const handleRoutineClick = (routineId: number) => {
@@ -96,6 +128,17 @@ const InicioInfante: React.FC = () => {
           <HelpButton onClick={handleHelpClick} />
         </Box>
       </Container>
+
+      <TutorialWizard
+        open={showTutorial}
+        onClose={() => setShowTutorial(false)}
+        mode={tutorialMode}
+        autoStart={autoStartTutorial}
+        initialModule={firstMandatoryModule}
+        navigate={navigate}
+      />
+
+
     </Box>
   )
 }

@@ -75,5 +75,29 @@ namespace rutinadeldiaservidor.Controllers
 
             return Ok(infantes);
         }
+
+        [HttpGet("tutorial-status/{infanteId}")]
+        public IActionResult GetTutorialStatus(int infanteId)
+        {
+            var infante = _context.Infantes.FirstOrDefault(i => i.Id == infanteId);
+            if (infante == null) return NotFound();
+
+            return Ok(new
+            {
+                showInfantTutorial = !infante.HasSeenInfantTutorial
+            });
+        }
+
+        [HttpPost("tutorial-completed/{infanteId}")]
+        public IActionResult MarkInfantTutorialCompleted(int infanteId)
+        {
+            var infante = _context.Infantes.FirstOrDefault(i => i.Id == infanteId);
+            if (infante == null) return NotFound();
+
+            infante.HasSeenInfantTutorial = true;
+            _context.SaveChanges();
+            return Ok();
+        }
+
     }
 }

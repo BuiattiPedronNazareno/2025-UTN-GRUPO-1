@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using rutinadeldiaservidor.Data;
@@ -11,9 +12,11 @@ using rutinadeldiaservidor.Data;
 namespace rutinadeldiaservidor.Migrations
 {
     [DbContext(typeof(RutinaContext))]
-    partial class RutinaContextModelSnapshot : ModelSnapshot
+    [Migration("20251011133117_NombreDeTuMigracion")]
+    partial class NombreDeTuMigracion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,9 +62,6 @@ namespace rutinadeldiaservidor.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("HasSeenInfantTutorial")
-                        .HasColumnType("boolean");
 
                     b.Property<int>("InfanteNivelId")
                         .HasColumnType("integer");
@@ -231,9 +231,6 @@ namespace rutinadeldiaservidor.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<bool>("HasSeenAdultTutorial")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("Telefono")
                         .IsRequired()
