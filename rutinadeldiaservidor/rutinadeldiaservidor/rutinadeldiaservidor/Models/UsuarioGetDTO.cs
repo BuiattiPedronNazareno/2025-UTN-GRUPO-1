@@ -1,4 +1,5 @@
-﻿using static rutinadeldiaservidor.DTOs.InfanteDTO;
+﻿using rutinadeldiaservidor.DTOs;
+using static rutinadeldiaservidor.DTOs.InfanteDTO;
 
 namespace rutinadeldiaservidor.Models
 {
