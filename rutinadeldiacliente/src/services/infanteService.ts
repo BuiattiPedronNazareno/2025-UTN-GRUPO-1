@@ -4,6 +4,7 @@ export interface InfanteCreateDTO {
   nombre: string;
   usuarioId: number;
   infanteNivelId: number;
+  categoriaIds: number[];
 }
 
 export interface InfanteReadDTO {
@@ -14,15 +15,21 @@ export interface InfanteReadDTO {
 }
 
 // Agregar infante
-export const agregarInfante = async (infante: InfanteCreateDTO): Promise<{ mensaje: string; infanteId: number }> => {
+export const agregarInfante = async (
+  infante: InfanteCreateDTO
+): Promise<{ mensaje: string; infanteId: number; rutinasGeneradas?: any[] }> => {
   try {
-    const response = await api.post<{ mensaje: string; infanteId: number }>("/Infante/agregarInfante", infante);
+    const response = await api.post<{ mensaje: string; infanteId: number; rutinasGeneradas?: any[] }>(
+      "/Infante/agregarInfante",
+      infante
+    );
     return response.data;
   } catch (error) {
     console.error("Error agregando infante:", error);
     throw error;
   }
 };
+
 
 // Obtener todos los infantes de un usuario
 export const obtenerInfantesPorUsuario = async (usuarioId: number): Promise<InfanteReadDTO[]> => {
