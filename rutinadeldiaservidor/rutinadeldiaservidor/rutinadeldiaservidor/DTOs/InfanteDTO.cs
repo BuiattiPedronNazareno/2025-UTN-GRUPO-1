@@ -7,7 +7,9 @@
             public string Nombre { get; set; } = string.Empty;
             public int UsuarioId { get; set; }
             public int InfanteNivelId { get; set; }
+            public List<int> CategoriaIds { get; set; } = new();
         }
+    }
 
         public class InfanteGetDTO
         {
@@ -24,4 +26,4 @@
             public int InfanteNivelId { get; set; }
         }
     }
-}
+
