@@ -20,7 +20,7 @@ const AjustesAdulto: React.FC = () => {
   }
 
   const handlePerfilClick = () => {
-    navigate("/perfil-adulto")
+    console.log("Cargando perfil...")
   }
 
   const handleBackClick = () => {

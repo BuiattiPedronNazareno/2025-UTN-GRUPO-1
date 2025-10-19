@@ -25,19 +25,7 @@
       @extend .main-action-button;
     }
   }
-  
-  .help-section {
-    margin-bottom: variables.$spacing-xl;
-    
-    .help-button {
-      @include mixins.button-help;
-      font-size: variables.$font-size-lg;
-      padding: variables.$spacing-lg variables.$spacing-xl;
-      border-radius: variables.$border-radius-lg;
-      min-width: 200px;
-    }
-  }
-  
+
   .back-section {
     display: flex;
     justify-content: center;
@@ -46,6 +34,7 @@
 
     .back-button {
       @extend .volver-button;
+      margin-top: 12rem !important;
       max-width: 150px;
     }
 
