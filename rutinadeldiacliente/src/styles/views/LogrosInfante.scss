@@ -1,96 +1,133 @@
 @use '../variables';
 @use '../mixins';
+@use '../components/MainActionButton'; 
 
 .logros-infante {
   min-height: 100vh;
   background-color: variables.$background-color;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   
   .main-content {
     padding: variables.$spacing-xl;
+    padding-top: 0rem !important;
     max-width: 600px;
     margin: 0 auto;
     text-align: center;
   }
   
-  .nivel-actual {
-    margin-bottom: variables.$spacing-xl;
-    
-    .nivel-badge {
-      background-color: variables.$primary-color;
-      color: variables.$white;
-      padding: variables.$spacing-lg variables.$spacing-xl;
-      border-radius: variables.$border-radius-lg;
-      display: inline-flex;
-      align-items: center;
-      gap: variables.$spacing-sm;
-      font-size: variables.$font-size-lg;
-      font-weight: 700;
-      box-shadow: variables.$shadow-md;
-      
-      .nivel-icon {
-        font-size: variables.$font-size-xl;
+  .nivel-section {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .nivel-header {
+      background-color: #3d7f8e;
+      border-radius: 40px;
+      padding: 0.8rem 3rem;
+      display: inline-block;
+      text-align: center;
+
+      .nivel-titulo {
+        color: #000;
+        font-size: 1.7rem;
+        font-weight: 500;
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
       }
     }
+
+    .nivel-actual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+
+      .nivel-icon {
+        font-size: 2rem;
+        color: #000;
+      }
+
+      .nivel-text {
+        font-size: 1.3rem;
+        font-weight: 500;
+        color: #000;
+        font-family: 'Poppins', sans-serif;
+      }
+    }
+  
   }
   
   .achievements-list {
-    margin-bottom: variables.$spacing-xl;
+    margin-bottom: 2.2rem;
     display: flex;
     flex-direction: column;
-    gap: variables.$spacing-md;
+    gap: variables.$spacing-lg;
     
     .achievement-item {
-      background-color: variables.$white;
-      padding: variables.$spacing-lg;
-      border-radius: variables.$border-radius-lg;
+      @extend .main-action-button;
+      background-color: #8FBC8F;
+      color: #000 !important;
+      padding: variables.$spacing-lg variables.$spacing-xl;
+      border-radius: 25px;
       display: flex;
       align-items: center;
       gap: variables.$spacing-md;
       box-shadow: variables.$shadow-sm;
       transition: all 0.3s ease;
+      min-height: 60px;
+      justify-content: flex-start;
       
       &.completed {
-        background-color: variables.$secondary-color;
-        color: variables.$white;
+        background-color: #8FBC8F;
         
-        .achievement-icon {
-          background-color: variables.$white;
-          color: variables.$secondary-color;
+        .MuiListItemIcon-root {
+          color: #000 !important;
+        }
+        
+        .MuiListItemText-primary {
+          color: #000 !important;
         }
       }
       
       &.pending {
-        background-color: variables.$white;
-        color: variables.$text-color;
+        background-color: #8FBC8F;
+        opacity: 0.8;
         
-        .achievement-icon {
-          background-color: #f0f0f0;
-          color: #999;
+        .MuiListItemIcon-root {
+          color: #000 !important;
+        }
+        
+        .MuiListItemText-primary {
+          color: #000 !important;
         }
       }
       
-      .achievement-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        font-size: variables.$font-size-lg;
+      &:hover {
+        background-color: #7CAF7C;
+        transform: translateY(-2px);
+        box-shadow: variables.$shadow-md;
       }
       
-      .achievement-title {
+      .MuiListItemIcon-root {
+        min-width: 40px;
+        justify-content: center;
+      }
+      
+      .MuiListItemText-primary {
         font-size: variables.$font-size-lg;
         font-weight: 600;
-        flex: 1;
-        text-align: left;
+        text-align: center;
+        color: #000 !important;
       }
     }
   }
   
   .help-section {
-    margin-bottom: variables.$spacing-xl;
+    margin-bottom: variables.$spacing-xs;
     
     .help-button {
       @include mixins.button-help;
@@ -106,8 +143,25 @@
       @include mixins.button-danger;
       font-size: variables.$font-size-lg;
       padding: variables.$spacing-md variables.$spacing-lg;
-      border-radius: variables.$border-radius-lg;
+      border-radius: 25px;
       min-width: 150px;
+      width: 100%;
+      max-width: 200px;
+    }
+  }
+}
+
+@media (max-width: variables.$mobile) {
+  .logros-infante {
+    .achievements-list {
+      .achievement-item {
+        padding: variables.$spacing-md;
+        min-height: 55px;
+        
+        .MuiListItemText-primary {
+          font-size: variables.$font-size-md;
+        }
+      }
     }
   }
 }
