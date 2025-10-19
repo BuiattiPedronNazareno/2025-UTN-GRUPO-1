@@ -18,7 +18,7 @@
   }
   
   .nivel-section {
-    margin-bottom: 2rem;
+    margin-bottom: 1.2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -65,11 +65,11 @@
     margin-bottom: 2.2rem;
     display: flex;
     flex-direction: column;
-    gap: variables.$spacing-lg;
+    gap: 0.15rem;
     
     .achievement-item {
       @extend .main-action-button;
-      background-color: #8FBC8F;
+      background-color: #6aa966;
       color: #000 !important;
       padding: variables.$spacing-lg variables.$spacing-xl;
       border-radius: 25px;
@@ -82,7 +82,7 @@
       justify-content: flex-start;
       
       &.completed {
-        background-color: #8FBC8F;
+        background-color: #6aa966;
         
         .MuiListItemIcon-root {
           color: #000 !important;
@@ -94,7 +94,7 @@
       }
       
       &.pending {
-        background-color: #8FBC8F;
+        background-color: #6aa966;
         opacity: 0.8;
         
         .MuiListItemIcon-root {
@@ -107,9 +107,13 @@
       }
       
       &:hover {
-        background-color: #7CAF7C;
-        transform: translateY(-2px);
-        box-shadow: variables.$shadow-md;
+        transform: none !important;
+      }
+
+      &,
+      &.main-action-button{
+        transform: none !important;
+        background-color: #6aa966 !important;
       }
       
       .MuiListItemIcon-root {
@@ -127,7 +131,6 @@
   }
   
   .help-section {
-    margin-bottom: variables.$spacing-xs;
     
     .help-button {
       @include mixins.button-help;
@@ -139,6 +142,7 @@
   }
   
   .back-section {
+    
     .back-button {
       @include mixins.button-danger;
       font-size: variables.$font-size-lg;
