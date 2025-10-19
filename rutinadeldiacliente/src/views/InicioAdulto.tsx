@@ -225,6 +225,17 @@ useEffect(() => {
                         gap: 1
                       }}
                     >
+                      {/* 👇 Solo aparece si el backend confirmó recordatorio */}
+                      {routinesWithReminders.has(routine.id) && (
+                        <IconButton
+                          className="action-button notification-button"
+                          onClick={() =>
+                            navigate(`/lista-recordatorio-adulto/${routine.id}`)
+                          }
+                        >
+                          <NotificationsActive />
+                        </IconButton>
+                      )}
                      <IconButton
                         onClick={() =>
                           handleCambiarEstadoRutina(routine.id, routine.estado ?? "Activa")
@@ -239,18 +250,6 @@ useEffect(() => {
                       >
                         <Edit />
                       </IconButton>
-
-                      {/* 👇 Solo aparece si el backend confirmó recordatorio */}
-                      {routinesWithReminders.has(routine.id) && (
-                        <IconButton
-                          className="action-button notification-button"
-                          onClick={() =>
-                            navigate(`/lista-recordatorio-adulto/${routine.id}`)
-                          }
-                        >
-                          <NotificationsActive />
-                        </IconButton>
-                      )}
                     </Box>
                   </Box>
                 </CardContent>
