@@ -1,68 +1,141 @@
-@use '../variables';
-@use '../mixins';
+@use "../variables";
+@use "../mixins";
+@use "sass:color";
 
 .rutina-detalle-infante {
   min-height: 100vh;
   background-color: variables.$background-color;
-  padding-bottom: 120px; // espacio para botones fijos
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .volver-button {
+    background-color: #C76E6E !important;
+    color: #000000 !important;
+    border: none !important;
+    border-radius: 0.5rem !important;
+    text-transform: none !important;
+    font-size: 1.4rem !important;
+    font-weight: 500 !important;
+    padding: 0.75rem 2rem !important;
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto !important;
+    display: block;
+    margin-bottom: 1.5rem !important; 
+
+    &:hover {
+      background-color: color.adjust(#C76E6E, $lightness: -10%) !important;
+    }
+
+  }
+
+  .rutina-titulo {
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    color: #000;
+  }
 
   .step-card {
-    margin-bottom: 1rem;
-    background-color: #3e8596; // card azul
-    color: white; // texto visible sobre azul
-    border-radius: 16px;
-    overflow: hidden;
+    background-color: variables.$background-color;
+    padding: 1rem;
+    box-shadow: 0 0 0 0;
+    border: none !important;
+    text-align: center;
+    width: 100%;
   }
 
   .step-image {
     width: 100%;
-    height: 200px;
+    border-radius: 10px;
     overflow: hidden;
+    margin-bottom: 1rem;
+
     img {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      height: auto;
+      object-fit: contain;
+      border-radius: 10px;
+    }
+  }
+
+  .step-content {
+    text-align: center;
+    padding-top: 0.5rem;
+    padding-bottom: 0.3rem !important;
+
+    .paso-descripcion {
+      font-family: "Poppins", sans-serif;
+      font-weight: 500;
+      color: #000;
+      margin-bottom: 1.5rem;
+    }
+
+    .audio-button {
+      background-color: variables.$accent-color!important;
+      color: #000 !important;
+      border-radius: 9999px !important;
+      width: 100%;
+      max-width: 280px;
+      margin: 0 auto 1.5rem auto !important;
+      display: block;
+
+      &:hover {
+        background-color: #295762 !important;
+      }
     }
   }
 
   .step-buttons {
     display: flex;
-    justify-content: space-between;
-    margin-top: 1rem; 
-    width: 100%;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
 
     button {
-      border-radius: 25px;
+      width: 70px;
+      height: 60px;
+      border-radius: 10px;
+      color: white;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-  }
 
-  button {
-    border-radius: 25px;
-  }
+    .naranja {
+      background-color: #FBC02D !important;
+      color: #000 !important;
+      border: 1px solid #000000 !important;
 
-  .MuiTypography-h5,
-  .MuiTypography-h6 {
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    font-weight: bold;
-  }
+      &:hover {
+        background-color: #FDD835 !important;
+      }
+    }
 
-  .help-section {
-    text-align: center;
-    margin-top: 1rem;
-  }
+    .verde {
+      background-color: #1FC44B !important;
+      color: #000 !important;
+      border: 1px solid #000000 !important;
 
-  .volver-button {
-    background-color: #64b5f6; // azul suave
-    color: white;
-    border-radius: 16px;
-    padding: 10px 0;
-    margin-bottom: 1rem;
+      &:hover {
+        background-color: #1EB346 !important;
+      }
+    }
 
-    &:hover {
-      background-color: #42a5f5;
+    .verde-finalizar {
+      text-align: center;
+      width: 9rem !important;
+      background-color: #1FC44B !important;
+      color: #000 !important;
+      border: 1px solid #000000 !important;
+
+      &:hover {
+        background-color: #1EB346 !important;
+      }
     }
   }
 }
