@@ -24,9 +24,9 @@ const Register: React.FC = () => {
   }
 }
   return (
-    <Box className="register-view" sx={{ minHeight: "100vh", backgroundColor: "#f5f5f5", py: 6 }}>
+    <Box className="register-view" sx={{ minHeight: "100vh", backgroundColor: "#BFDBD8", py: 6, fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
       <Container maxWidth="sm">
-        <Card sx={{ borderRadius: 3, p: 3, boxShadow: 3 }}>
+        <Card sx={{ borderRadius: 3, p: 3, boxShadow: 3, backgroundColor: "#E7F3F2" }}>
           <CardContent>
             <Typography variant="h4" component="h1" sx={{ mb: 3, textAlign: "center" }}>
               Registro
@@ -35,9 +35,10 @@ const Register: React.FC = () => {
             <TextField
               label="Email"
               fullWidth
-              margin="normal"
+              margin="dense" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              sx={{ backgroundColor: "white", borderRadius: 1, "& fieldset": { border: "none" } }}
             />
             <TextField
               label="Contraseña"
@@ -46,6 +47,7 @@ const Register: React.FC = () => {
               margin="normal"
               value={clave}
               onChange={(e) => setClave(e.target.value)}
+              sx={{ backgroundColor: "white", borderRadius: 1, "& fieldset": { border: "none" } }}
             />
             <TextField
               label="Teléfono"
@@ -53,6 +55,7 @@ const Register: React.FC = () => {
               margin="normal"
               value={telefono}
               onChange={(e) => setTelefono(e.target.value)}
+              sx={{ backgroundColor: "white", borderRadius: 1, "& fieldset": { border: "none" } }}
             />
             <TextField
               label="PIN de adulto"
@@ -61,12 +64,13 @@ const Register: React.FC = () => {
               margin="normal"
               value={pin}
               onChange={(e) => setPin(e.target.value)}
+              sx={{ backgroundColor: "white", borderRadius: 1, "& fieldset": { border: "none" } }}
             />
 
             <Button
               variant="contained"
               fullWidth
-              sx={{ mt: 3, py: 1.5, borderRadius: 2 }}
+              sx={{ mt: 3, py: 1.5, borderRadius: 2, backgroundColor: "#87C2D4", color: "black", fontSize: "1rem" }}
               onClick={handleRegister}
             >
               Registrarse
@@ -75,7 +79,7 @@ const Register: React.FC = () => {
             <Button
               variant="text"
               fullWidth
-              sx={{ mt: 1 }}
+              sx={{ mt: 1, color: "black" }}
               onClick={() => navigate("/login")}
             >
               ¿Ya tienes cuenta? Inicia sesión

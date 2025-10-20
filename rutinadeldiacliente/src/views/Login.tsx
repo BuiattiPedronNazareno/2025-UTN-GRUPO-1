@@ -28,9 +28,9 @@ const Login: React.FC = () => {
 
 
   return (
-    <Box className="login-view" sx={{ minHeight: "100vh", backgroundColor: "#f5f5f5", py: 6 }}>
+    <Box className="login-view" sx={{ minHeight: "100vh", backgroundColor: "#BFDBD8", py: 6, fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
       <Container maxWidth="sm">
-        <Card sx={{ borderRadius: 3, p: 3, boxShadow: 3 }}>
+        <Card sx={{ borderRadius: 3, p: 3, boxShadow: 3, backgroundColor: "#E7F3F2" }}>
           <CardContent>
             <Typography variant="h4" component="h1" sx={{ mb: 3, textAlign: "center" }}>
               Iniciar Sesión
@@ -42,6 +42,7 @@ const Login: React.FC = () => {
               margin="normal"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              sx={{ backgroundColor: "white", borderRadius: 1, "& fieldset": { border: "none" } }}
             />
             <TextField
               label="Contraseña"
@@ -50,12 +51,13 @@ const Login: React.FC = () => {
               margin="normal"
               value={clave}
               onChange={(e) => setClave(e.target.value)}
+              sx={{ backgroundColor: "white", borderRadius: 1, "& fieldset": { border: "none" } }}
             />
 
             <Button
               variant="contained"
               fullWidth
-              sx={{ mt: 3, py: 1.5, borderRadius: 2 }}
+              sx={{ mt: 3, py: 1.5, borderRadius: 2, backgroundColor: "#87C2D4", color: "black", fontSize: "1rem" }}
               onClick={handleLogin}
             >
               Ingresar
@@ -64,7 +66,7 @@ const Login: React.FC = () => {
             <Button
               variant="text"
               fullWidth
-              sx={{ mt: 1 }}
+              sx={{ mt: 1, color: "black" }}
               onClick={() => navigate("/register")}
             >
               ¿No tienes cuenta? Regístrate
