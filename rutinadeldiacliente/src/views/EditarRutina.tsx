@@ -11,6 +11,10 @@ import type { InfanteGetDTO } from "../services/UsuarioService";
 import { useAppContext } from "../context/AppContext";
 import "../styles/views/CrearRutina.scss";
 import "../styles/views/EditarRutina.scss";
+import ChevronRight from "@mui/icons-material/ChevronRight";
+import ChevronLeft from "@mui/icons-material/ChevronLeft";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
 const EditarRutina: React.FC = () => {
   const { rutinaId } = useParams<{ rutinaId: string }>();
@@ -86,7 +90,12 @@ const EditarRutina: React.FC = () => {
 
   return (
     <div className="crear-rutina-container">
-      <h2>Editar Rutina</h2>
+      <button className="volver-btn" onClick={() => navigate("/adulto")}>
+        <ChevronLeft className="volver-icon" />
+        <span className="volver-text">Volver</span>
+      </button>
+
+      <h2 className="edit-routine-title">Editar Rutina</h2>
 
       {/* Nombre, Imagen, Categoría e Infante */}
       <div className="form-row">
@@ -140,14 +149,7 @@ const EditarRutina: React.FC = () => {
         </div>
       </div>
 
-      <div className="action-buttons">
-        <button className="volver-btn" onClick={() => navigate("/adulto")}>
-          Volver
-        </button>
-        <button className="crear-paso-btn" onClick={handleActualizarRutina}>
-          Guardar Rutina
-        </button>
-      </div>
+
 
       {/* Lista de pasos */}
       <div className="pasos-agregados">
@@ -158,11 +160,18 @@ const EditarRutina: React.FC = () => {
               <span>{p.descripcion}</span>
               <div className="paso-actions">
                 <button
+                  className="edit-btn"
                   onClick={() => navigate(`/rutina/${rutinaId}/paso/${p.id}`)}
                 >
-                  Editar
+                  <EditIcon />
                 </button>
-                <button onClick={() => handleEliminarPaso(p.id!)}>Eliminar</button>
+                
+                <button
+                  className="delete-btn"
+                  onClick={() => handleEliminarPaso(p.id!)}
+                >
+                  <DeleteIcon />
+                </button>
               </div>
             </li>
           ))}
@@ -175,6 +184,15 @@ const EditarRutina: React.FC = () => {
           Crear Paso Nuevo
         </button>
       </div>
+
+      <button
+        className="guardar-btn"
+        onClick={handleActualizarRutina}
+      >
+        <span className="guardar-text">Guardar Rutina</span>
+        <ChevronRight className="guardar-icon"/>
+      </button>
+
     </div>
   );
 };
