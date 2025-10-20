@@ -89,7 +89,7 @@ const EditarRutina: React.FC = () => {
   };
 
   return (
-    <div className="crear-rutina-container">
+    <div className="crear-rutina-container" style={{ fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
       <button className="volver-btn" onClick={() => navigate("/adulto")}>
         <ChevronLeft className="volver-icon" />
         <span className="volver-text">Volver</span>
@@ -100,7 +100,7 @@ const EditarRutina: React.FC = () => {
       {/* Nombre, Imagen, Categoría e Infante */}
       <div className="form-row">
         <div className="form-group">
-          <label>Nombre de la Rutina:</label>
+          <label>Nombre de la Rutina</label>
           <input
             type="text"
             value={nombre}
@@ -109,7 +109,7 @@ const EditarRutina: React.FC = () => {
         </div>
 
         <div className="form-group">
-          <label>Imagen:</label>
+          <label>Imagen</label>
           <select value={imagen} onChange={(e) => setImagen(e.target.value)}>
             <option value="">-- Selecciona una imagen --</option>
             <option value="lavarse-las-manos.jpg">Lavarse las manos</option>
@@ -119,7 +119,7 @@ const EditarRutina: React.FC = () => {
         </div>
 
         <div className="form-group">
-          <label>Categoría:</label>
+          <label>Categoría</label>
           <select
             value={categoriaId ?? ""}
             onChange={(e) => setCategoriaId(Number(e.target.value))}
@@ -134,7 +134,7 @@ const EditarRutina: React.FC = () => {
         </div>
 
         <div className="form-group">
-          <label>Infante:</label>
+          <label>Infante</label>
           <select
             value={infanteId ?? ""}
             onChange={(e) => setInfanteId(Number(e.target.value))}
@@ -153,7 +153,7 @@ const EditarRutina: React.FC = () => {
 
       {/* Lista de pasos */}
       <div className="pasos-agregados">
-        <h3>Pasos:</h3>
+        <h3>Pasos</h3>
         <ul>
           {pasos.map((p) => (
             <li key={p.id}>

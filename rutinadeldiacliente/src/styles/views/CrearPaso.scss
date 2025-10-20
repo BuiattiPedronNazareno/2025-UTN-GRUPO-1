@@ -1,18 +1,21 @@
+@use '../variables';
+
 .crear-paso-container {
-  max-width: 800px; // diseño para PC
+  max-width: 800px; 
   margin: 2rem auto;
   padding: 2rem;
-  background-color: #C5E1DA;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  background-color: #B8D6D4 !important;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  width: 100%;
 
   h2 {
+    font-size: variables.$font-size-xxl;
+    font-weight: 700;
+    color: #2C3E50;
     text-align: center;
-    font-size: 2rem;
-    font-weight: bold;
+    flex-grow: 1;
   }
 
   .form-group {
@@ -36,23 +39,30 @@
   .botones-accion {
     display: flex;
     gap: 1rem;
-    margin-top: 1rem;
+    margin-top: 10.6rem;
 
     button {
       flex: 1;
       padding: 0.7rem;
       border-radius: 6px;
-      border: none;
+      color: #000000 !important;
+      border: 1px solid #000000 !important;
       font-weight: bold;
-      color: white;
       cursor: pointer;
       font-size: 1rem;
 
       &:first-child {
-        background-color: #1976D2; // azul
+        background-color: variables.$accent-color; 
+        &:hover {
+          background-color: #34707e;
+        }
       }
+
       &:last-child {
-        background-color: #2E7D32; // verde
+        background-color: #43A047; 
+        &:hover {
+          background-color: #66BB6A;
+        }
       }
     }
   }
