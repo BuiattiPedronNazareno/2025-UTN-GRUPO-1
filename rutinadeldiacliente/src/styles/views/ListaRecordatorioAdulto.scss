@@ -1,71 +1,66 @@
 @use '../variables';
 @use '../mixins';
 @use "sass:color";
+@use '../components/MainActionButton';
 
 .lista-recordatorios {
   min-height: 100vh;
   background-color: variables.$background-color;
-  padding-top: 0;
 
   .header {
-    background-color: variables.$white;
-    box-shadow: variables.$shadow-md;
-    padding: variables.$spacing-lg 0;
-    border-bottom: 1px solid rgba(variables.$primary-color, 0.1);
+    background-color: variables.$accent-color !important;
+    padding: variables.$spacing-md variables.$spacing-lg !important;
+    box-shadow: variables.$shadow-sm !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    height: 7rem; 
+    text-align: center;
 
-    .header-content {
-      @include mixins.container;
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-
-      .back-button {
-        background: rgba(variables.$primary-color, 0.1);
-        transition: all 0.3s ease;
-        color: variables.$primary-color;
-
-        &:hover {
-          background: rgba(variables.$primary-color, 0.2);
-          transform: translateX(-2px);
-        }
-      }
-
-      .header-title {
-        color: variables.$text-color;
-        font-weight: bold;
-        font-size: variables.$font-size-xxl;
-        margin: 0;
-      }
-
-      .rutina-subtitle {
-        color: color.adjust(variables.$text-color, $lightness: 20%);
-        font-size: variables.$font-size-lg;
-        font-weight: 500;
-        margin: 0;
-      }
+    .back-button {
+      color: variables.$text-color !important;
+      z-index: 2; 
+      margin-left: 0.2rem;
     }
 
-    .stats {
-      @include mixins.container;
+    .header-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
       display: flex;
+      flex-direction: column;
+      align-items: center;
       justify-content: center;
-      gap: variables.$spacing-xl;
-      margin-top: variables.$spacing-md;
+    }
 
-      .stats-text {
-        color: variables.$text-color;
-        font-weight: 600;
-        font-size: variables.$font-size-sm;
-        letter-spacing: 0.5px;
-      }
+    .header-title {
+      font-size: variables.$font-size-xxl !important;
+      font-weight: 700 !important;
+      color: variables.$text-color !important;
+      margin: 0 !important;
+      line-height: 1.1;
+    }
 
-      @media (max-width: variables.$mobile) {
-        flex-direction: column;
-        align-items: center;
-        gap: variables.$spacing-sm;
-      }
+    .rutina-subtitle {
+      color: variables.$text-color !important;
+      font-size: variables.$font-size-lg !important;
+      font-weight: 500 !important;
+      margin-top: 0.2rem;
+    }
+
+    .stats-text {
+      margin-top: 0.4rem;
+      font-size: variables.$font-size-sm !important;
+      color: variables.$text-color !important;
+      font-weight: 500;
+    }
+
+    .header-right {
+      width: 48px; 
     }
   }
+
 
   .main-content {
     padding: variables.$spacing-lg;
@@ -76,11 +71,16 @@
   }
 
   .recordatorios-container {
+    margin-top: 1.3rem;
     .recordatorio-card {
       @include mixins.card;
-      background-color: variables.$primary-color;
+      background-color: variables.$card-color;
       transition: all 0.3s ease;
-      border: 1px solid rgba(variables.$white, 0.2);
+      border: 1px solid #000;
+      width: 90%;
+      align-self: center;
+      margin-top: 0rem;
+      margin-bottom: 1.4rem;
 
       &.inactivo {
         background-color: color.adjust(variables.$text-color, $lightness: 20%);
@@ -94,19 +94,18 @@
 
       .recordatorio-title {
         font-weight: bold;
-        color: variables.$white;
+        color: #000;
         font-size: variables.$font-size-lg;
       }
 
       .notification-icon {
-        color: variables.$white;
+        color: #000;
         margin-right: variables.$spacing-sm;
-        opacity: 0.9;
       }
 
       .status-chip {
         margin-left: variables.$spacing-md;
-        color: variables.$white;
+        color: #000;
 
         &.activo {
           background-color: variables.$secondary-color;
@@ -118,23 +117,31 @@
       }
 
       .recordatorio-descripcion {
-        color: rgba(variables.$white, 0.8);
-        margin-bottom: variables.$spacing-sm;
+        color: #000;
+        margin-bottom: 1.1rem;
+        margin-top: 1.1rem;
+        font-size: 1.4rem;
+        white-space: normal;     
+        overflow: visible;       
+        display: block;           
+        word-break: break-word; 
       }
 
       .schedule-icon {
-        color: variables.$white;
-        margin-right: variables.$spacing-sm;
+        color: #000;
+        margin-right: variables.$spacing-xs;
         font-size: 18px;
       }
 
       .hora-text {
-        color: variables.$white;
+        color: #000;
         font-weight: bold;
+        font-size: 1.6rem;
       }
 
       .dias-text {
-        color: rgba(variables.$white, 0.9);
+        color: #000;
+        font-size: 1.6rem;
       }
 
       .recordatorio-actions {
@@ -142,13 +149,12 @@
         gap: variables.$spacing-sm;
 
         .action-button {
-          background: rgba(variables.$white, 0.1);
           border-radius: variables.$border-radius;
           transition: all 0.2s ease;
-          color: variables.$white;
+          color: #000;
 
           &:hover {
-            background: rgba(variables.$white, 0.2);
+            background: rgba(#000, 0.2);
             transform: scale(1.1);
           }
         }
@@ -165,20 +171,14 @@
     margin-top: variables.$spacing-xl;
 
     .create-recordatorio-button {
-      @include mixins.button-secondary;
-      width: 100%;
-      border-radius: variables.$border-radius-xl;
-      padding: variables.$spacing-md variables.$spacing-lg;
-      font-size: variables.$font-size-lg;
-      text-transform: none;
-
+      @extend .main-action-button;
+      
       &:hover {
         transform: translateY(-2px);
       }
     }
   }
 
-  // Responsive Design
   @media (max-width: variables.$mobile) {
     .header {
       .stats {
