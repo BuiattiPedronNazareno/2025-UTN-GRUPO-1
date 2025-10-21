@@ -56,6 +56,26 @@ namespace rutinadeldiaservidor.Controllers
             return rutina == null ? NotFound() : Ok(rutina);
         }
 
+        // GET api/rutina/obtenerRutina/5
+        [HttpGet("obtenerRutinaInfante/{id}")]
+        public async Task<ActionResult<IEnumerable<RutinaReadDTO>>> GetByUserId(int id)
+        {
+            var rutinas = await _context.Rutinas
+                .Where(r => r.InfanteId == id)
+                .Select(r => new RutinaReadDTO
+                {
+                    Id = r.Id,
+                    Nombre = r.Nombre,
+                    Imagen = r.Imagen,
+                    Estado = r.Estado,
+                    CategoriaId = r.CategoriaId,
+                    InfanteId = r.InfanteId
+                })
+                .ToListAsync();
+
+            return rutinas == null ? NotFound() : Ok(rutinas);
+        }
+
         // POST: Rutina/crearRutina
         [HttpPost("crearRutina")]
         public async Task<ActionResult<RutinaReadDTO>> Create(RutinaCreateDTO rutinaDTO)
