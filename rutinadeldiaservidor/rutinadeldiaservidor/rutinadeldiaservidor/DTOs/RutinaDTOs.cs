@@ -1,4 +1,4 @@
-﻿namespace rutinadeldiaservidor.Models
+﻿namespace rutinadeldiaservidor.DTOs
 {
     // Clase base con lo común
     public abstract class RutinaBaseDTO

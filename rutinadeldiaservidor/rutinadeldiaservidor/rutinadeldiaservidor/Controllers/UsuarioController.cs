@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using rutinadeldiaservidor.Data;
 using rutinadeldiaservidor.Models;
 using Microsoft.AspNetCore.Identity;
-using static rutinadeldiaservidor.DTOs.InfanteDTO;
 using rutinadeldiaservidor.DTOs;
+
 
 namespace rutinadeldiaservidor.Controllers
 {

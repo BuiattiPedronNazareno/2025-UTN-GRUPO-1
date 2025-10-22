@@ -12,6 +12,7 @@ import "../styles/views/RutinaDetalle.scss";
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { crearCancelacion } from "../services/cancelacionService";
 
 const RutinaDetalleInfante: React.FC = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ const RutinaDetalleInfante: React.FC = () => {
   const [pasos, setPasos] = useState<Paso[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [rutina, setRutina] = useState<Rutina | null>(null);
+  const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
     const fetchRutinaYPasos = async () => {
@@ -45,7 +47,27 @@ const RutinaDetalleInfante: React.FC = () => {
     console.log("Solicitando ayuda...")
   }
 
-  const handleCancelar = () => navigate("/inicio");
+  const handleCancelar = () => {
+    try {
+      if (!rutinaId) return;
+
+      const cancelacion ={
+        rutinaID: Number(rutinaId),
+        fechaHora: new Date()
+      }
+
+      crearCancelacion(cancelacion);
+      setShowNotification(true);
+
+      // Ocultar después de 0.5 segundos y navegar
+      setTimeout(() => {
+        setShowNotification(false);
+        navigate("/inicio");
+      }, 2500);
+    } catch (error) {
+    console.error("Error al crear la cancelacion:", error);
+    }
+  };
 
   const handleNext = () => {
   if (currentStep < pasos.length - 1) {
@@ -87,6 +109,7 @@ if (pasos.length === 0)
         <Typography variant="body1" sx={{ textAlign: "center" }}>
           No hay pasos disponibles para esta rutina.
         </Typography>
+        {showNotification && <div className="cancel-notification">Rutina cancelada</div>}
       </Container>
     );
 
@@ -167,6 +190,9 @@ if (pasos.length === 0)
           </Button>
         </Box>
       </Container>
+      {showNotification && (
+        <div className="cancel-notification">Rutina cancelada correctamente</div>
+      )}
     </Box>
   );
 };

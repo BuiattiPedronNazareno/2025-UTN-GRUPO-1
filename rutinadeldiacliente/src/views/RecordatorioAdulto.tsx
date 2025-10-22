@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import { obtenerRutinas } from "../services/rutinaService";
+import { obtenerRutinaPorUsuario } from "../services/rutinaService";
 import type { Rutina } from "../services/rutinaService";
 import {
   obtenerRecordatorio,
@@ -26,6 +26,7 @@ import {
   actualizarRecordatorio,
   eliminarRecordatorio,
 } from "../services/recordatorioService";
+import { useAppContext } from "../context/AppContext"; // ✅ agregado
 
 const frequencies = ["Diaria", "Semanal"];
 const daysOfWeek = [
@@ -56,6 +57,14 @@ const RecordatorioAdulto: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
+  const { usuarioActivo } = useAppContext();
+
+  // Redirigir si no hay usuario activo
+  useEffect(() => {
+    if (!usuarioActivo) {
+      navigate("/login");
+    }
+  }, [usuarioActivo, navigate]);
 
   // Determinar si estamos editando basándonos en la URL
   const isEditing = location.pathname.startsWith("/editar-recordatorio-adulto");
@@ -63,13 +72,18 @@ const RecordatorioAdulto: React.FC = () => {
 
   const title = isEditing ? "Editar Recordatorio" : "Agregar Recordatorio";
 
-  // Función para obtener datos del recordatorio
+  // ✅ Función para obtener datos del recordatorio
   const fetchRecordatorio = async (id: string) => {
+    if (!usuarioActivo?.id) {
+      setError("No hay un usuario activo.");
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
 
-      const rec = await obtenerRecordatorio(Number(id));
+      const rec = await obtenerRecordatorio(Number(usuarioActivo.id));
       console.log("Recordatorio data:", rec);
 
       // Establecer los valores por defecto con los datos del backend
@@ -89,10 +103,12 @@ const RecordatorioAdulto: React.FC = () => {
     }
   };
 
-  // Función para obtener todas las rutinas
+  // ✅ Función para obtener todas las rutinas
   const fetchAllRoutines = async () => {
     try {
-      const data = await obtenerRutinas();
+      if (!usuarioActivo?.id) return;
+
+      const data = await obtenerRutinaPorUsuario(Number(usuarioActivo.id));
       setRoutines(data);
     } catch (err) {
       console.error("Error fetching all routines:", err);
@@ -107,7 +123,7 @@ const RecordatorioAdulto: React.FC = () => {
     if (!isEditing) {
       fetchAllRoutines();
     }
-  }, [isEditing, idURL]);
+  }, [isEditing, idURL, usuarioActivo]);
 
   const handleSave = async () => {
     try {
@@ -115,7 +131,7 @@ const RecordatorioAdulto: React.FC = () => {
       setError(null);
 
       if (isEditing) {
-        const updateData: UpdateRecordatorioData = {
+        const updateData = {
           descripcion: description,
           frecuencia: frequency,
           hora: time,
@@ -128,7 +144,7 @@ const RecordatorioAdulto: React.FC = () => {
         console.log("Updating recordatorio data:", updateData);
         await actualizarRecordatorio(idrec, updateData);
       } else {
-        const createData: CreateRecordatorioData = {
+        const createData = {
           descripcion: description,
           frecuencia: frequency,
           hora: time,

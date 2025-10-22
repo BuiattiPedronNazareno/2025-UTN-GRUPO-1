@@ -3,6 +3,7 @@ using rutinadeldiaservidor.Data;
 using rutinadeldiaservidor.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using rutinadeldiaservidor.DTOs;
 
 namespace rutinadeldiaservidor.Controllers
 {
@@ -58,10 +59,32 @@ namespace rutinadeldiaservidor.Controllers
 
         // GET api/rutina/obtenerRutina/5
         [HttpGet("obtenerRutinaInfante/{id}")]
-        public async Task<ActionResult<IEnumerable<RutinaReadDTO>>> GetByUserId(int id)
+        public async Task<ActionResult<IEnumerable<RutinaReadDTO>>> GetByInfantId(int id)
         {
             var rutinas = await _context.Rutinas
                 .Where(r => r.InfanteId == id)
+                .Select(r => new RutinaReadDTO
+                {
+                    Id = r.Id,
+                    Nombre = r.Nombre,
+                    Imagen = r.Imagen,
+                    Estado = r.Estado,
+                    CategoriaId = r.CategoriaId,
+                    InfanteId = r.InfanteId
+                })
+                .ToListAsync();
+
+            return rutinas == null ? NotFound() : Ok(rutinas);
+        }
+
+        // GET api/rutina/obtenerRutina/5
+        [HttpGet("obtenerRutinaUsuario/{id}")]
+        public async Task<ActionResult<IEnumerable<RutinaReadDTO>>> GetByUserId(int id)
+        {
+            var rutinas = await _context.Rutinas
+                .Where(r => r.InfanteId != null &&
+                            _context.Infantes.Any(i => i.Id == r.InfanteId && i.UsuarioId == id)
+                            )
                 .Select(r => new RutinaReadDTO
                 {
                     Id = r.Id,
