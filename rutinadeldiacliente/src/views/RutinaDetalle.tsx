@@ -20,6 +20,7 @@ const RutinaDetalleInfante: React.FC = () => {
   const [pasos, setPasos] = useState<Paso[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [rutina, setRutina] = useState<Rutina | null>(null);
+  const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
     const fetchRutinaYPasos = async () => {
@@ -56,7 +57,13 @@ const RutinaDetalleInfante: React.FC = () => {
       }
 
       crearCancelacion(cancelacion);
-      navigate("/inicio");
+      setShowNotification(true);
+
+      // Ocultar después de 0.5 segundos y navegar
+      setTimeout(() => {
+        setShowNotification(false);
+        navigate("/inicio");
+      }, 2500);
     } catch (error) {
     console.error("Error al crear la cancelacion:", error);
     }
@@ -102,6 +109,7 @@ if (pasos.length === 0)
         <Typography variant="body1" sx={{ textAlign: "center" }}>
           No hay pasos disponibles para esta rutina.
         </Typography>
+        {showNotification && <div className="cancel-notification">Rutina cancelada</div>}
       </Container>
     );
 
@@ -182,6 +190,9 @@ if (pasos.length === 0)
           </Button>
         </Box>
       </Container>
+      {showNotification && (
+        <div className="cancel-notification">Rutina cancelada correctamente</div>
+      )}
     </Box>
   );
 };

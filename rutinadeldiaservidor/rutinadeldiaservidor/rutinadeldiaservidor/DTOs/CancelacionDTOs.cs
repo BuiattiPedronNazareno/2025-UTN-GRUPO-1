@@ -1,4 +1,4 @@
-﻿namespace rutinadeldiaservidor.Models
+﻿namespace rutinadeldiaservidor.DTOs
 {
     public abstract class CancelacionBaseDTO
     {
