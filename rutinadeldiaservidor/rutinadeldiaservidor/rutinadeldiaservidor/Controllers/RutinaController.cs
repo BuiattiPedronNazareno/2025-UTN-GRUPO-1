@@ -3,6 +3,7 @@ using rutinadeldiaservidor.Data;
 using rutinadeldiaservidor.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using rutinadeldiaservidor.DTOs;
 
 namespace rutinadeldiaservidor.Controllers
 {

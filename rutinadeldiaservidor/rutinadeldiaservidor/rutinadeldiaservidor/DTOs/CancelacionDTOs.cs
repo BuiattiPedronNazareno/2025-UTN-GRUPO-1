@@ -4,7 +4,7 @@
     {
         public DateTime fechaHora {  get; set; }
 
-        public int rutinaID { get; set; }
+        public int? rutinaID { get; set; }
     }
 
     public class CancelacionReadDTO : CancelacionBaseDTO { 

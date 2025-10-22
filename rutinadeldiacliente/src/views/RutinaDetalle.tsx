@@ -12,6 +12,7 @@ import "../styles/views/RutinaDetalle.scss";
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { crearCancelacion } from "../services/cancelacionService";
 
 const RutinaDetalleInfante: React.FC = () => {
   const navigate = useNavigate();
@@ -45,7 +46,21 @@ const RutinaDetalleInfante: React.FC = () => {
     console.log("Solicitando ayuda...")
   }
 
-  const handleCancelar = () => navigate("/inicio");
+  const handleCancelar = () => {
+    try {
+      if (!rutinaId) return;
+
+      const cancelacion ={
+        rutinaID: Number(rutinaId),
+        fechaHora: new Date()
+      }
+
+      crearCancelacion(cancelacion);
+      navigate("/inicio");
+    } catch (error) {
+    console.error("Error al crear la cancelacion:", error);
+    }
+  };
 
   const handleNext = () => {
   if (currentStep < pasos.length - 1) {
