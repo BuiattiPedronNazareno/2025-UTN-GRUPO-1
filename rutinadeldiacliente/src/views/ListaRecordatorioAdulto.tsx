@@ -169,7 +169,7 @@ const ListaRecordatorioAdulto: React.FC = () => {
             }}
           >
             {recordatorios.map((recordatorio) => (
-              <Card key={recordatorio.id} className={`recordatorio-card `}>
+              <Card key={recordatorio.id} className={`recordatorio-card `} >
                 <CardContent>
                   <Box
                     sx={{
@@ -180,25 +180,13 @@ const ListaRecordatorioAdulto: React.FC = () => {
                     }}
                   >
                     <Box sx={{ flex: 1 }}>
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                      >
-                        <NotificationsActive className="notification-icon" />
-                        <Typography
-                          variant="h6"
-                          component="h3"
-                          className="recordatorio-title"
-                        >
-                          {recordatorio.nombre}
-                        </Typography>
-                      </Box>
 
                       {recordatorio.descripcion && (
                         <Typography
                           variant="body2"
                           className="recordatorio-descripcion"
                         >
-                          {recordatorio.descripcion}
+                          <b>{recordatorio.descripcion}</b>
                         </Typography>
                       )}
 
@@ -219,8 +207,30 @@ const ListaRecordatorioAdulto: React.FC = () => {
                       </Box>
 
                       <Typography variant="body2" className="dias-text">
-                        📅 {recordatorio.diaSemana}
+                        📅 {recordatorio.frecuencia === "Semanal" ? recordatorio.diaSemana : '—'}
                       </Typography>
+                      <Typography variant="body2" className="dias-text">
+                        🔔 Sonido: {recordatorio.sonido || '—'}
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="body2" className="dias-text">🎨 Color:</Typography>
+                        {recordatorio.color ? (
+                          <span
+                            title={recordatorio.color}
+                            aria-label={`Color ${recordatorio.color}`}
+                            style={{
+                              width: 16,
+                              height: 16,
+                              borderRadius: '50%',
+                              display: 'inline-block',
+                              backgroundColor: recordatorio.color,
+                              border: '1px solid rgba(0,0,0,0.12)',
+                            }}
+                          />
+                        ) : (
+                          <Typography variant="body2">—</Typography>
+                        )}
+                      </Box>
                     </Box>
 
                     <Box className="recordatorio-actions">

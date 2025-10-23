@@ -69,7 +69,7 @@ const RecordatorioAdulto: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      const rec = await obtenerRecordatorio(Number(usuarioActivo.id));
+      const rec = await obtenerRecordatorio(Number(id));
       console.log("Recordatorio data:", rec);
 
       setIdrec(rec.id || 0);
@@ -107,6 +107,7 @@ const RecordatorioAdulto: React.FC = () => {
     if (!isEditing) {
       fetchAllRoutines();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEditing, idURL, usuarioActivo]);
 
   const handleSave = async () => {
