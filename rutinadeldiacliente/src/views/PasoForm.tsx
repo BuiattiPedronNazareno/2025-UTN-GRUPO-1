@@ -15,6 +15,7 @@ const PasoForm: React.FC = () => {
   const [descripcion, setDescripcion] = useState("");
   const [imagen, setImagen] = useState("");
   const [audio, setAudio] = useState("");
+  const [estado, setEstado] = useState("Activo");
 
   const audios = ["audio1.mp3", "audio2.mp3", "audio3.mp3"];
 
@@ -27,6 +28,7 @@ const PasoForm: React.FC = () => {
             setDescripcion(paso.descripcion);
             setImagen(paso.imagen);
             setAudio(paso.audio || "");
+            setEstado(paso.estado || "Activo");
           }
         })
         .catch((err) => console.error("Error cargando paso:", err));
@@ -37,7 +39,7 @@ const PasoForm: React.FC = () => {
     if (!rutinaId) return;
     try {
       if (pasoId) {
-        await actualizarPaso(Number(pasoId), { descripcion, imagen, audio, estado: "Activo" });
+        await actualizarPaso(Number(pasoId), { descripcion, imagen, audio, estado });
         alert("Paso actualizado con éxito");
       } else {
         await crearPaso({ descripcion, imagen, audio, rutinaId: Number(rutinaId) });
@@ -82,6 +84,14 @@ const PasoForm: React.FC = () => {
               {a}
             </option>
           ))}
+        </select>
+      </div>
+
+      <div className="form-group">
+        <label>Estado:</label>
+        <select value={estado} onChange={(e) => setEstado(e.target.value)}>
+          <option value="Activo">Activo</option>
+          <option value="Inactivo">Inactivo</option>
         </select>
       </div>
 
