@@ -67,11 +67,17 @@ const InicioInfante: React.FC = () => {
       try {
         const data = await obtenerRutinaPorInfante(infanteActivo.id)
         setRoutines(data)
-        // verificar recordatorios para cada rutina
+        // verificar recordatorios para cada rutina (pero ignorar rutinas ocultas)
         const map: Record<number, boolean> = {}
         await Promise.all(
           data.map(async (r) => {
             try {
+              // Si la rutina está Oculta, no la consideramos para recordatorios
+              if ((r.estado || "").trim().toLowerCase() === "oculta") {
+                map[r.id] = false
+                return
+              }
+
               const has = await verificarRecordatorio(r.id)
               map[r.id] = has
             } catch (err) {
@@ -81,16 +87,18 @@ const InicioInfante: React.FC = () => {
           })
         )
         setHasReminderMap(map)
-        // construir cola de recordatorios basados en el map (solo si existen)
+        // construir cola de recordatorios basados en el map (solo si existen) y solo para rutinas visibles
         // Mockear color y hora para cada recordatorio
-        const allReminders = data.filter(d => map[d.id]).map(d => ({
-          id: d.id,
-          title: `Recordatorio: ${d.nombre}`,
-          description: `Es el momento de realizar ${d.nombre}. Toca para ver los pasos.`,
-          visible: false,
-          color: '#ff0000', // color mock (puede cambiarse por valor del servicio)
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }))
+        const allReminders = data
+          .filter(d => map[d.id] && ((d.estado || "").trim().toLowerCase() !== "oculta"))
+          .map(d => ({
+            id: d.id,
+            title: `Recordatorio: ${d.nombre}`,
+            description: `Es el momento de realizar ${d.nombre}. Toca para ver los pasos.`,
+            visible: false,
+            color: '#ff0000', // color mock (puede cambiarse por valor del servicio)
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          }))
 
         // filtrar recordatorios ya manejados (persistidos en localStorage)
         const handled = getHandledReminders()
@@ -196,58 +204,60 @@ const InicioInfante: React.FC = () => {
             mt: 4
           }}
         >
-          {routines.map((routine) => (
-            <Box
-              key={routine.id}
-              sx={{
-                width: { xs: '100%', sm: '48%' },
-                maxWidth: '400px'
-              }}
-            >
-              <Card
-                className="routine-card"
-                onClick={() => handleRoutineClick(routine.id)}
+          {routines
+            .filter((routine) => (routine.estado || "").toLowerCase() !== "oculta")
+            .map((routine) => (
+              <Box
+                key={routine.id}
                 sx={{
-                  backgroundColor: "#3E8596",
-                  cursor: "pointer",
-                  "&:hover": { transform: "scale(1.02)" },
-                  height: '100%',
-                  position: 'relative', // para que el icono absolute quede relativo a la card
-                  overflow: 'hidden'
+                  width: { xs: '100%', sm: '48%' },
+                  maxWidth: '400px'
                 }}
               >
-                {/* icono de recordatorio en la esquina superior derecha si existe */}
-                {hasReminderMap[routine.id] && (
-                  <IconButton
-                    aria-label="recordatorio activo"
-                    size="small"
-                    sx={{
-                      position: 'absolute',
-                      right: 8,
-                      top: 8,
-                      color: '#FFD54F',
-                      zIndex: 2
-                    }}
-                    onClick={(e) => { e.stopPropagation(); navigate(`/recordatorio-infante/${routine.id}`); }}
-                  >
-                    <NotificationsActiveIcon />
-                  </IconButton>
-                )}
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={routine.imagen || "/placeholder.svg"}
-                  alt={routine.nombre}
-                  className="routine-image"
-                />
-                <CardContent>
-                  <Typography variant="h6" component="h3" className="routine-title">
-                    {routine.nombre}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Box>
-          ))}
+                <Card
+                  className="routine-card"
+                  onClick={() => handleRoutineClick(routine.id)}
+                  sx={{
+                    backgroundColor: "#3E8596",
+                    cursor: "pointer",
+                    "&:hover": { transform: "scale(1.02)" },
+                    height: '100%',
+                    position: 'relative', // para que el icono absolute quede relativo a la card
+                    overflow: 'hidden'
+                  }}
+                >
+                  {/* icono de recordatorio en la esquina superior derecha si existe */}
+                  {hasReminderMap[routine.id] && (
+                    <IconButton
+                      aria-label="recordatorio activo"
+                      size="small"
+                      sx={{
+                        position: 'absolute',
+                        right: 8,
+                        top: 8,
+                        color: '#FFD54F',
+                        zIndex: 2
+                      }}
+                      onClick={(e) => { e.stopPropagation(); navigate(`/recordatorio-infante/${routine.id}`); }}
+                    >
+                      <NotificationsActiveIcon />
+                    </IconButton>
+                  )}
+                  <CardMedia
+                    component="img"
+                    height="200"
+                    image={routine.imagen || "/placeholder.svg"}
+                    alt={routine.nombre}
+                    className="routine-image"
+                  />
+                  <CardContent>
+                    <Typography variant="h6" component="h3" className="routine-title">
+                      {routine.nombre}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Box>
+            ))}
         </Box>
 
         <Box className="help-section" sx={{ textAlign: "center", mt: 4 }}>

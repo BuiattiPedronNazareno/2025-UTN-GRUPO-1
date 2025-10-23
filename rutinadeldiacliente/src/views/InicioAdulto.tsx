@@ -13,6 +13,8 @@ import {
   Box,
   Button,
   IconButton,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import {
   Settings,
@@ -41,6 +43,8 @@ const InicioAdulto: React.FC = () => {
   const [tutorialMode, setTutorialMode] = useState<"adulto" | "infante">("adulto");
   const [autoStartTutorial, setAutoStartTutorial] = useState(false);
   const [firstMandatoryModule, setFirstMandatoryModule] = useState<number>(1)
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
 
 
@@ -98,34 +102,34 @@ const InicioAdulto: React.FC = () => {
     fetchRutinas();
   }, []);
 
-useEffect(() => {
-  const checkTutorial = async () => {
-    if (!usuarioActivo) return;
+  useEffect(() => {
+    const checkTutorial = async () => {
+      if (!usuarioActivo) return;
 
-    try {
-      const status = await obtenerTutorialStatus(usuarioActivo.id);
-      if (status.showAdultTutorial) {
-        setTutorialMode("adulto");
-        setShowTutorial(true);
-        setAutoStartTutorial(true);
+      try {
+        const status = await obtenerTutorialStatus(usuarioActivo.id);
+        if (status.showAdultTutorial) {
+          setTutorialMode("adulto");
+          setShowTutorial(true);
+          setAutoStartTutorial(true);
 
-        // El primer módulo obligatorio ya está definido por defecto
-        // Se marca como completado en el backend
-        await completarTutorial(usuarioActivo.id);
+          // El primer módulo obligatorio ya está definido por defecto
+          // Se marca como completado en el backend
+          await completarTutorial(usuarioActivo.id);
+        }
+      } catch (error) {
+        console.error("Error verificando tutorial adulto:", error);
       }
-    } catch (error) {
-      console.error("Error verificando tutorial adulto:", error);
-    }
-  };
+    };
 
-  checkTutorial();
-}, [usuarioActivo]);
+    checkTutorial();
+  }, [usuarioActivo]);
 
 
 
 
   const handleRoutineEdit = (routineId: number) => {
-  navigate(`/editar-rutina/${routineId}`);
+    navigate(`/editar-rutina/${routineId}`);
   };
 
   const handleCreateRoutine = () => {
@@ -142,21 +146,35 @@ useEffect(() => {
   };
 
   const handleCambiarEstadoRutina = async (routineId: number, estadoActual: string) => {
-  try {
-    const estadoNuevo = estadoActual.trim().toLowerCase() === "activa" ? "Oculta" : "Activa";
+    try {
+      const isCurrentlyActive = (estadoActual || "").trim().toLowerCase() === "activa";
 
-    const rutinaActualizada = await cambiarVisibilidadRutina(routineId, {
-      estado: estadoNuevo,
-    });
+      // Si se intenta ocultar y solo queda una rutina activa, bloquear la acción
+      if (isCurrentlyActive) {
+        const activeCount = routines.reduce((count, r) => {
+          return count + ((r.estado || "").trim().toLowerCase() === "activa" ? 1 : 0);
+        }, 0);
 
-    setRoutines((prev) =>
-      prev.map((r) =>
-        r.id === routineId ? { ...r, estado: rutinaActualizada.estado } : r
-      )
-    );
-  } catch (error) {
-    console.error("Error al actualizar rutina:", error);
-  }
+        if (activeCount <= 1) {
+          // Mostrar snackbar estético en lugar de alert
+          setSnackbarMessage("No puedes ocultar la última rutina activa. Debe haber al menos una rutina en estado 'Activa'.");
+          setSnackbarOpen(true);
+          return;
+        }
+      }
+
+      const estadoNuevo = isCurrentlyActive ? "Oculta" : "Activa";
+
+      const rutinaActualizada = await cambiarVisibilidadRutina(routineId, {
+        estado: estadoNuevo,
+      });
+
+      setRoutines((prev) =>
+        prev.map((r) => (r.id === routineId ? { ...r, estado: rutinaActualizada.estado } : r))
+      );
+    } catch (error) {
+      console.error("Error al actualizar rutina:", error);
+    }
   };
 
   return (
@@ -198,7 +216,7 @@ useEffect(() => {
           }}
         >
           {routines.map((routine) => (
-            
+
             <Box
               key={routine.id}
               sx={{
@@ -207,7 +225,7 @@ useEffect(() => {
               }}
             >
               <Card
-                className="routine-card"
+                className={"routine-card " + ((routine.estado || "").toLowerCase() === "oculta" ? "routine-card--hidden" : "")}
                 sx={{
                   backgroundColor: "#4A90A4",
                   cursor: "pointer",
@@ -243,7 +261,7 @@ useEffect(() => {
                     </Typography>
 
                     <Box className="routine-actions">
-                     <IconButton
+                      <IconButton
                         onClick={() =>
                           handleCambiarEstadoRutina(routine.id, routine.estado ?? "Activa")
                         }
@@ -324,6 +342,25 @@ useEffect(() => {
           </Button>
         </Box>
       </Container>
+
+      {/* Snackbar estético para advertencias */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={(_e, reason) => {
+          if (reason === 'clickaway') return;
+          setSnackbarOpen(false);
+        }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity="warning"
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
 
       <TutorialWizard
         open={showTutorial}
