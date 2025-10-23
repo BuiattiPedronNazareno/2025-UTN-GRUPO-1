@@ -21,8 +21,9 @@ import {
   NotificationsActive,
 } from "@mui/icons-material";
 import "../styles/views/InicioAdulto.scss";
-import { obtenerRutinas, cambiarVisibilidadRutina } from "../services/rutinaService";
+import { obtenerRutinaPorInfante, cambiarVisibilidadRutina } from "../services/rutinaService";
 import type { Rutina } from "../services/rutinaService";
+import { obtenerInfantesPorUsuario } from "../services/infanteService";
 import { verificarRecordatorio } from "../services/recordatorioService";
 import { obtenerTutorialStatus, completarTutorial } from "../services/UsuarioService";
 import { useAppContext } from "../context/AppContext";
@@ -41,19 +42,49 @@ const InicioAdulto: React.FC = () => {
   const [firstMandatoryModule, setFirstMandatoryModule] = useState<number>(1)
 
 
+
   useEffect(() => {
     const fetchRutinas = async () => {
       try {
-        const data = await obtenerRutinas();
-        
-        setRoutines(data);
+        if (!usuarioActivo) return;
 
-        // después de obtener rutinas, verificamos recordatorios
+        console.log("Buscando infantes del usuario:", usuarioActivo.id);
+        const infantes = await obtenerInfantesPorUsuario(usuarioActivo.id);
+
+        if (!Array.isArray(infantes) || infantes.length === 0) {
+          console.warn("El usuario no tiene infantes registrados.");
+          setRoutines([]);
+          return;
+        }
+
+        // ✅ Obtener rutinas de todos los infantes
+        const data = await Promise.all(
+          infantes.map(async (infante) => {
+            try {
+              const rutinas = await obtenerRutinaPorInfante(infante.id);
+              console.log(`Rutinas del infante ${infante.nombre}:`, rutinas);
+              return Array.isArray(rutinas) ? rutinas : [];
+            } catch (error) {
+              console.error(`Error al obtener rutinas del infante ${infante.id}:`, error);
+              return [];
+            }
+          })
+        );
+
+        // ✅ Aplanar el array de arrays (Rutina[][] → Rutina[])
+        const todasLasRutinas = data.flat();
+        setRoutines(todasLasRutinas);
+
+        // ✅ Verificar recordatorios solo sobre rutinas válidas
         const results = await Promise.all(
-          data.map(async (routine) => {
-            const tiene = await verificarRecordatorio(routine.id);
-            return tiene ? routine.id : null;
-          }),
+          todasLasRutinas.map(async (routine) => {
+            try {
+              const tiene = await verificarRecordatorio(routine.id);
+              return tiene ? routine.id : null;
+            } catch {
+              return null;
+            }
+          })
         );
 
         // guardamos solo los ids que tienen recordatorio

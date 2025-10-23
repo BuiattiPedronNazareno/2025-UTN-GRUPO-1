@@ -7,7 +7,7 @@ import { Container, Card, CardContent, CardMedia, Typography, Box } from "@mui/m
 import NavBar from "../components/NavBar"
 import HelpButton from "../components/HelpButton"
 import "../styles/views/InicioInfante.scss"
-import { obtenerRutinas } from "../services/rutinaService"
+import { obtenerRutinaPorInfante } from "../services/rutinaService"
 import type { Rutina } from "../services/rutinaService"
 import "../styles/components/RoutineCard.scss";
 import "../styles/components/MainActionButton.scss";
@@ -22,12 +22,13 @@ const InicioInfante: React.FC = () => {
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialMode, setTutorialMode] = useState<"adulto" | "infante">("infante");
   const [autoStartTutorial, setAutoStartTutorial] = useState(false);
-  const [firstMandatoryModule, setFirstMandatoryModule] = useState<number>(1)
+  const [firstMandatoryModule] = useState<number>(1)
 
   useEffect(() => {
     const fetchRutinas = async () => {
+      if (!infanteActivo) return;
       try {
-        const data = await obtenerRutinas()
+        const data = await obtenerRutinaPorInfante(infanteActivo.id)
         setRoutines(data)
       } catch (error) {
         console.error("Error al obtener rutinas:", error)

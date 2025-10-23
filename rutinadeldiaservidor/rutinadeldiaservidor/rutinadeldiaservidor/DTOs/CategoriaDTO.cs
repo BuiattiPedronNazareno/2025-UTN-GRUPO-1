@@ -1,16 +1,16 @@
 ﻿namespace rutinadeldiaservidor.DTOs
 {
-    public class CategoriaDTO
+    public abstract class CategoriaBaseDTO
     {
-        public class CategoriaReadDTO
-        {
-            public int Id { get; set; }
-            public string Descripcion { get; set; }
-        }
-
-        public class CategoriaCreateDTO
-        {
-            public string Descripcion { get; set; }
-        }
+        public string Descripcion { get; set; }
     }
+    public class CategoriaReadDTO : CategoriaBaseDTO
+    {
+        public int Id { get; set; }
+    }
+
+    public class CategoriaCreateDTO : CategoriaBaseDTO
+    {
+    }
+    
 }

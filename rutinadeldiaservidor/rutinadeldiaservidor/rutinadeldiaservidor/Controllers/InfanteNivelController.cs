@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using rutinadeldiaservidor.Data;
+using rutinadeldiaservidor.DTOs;
 using rutinadeldiaservidor.Models;
 
 namespace rutinadeldiaservidor.Controllers

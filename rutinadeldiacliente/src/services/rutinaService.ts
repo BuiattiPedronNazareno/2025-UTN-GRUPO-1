@@ -29,6 +29,19 @@ export const obtenerRutinaPorId = async (id: number): Promise<Rutina> => {
   return response.data;
 };
 
+export const obtenerRutinaPorInfante = async (infanteId: number): Promise<Rutina[]> => {
+  console.log("Obteniendo rutinas para infante ID:", infanteId);
+  const response = await api.get<Rutina[]>(`/Rutina/obtenerRutinaInfante/${infanteId}`);
+  return response.data;
+};
+
+export const obtenerRutinaPorUsuario = async (usuarioId: number): Promise<Rutina[]> => {
+  console.log("Obteniendo rutinas para usuario ID:", usuarioId);
+  const response = await api.get<Rutina[]>(`/Rutina/obtenerRutinaUsuario/${usuarioId}`);
+  console.log("Respuesta de obtenerRutinaPorUsuario:", response.data);
+  return response.data;
+};
+
 // Actualizar rutina
 export const actualizarRutina = async (
   id: number,
