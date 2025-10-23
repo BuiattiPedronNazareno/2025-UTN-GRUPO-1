@@ -1,0 +1,217 @@
+// Ajusta la ruta según tu estructura de carpetas
+// Si RecordatorioAdulto.scss está en styles/views/, usa:
+// @use '../variables';
+// Si está en otra ubicación, ajusta la ruta
+
+.recordatorio-adulto-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #C5E1DA;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  h2 {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2C3E50;
+    margin: 0;
+  }
+
+  .error-message {
+    background-color: #E74C3C;
+    color: #FFFFFF;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 0.5rem;
+    min-width: 200px;
+
+    &.full-width {
+      flex: 1 1 100%;
+    }
+
+    label {
+      font-weight: 600;
+      color: #2C3E50;
+      font-size: 1rem;
+    }
+
+    input,
+    select {
+      padding: 0.5rem;
+      border-radius: 6px;
+      border: 1px solid #888;
+      font-size: 1rem;
+      background-color: #FFFFFF;
+      color: #2C3E50;
+      transition: border-color 0.3s ease;
+
+      &:focus {
+        outline: none;
+        border-color: #4A90A4;
+      }
+
+      &:disabled {
+        background-color: #e0e0e0;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+    }
+
+    input[type="time"] {
+      cursor: pointer;
+    }
+
+    .color-picker-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.5rem;
+      background-color: #FFFFFF;
+      border: 1px solid #888;
+      border-radius: 6px;
+      transition: border-color 0.3s ease;
+
+      &:focus-within {
+        border-color: #4A90A4;
+      }
+
+      .color-picker {
+        width: 60px;
+        height: 40px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        padding: 0;
+
+        &::-webkit-color-swatch-wrapper {
+          padding: 0;
+        }
+
+        &::-webkit-color-swatch {
+          border: 2px solid #888;
+          border-radius: 4px;
+        }
+      }
+
+      .color-value {
+        font-family: monospace;
+        font-weight: 600;
+        color: #2C3E50;
+        font-size: 0.95rem;
+      }
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+
+    button {
+      flex: 1;
+      border: none;
+      padding: 0.8rem 1rem;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      &:not(:disabled):hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+    }
+
+    .volver-btn {
+      background-color: #FBC02D;
+      color: #FFFFFF;
+
+      &:hover:not(:disabled) {
+        background-color: #FFD54F;
+      }
+    }
+
+    .guardar-btn {
+      background-color: #43A047;
+      color: #FFFFFF;
+
+      &:hover:not(:disabled) {
+        background-color: #66BB6A;
+      }
+    }
+
+    .eliminar-btn {
+      background-color: #E74C3C;
+      color: #FFFFFF;
+
+      &:hover:not(:disabled) {
+        background-color: #ef5350;
+      }
+    }
+  }
+
+  // Estilos responsive
+  @media (max-width: 768px) {
+    margin: 1rem;
+    padding: 1.5rem;
+
+    h2 {
+      font-size: 1.5rem;
+    }
+
+    .form-row {
+      gap: 1rem;
+    }
+
+    .form-group {
+      flex: 1 1 100%;
+      min-width: unset;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #BFDBD8;
+}

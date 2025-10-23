@@ -13,6 +13,7 @@ import CrearRutina from "../views/crearRutina";
 import CrearPaso from "../views/crearPaso";
 import RutinaDetalleInfante from "../views/RutinaDetalle";
 import RecordatorioAdulto from "../views/RecordatorioAdulto";
+import RecordatorioDetalleInfante from "../views/RecordatorioDetalleInfante";
 import ListaRecordatorioAdulto from "../views/ListaRecordatorioAdulto";
 import EditarRutina from "../views/EditarRutina";
 import PasoForm from "../views/PasoForm";
@@ -80,6 +81,10 @@ export const router = createBrowserRouter([
     element: <ListaRecordatorioAdulto />,
   },
   {
+    path: "/recordatorio-infante/:rutinaId",
+    element: <RecordatorioDetalleInfante />,
+  },
+  {
     path: "/recordatorio-adulto",
     element: <RecordatorioAdulto />,
   },
@@ -87,7 +92,8 @@ export const router = createBrowserRouter([
     path: "/editar-recordatorio-adulto/:id",
     element: <RecordatorioAdulto />,
   },
-  { path: "/crear-rutina-precargada",
+  {
+    path: "/crear-rutina-precargada",
     element: <CrearRutinaPrecargada />
   },
 

@@ -28,70 +28,6 @@ import {
 } from "../services/recordatorioService";
 import type { Rutina, Recordatorio } from "../services/recordatorioService";
 
-// // 🔹 Tipos de datos
-// interface Rutina {
-//   id: number;
-//   nombre: string;
-//   imagen: string;
-// }
-//
-// interface Recordatorio {
-//   id: number;
-//   rutinaId: number;
-//   nombre: string;
-//   descripcion: string;
-//   hora: string;
-//   diaSemana: string;
-//   fechaCreacion: string;
-// }
-//
-// // 🔹 Función para obtener recordatorios de una rutina específica
-// const obtenerRecordatoriosPorRutina = async (
-//   rutinaId: number,
-// ): Promise<Recordatorio[]> => {
-//   try {
-//     const res = await fetch(
-//       `http://localhost:5012/Recordatorio/porRutina/${rutinaId}`,
-//     );
-//     if (!res.ok) throw new Error("Error al obtener recordatorios");
-//
-//     const data = await res.json();
-//     return Array.isArray(data) ? data : [];
-//   } catch (error) {
-//     console.error("Error obteniendo recordatorios:", error);
-//     return [];
-//   }
-// };
-//
-// // 🔹 Función para obtener información de una rutina específica
-// const obtenerRutinaPorId = async (rutinaId: number): Promise<Rutina | null> => {
-//   try {
-//     const res = await fetch(`http://localhost:5012/Rutina/${rutinaId}`);
-//     if (!res.ok) throw new Error("Error al obtener rutina");
-//
-//     const data = await res.json();
-//     return data;
-//   } catch (error) {
-//     console.error("Error obteniendo rutina:", error);
-//     return null;
-//   }
-// };
-//
-// // 🔹 Función para eliminar recordatorio
-// const eliminarRecordatorio = async (rutinaId: number): Promise<boolean> => {
-//   try {
-//     const res = await fetch(
-//       `http://localhost:5012/Recordatorio/eliminarRecordatorio/${rutinaId}`,
-//       {
-//         method: "DELETE",
-//       },
-//     );
-//     return res.ok;
-//   } catch (error) {
-//     console.error("Error eliminando recordatorio:", error);
-//     return false;
-//   }
-// };
 
 const ListaRecordatorioAdulto: React.FC = () => {
   const navigate = useNavigate();
@@ -233,7 +169,7 @@ const ListaRecordatorioAdulto: React.FC = () => {
             }}
           >
             {recordatorios.map((recordatorio) => (
-              <Card key={recordatorio.id} className={`recordatorio-card `}>
+              <Card key={recordatorio.id} className={`recordatorio-card `} >
                 <CardContent>
                   <Box
                     sx={{
@@ -244,25 +180,13 @@ const ListaRecordatorioAdulto: React.FC = () => {
                     }}
                   >
                     <Box sx={{ flex: 1 }}>
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                      >
-                        <NotificationsActive className="notification-icon" />
-                        <Typography
-                          variant="h6"
-                          component="h3"
-                          className="recordatorio-title"
-                        >
-                          {recordatorio.nombre}
-                        </Typography>
-                      </Box>
 
                       {recordatorio.descripcion && (
                         <Typography
                           variant="body2"
                           className="recordatorio-descripcion"
                         >
-                          {recordatorio.descripcion}
+                          <b>{recordatorio.descripcion}</b>
                         </Typography>
                       )}
 
@@ -283,8 +207,30 @@ const ListaRecordatorioAdulto: React.FC = () => {
                       </Box>
 
                       <Typography variant="body2" className="dias-text">
-                        📅 {recordatorio.diaSemana}
+                        📅 {recordatorio.frecuencia === "Semanal" ? recordatorio.diaSemana : '—'}
                       </Typography>
+                      <Typography variant="body2" className="dias-text">
+                        🔔 Sonido: {recordatorio.sonido || '—'}
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="body2" className="dias-text">🎨 Color:</Typography>
+                        {recordatorio.color ? (
+                          <span
+                            title={recordatorio.color}
+                            aria-label={`Color ${recordatorio.color}`}
+                            style={{
+                              width: 16,
+                              height: 16,
+                              borderRadius: '50%',
+                              display: 'inline-block',
+                              backgroundColor: recordatorio.color,
+                              border: '1px solid rgba(0,0,0,0.12)',
+                            }}
+                          />
+                        ) : (
+                          <Typography variant="body2">—</Typography>
+                        )}
+                      </Box>
                     </Box>
 
                     <Box className="recordatorio-actions">
