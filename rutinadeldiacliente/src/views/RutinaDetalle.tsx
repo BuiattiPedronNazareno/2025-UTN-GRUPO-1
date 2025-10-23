@@ -24,21 +24,25 @@ const RutinaDetalleInfante: React.FC = () => {
 
   useEffect(() => {
     const fetchRutinaYPasos = async () => {
-  try {
-    if (!rutinaId) return;
+      try {
+        if (!rutinaId) return;
 
-    const [rutinaData, pasosData] = await Promise.all([
-      obtenerRutinaPorId(Number(rutinaId)),
-      obtenerPasosPorRutina(Number(rutinaId)).catch(() => []), 
-    ]);
+        const [rutinaData, pasosData] = await Promise.all([
+          obtenerRutinaPorId(Number(rutinaId)),
+          obtenerPasosPorRutina(Number(rutinaId)).catch(() => []),
+        ]);
 
-    setRutina(rutinaData);
-    setPasos(pasosData);
+        setRutina(rutinaData);
+        // Filtrar solo pasos con estado 'Activo' (si estado es undefined, asumimos 'Activo')
+        const pasosActivos = pasosData.filter((p: Paso) => p.estado === 'Activo');
+        setPasos(pasosActivos);
+        // Asegurar que currentStep esté en rango
+        setCurrentStep(0);
 
-  } catch (error) {
-    console.error("Error al obtener rutina o pasos:", error);
-  }
-};
+      } catch (error) {
+        console.error("Error al obtener rutina o pasos:", error);
+      }
+    };
 
     fetchRutinaYPasos();
   }, [rutinaId]);
@@ -51,7 +55,7 @@ const RutinaDetalleInfante: React.FC = () => {
     try {
       if (!rutinaId) return;
 
-      const cancelacion ={
+      const cancelacion = {
         rutinaID: Number(rutinaId),
         fechaHora: new Date()
       }
@@ -65,44 +69,44 @@ const RutinaDetalleInfante: React.FC = () => {
         navigate("/inicio");
       }, 2500);
     } catch (error) {
-    console.error("Error al crear la cancelacion:", error);
+      console.error("Error al crear la cancelacion:", error);
     }
   };
 
   const handleNext = () => {
-  if (currentStep < pasos.length - 1) {
-    setCurrentStep(currentStep + 1);
-  } else {
-    // Último paso, finalizar rutina
-    navigate("/inicio");
-  }
-};
+    if (currentStep < pasos.length - 1) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      // Último paso, finalizar rutina
+      navigate("/inicio");
+    }
+  };
 
 
   const handlePrev = () => {
     if (currentStep > 0) setCurrentStep(currentStep - 1);
   };
 
-if (pasos.length === 0)
+  if (pasos.length === 0)
     return (
       <Container maxWidth="sm" sx={{ mt: 4 }}>
         <Button
-        variant="contained"
-        fullWidth
-        sx={{
-          mb: 3,
-          backgroundColor: "#64B5F6", // azul suave
-          color: "white",
-          borderRadius: 2,
-          py: 1.5,
-          "&:hover": {
-            backgroundColor: "#42A5F5",
-          },
-        }}
-        onClick={handleCancelar}
-      >
-        Volver
-      </Button>
+          variant="contained"
+          fullWidth
+          sx={{
+            mb: 3,
+            backgroundColor: "#64B5F6", // azul suave
+            color: "white",
+            borderRadius: 2,
+            py: 1.5,
+            "&:hover": {
+              backgroundColor: "#42A5F5",
+            },
+          }}
+          onClick={handleCancelar}
+        >
+          Volver
+        </Button>
         <Typography variant="h5" component="h2" sx={{ textAlign: "center", mb: 2 }}>
           {rutina?.nombre || "Rutina"}
         </Typography>
