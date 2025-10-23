@@ -1,0 +1,100 @@
+.reminder-notification {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(90deg, #fff8e1, #fffde7);
+    border: 1px solid #ffe082;
+    border-radius: 10px;
+    padding: 10px 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.reminder-notification.overlay {
+    /* the container (.reminder-overlay-container) is fixed; individual notifications should not be fixed to allow stacking */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* contenedor para apilar múltiples notificaciones */
+.reminder-overlay-container {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    z-index: 1200;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 340px;
+}
+
+/* animación de entrada breve */
+@keyframes reminder-in {
+    0% {
+        transform: translateY(-10px) scale(0.98);
+        opacity: 0;
+    }
+
+    60% {
+        transform: translateY(4px) scale(1.01);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.stack-item {
+    animation: reminder-in 360ms cubic-bezier(.2, .8, .2, 1);
+    animation-fill-mode: both;
+    /* keep final state */
+}
+
+.reminder-icon {
+    margin-right: 12px;
+}
+
+.reminder-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.reminder-color-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.reminder-content {
+    flex: 1 1 auto;
+    min-height: 42px;
+    /* helps avoid layout jump when animation finishes */
+}
+
+.reminder-title {
+    font-weight: 600;
+}
+
+.reminder-desc {
+    color: #5f6368;
+}
+
+.reminder-time {
+    color: #606770;
+    display: block;
+    margin-top: 4px;
+}
+
+.reminder-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 8px;
+}
+
+
+.reminder-close {
+    color: #7a7a7a;
+}

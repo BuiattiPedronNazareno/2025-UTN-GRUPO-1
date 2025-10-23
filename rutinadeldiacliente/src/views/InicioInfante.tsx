@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import { Container, Card, CardContent, CardMedia, Typography, Box, IconButton } from "@mui/material"
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive'
@@ -14,6 +14,7 @@ import { verificarRecordatorio } from "../services/recordatorioService"
 import { obtenerTutorialStatusInfante, completarTutorialInfante } from "../services/infanteService"
 import { useAppContext } from "../context/AppContext";
 import TutorialWizard from "../components/TutorialWizard";
+import ReminderNotification from "../components/ReminderNotification";
 
 const InicioInfante: React.FC = () => {
   const navigate = useNavigate()
@@ -24,6 +25,40 @@ const InicioInfante: React.FC = () => {
   const [tutorialMode, setTutorialMode] = useState<"adulto" | "infante">("infante");
   const [autoStartTutorial, setAutoStartTutorial] = useState(false);
   const [firstMandatoryModule] = useState<number>(1)
+  const [showReminderOverlay, setShowReminderOverlay] = useState<boolean>(true);
+  const [queuedReminders, setQueuedReminders] = useState<Array<{ id: number, title: string, description: string, visible: boolean, color?: string, time?: string }>>([]);
+
+  // helpers para persistir recordatorios manejados entre visitas usando cookies
+  const HANDLED_KEY = 'handled_reminders'
+
+  const getCookie = (name: string): string | null => {
+    const cookies = document.cookie ? document.cookie.split('; ') : []
+    const found = cookies.find(c => c.startsWith(name + '='))
+    return found ? decodeURIComponent(found.split('=')[1]) : null
+  }
+
+  const setCookie = (name: string, value: string, days = 365) => {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString()
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`
+  }
+
+  const getHandledReminders = useCallback((): number[] => {
+    try {
+      const raw = getCookie(HANDLED_KEY)
+      if (!raw) return []
+      return JSON.parse(raw) as number[]
+    } catch {
+      return []
+    }
+  }, [])
+
+  const setHandledReminders = useCallback((ids: number[]) => {
+    try {
+      setCookie(HANDLED_KEY, JSON.stringify(ids), 365)
+    } catch {
+      // ignore
+    }
+  }, [])
 
 
   useEffect(() => {
@@ -46,13 +81,39 @@ const InicioInfante: React.FC = () => {
           })
         )
         setHasReminderMap(map)
+        // construir cola de recordatorios basados en el map (solo si existen)
+        // Mockear color y hora para cada recordatorio
+        const allReminders = data.filter(d => map[d.id]).map(d => ({
+          id: d.id,
+          title: `Recordatorio: ${d.nombre}`,
+          description: `Es el momento de realizar ${d.nombre}. Toca para ver los pasos.`,
+          visible: false,
+          color: '#ff0000', // color mock (puede cambiarse por valor del servicio)
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }))
+
+        // filtrar recordatorios ya manejados (persistidos en localStorage)
+        const handled = getHandledReminders()
+        const reminders = allReminders.filter(r => !handled.includes(r.id))
+        setQueuedReminders(reminders)
       } catch (error) {
         console.error("Error al obtener rutinas:", error)
       }
     }
 
     fetchRutinas()
-  }, [infanteActivo])
+  }, [infanteActivo, getHandledReminders])
+
+  // cuando la cola cambia, esperar 5s y luego mostrar todas las notificaciones (apiladas)
+  useEffect(() => {
+    if (!queuedReminders || queuedReminders.length === 0) return;
+
+    const timer = setTimeout(() => {
+      setQueuedReminders(prev => prev.map(r => ({ ...r, visible: true })))
+    }, 5000)
+
+    return () => clearTimeout(timer)
+  }, [queuedReminders])
 
   useEffect(() => {
     const checkTutorial = async () => {
@@ -96,6 +157,35 @@ const InicioInfante: React.FC = () => {
       <NavBar title="Mis Rutinas" showSettingsButton={true} onSettingsClick={handleSettingsClick} />
 
       <Container component="main" className="main-content" maxWidth="md">
+        {/* Overlay de notificación de recordatorio: aparece sobre la página y puede cerrarse. Se muestran apiladas. */}
+        {showReminderOverlay && queuedReminders.length > 0 && (
+          <Box className="reminder-overlay-container">
+            {[...queuedReminders].slice().reverse().map((rem) => (
+              rem.visible && (
+                <Box key={rem.id} className="stack-item">
+                  <ReminderNotification
+                    className="overlay"
+                    title={rem.title}
+                    description={rem.description}
+                    time={rem.time}
+                    color={rem.color}
+                    onOpen={() => {
+                      // marcar como manejada y persistir
+                      const handled = getHandledReminders()
+                      const updated = Array.from(new Set([...handled, rem.id]))
+                      setHandledReminders(updated)
+                      // remover de la lista mostrada y navegar
+                      setQueuedReminders(prev => prev.filter(p => p.id !== rem.id))
+                      setShowReminderOverlay(false)
+                      navigate(`/rutina/${rem.id}/pasos`)
+                    }}
+                    onClose={() => setQueuedReminders(prev => prev.filter(p => p.id !== rem.id))}
+                  />
+                </Box>
+              )
+            ))}
+          </Box>
+        )}
         <Box
           className="routines-container"
           sx={{
