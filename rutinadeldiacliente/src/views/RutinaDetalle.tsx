@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Box, Container, Card, CardContent, Typography, Button } from "@mui/material";
+import { Box, Container, Card, CardContent, Typography, Button, CircularProgress } from "@mui/material";
 import HelpButton from "../components/HelpButton";
 import { obtenerPasosPorRutina } from "../services/pasoService";
 import { obtenerRutinaPorId } from "../services/rutinaService";
@@ -21,12 +21,13 @@ const RutinaDetalleInfante: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [rutina, setRutina] = useState<Rutina | null>(null);
   const [showNotification, setShowNotification] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchRutinaYPasos = async () => {
       try {
         if (!rutinaId) return;
-
+        setIsLoading(true);
         const [rutinaData, pasosData] = await Promise.all([
           obtenerRutinaPorId(Number(rutinaId)),
 
@@ -35,7 +36,7 @@ const RutinaDetalleInfante: React.FC = () => {
 
         setRutina(rutinaData);
         // Filtrar solo pasos con estado 'Activo' (si estado es undefined, asumimos 'Activo')
-        const pasosActivos = pasosData.filter((p: Paso) => p.estado === 'Activo');
+        const pasosActivos = pasosData.filter((p: Paso) => p.estado?.toLowerCase() === 'activo');
         setPasos(pasosActivos);
         // Asegurar que currentStep esté en rango
         setCurrentStep(0);
@@ -43,6 +44,8 @@ const RutinaDetalleInfante: React.FC = () => {
 
       } catch (error) {
         console.error("Error al obtener rutina o pasos:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -90,8 +93,19 @@ const RutinaDetalleInfante: React.FC = () => {
   const handlePrev = () => {
     if (currentStep > 0) setCurrentStep(currentStep - 1);
   };
-
-  if (pasos.length === 0)
+  
+  if (isLoading) {
+  return (
+    <Container maxWidth="sm" sx={{ mt: 4, textAlign: "center" }}>
+      <CircularProgress /> {/* Importar de @mui/material */}
+      <Typography variant="h6" sx={{ mt: 2 }}>
+        Cargando rutina...
+      </Typography>
+    </Container>
+  );
+  }
+  if (pasos.length === 0 && isLoading === false) {
+    console.log("Pasos de la rutina:", pasos, pasos.length);
     return (
       <Container maxWidth="sm" sx={{ mt: 4 }}>
         <Button className="volver-button" onClick={handleCancelar}>
@@ -107,7 +121,7 @@ const RutinaDetalleInfante: React.FC = () => {
         {showNotification && <div className="cancel-notification">Rutina cancelada</div>}
       </Container>
     );
-
+  }
   const paso = pasos[currentStep];
   console.log(paso.imagen);
 
