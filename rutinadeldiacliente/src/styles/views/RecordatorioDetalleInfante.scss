@@ -1,0 +1,63 @@
+.recordatorio-detalle {
+    .header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px;
+        background: linear-gradient(90deg, #3e8596 0%, #2f6f75 100%);
+        color: #fff;
+
+        .back-button {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .header-title {
+            font-weight: 700;
+        }
+
+        .rutina-subtitle {
+            opacity: 0.95;
+        }
+    }
+
+    .main-content {
+        padding: 16px;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .empty-state {
+        text-align: center;
+        margin-top: 32px;
+        color: #777;
+
+        svg {
+            opacity: 0.6;
+        }
+    }
+
+    .recordatorios-container {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-top: 8px;
+    }
+
+    .recordatorio-card {
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        padding: 12px;
+
+        .recordatorio-title {
+            font-weight: 600;
+        }
+
+        .recordatorio-descripcion {
+            color: #444;
+        }
+
+        .hora-text {
+            color: #666;
+        }
+    }
+}

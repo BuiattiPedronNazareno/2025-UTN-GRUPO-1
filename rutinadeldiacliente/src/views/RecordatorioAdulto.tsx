@@ -1,14 +1,16 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
+
 import {
-  Typography,
   Box,
-  CircularProgress,
 } from "@mui/material";
 
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import DeleteIcon from "@mui/icons-material/Delete";
+
+import { CircularProgress } from "@mui/material";
+
 import { obtenerRutinaPorUsuario } from "../services/rutinaService";
 import type { Rutina } from "../services/rutinaService";
 import {
@@ -18,10 +20,15 @@ import {
   eliminarRecordatorio,
 } from "../services/recordatorioService";
 
+
 import "../styles/views/RecordatorioAdulto.scss";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 
 import { useAppContext } from "../context/AppContext"; // ✅ agregado
+
+
+import "../styles/views/RecordatorioAdulto.scss";
+
 
 
 const frequencies = ["Diaria", "Semanal"];
@@ -69,7 +76,8 @@ const RecordatorioAdulto: React.FC = () => {
   const title = isEditing ? "Editar Recordatorio" : "Agregar Recordatorio";
 
   // Función para obtener datos del recordatorio
-  const fetchRecordatorio = async (recordatorioId: string) => {
+
+  const fetchRecordatorio = async (id: string) => {
     if (!usuarioActivo?.id) {
       setError("No hay un usuario activo.");
       return;
@@ -79,10 +87,10 @@ const RecordatorioAdulto: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      const rec = await obtenerRecordatorio(Number(recordatorioId));
+
+      const rec = await obtenerRecordatorio(Number(id));
       console.log("Recordatorio data:", rec);
 
-      // Establecer los valores por defecto con los datos del backend
       setIdrec(rec.id || 0);
       setRutinaId(rec.rutinaId || 0);
       setFrequency(rec.frecuencia || frequencies[1]);
@@ -99,7 +107,7 @@ const RecordatorioAdulto: React.FC = () => {
     }
   };
 
-  // ✅ Función para obtener todas las rutinas
+  // Función para obtener todas las rutinas
   const fetchAllRoutines = async () => {
     try {
       if (!usuarioActivo?.id) return;
@@ -111,7 +119,6 @@ const RecordatorioAdulto: React.FC = () => {
     }
   };
 
-  // useEffect para cargar datos cuando estamos editando
   useEffect(() => {
     if (isEditing && idURL) {
       fetchRecordatorio(idURL);
@@ -119,6 +126,7 @@ const RecordatorioAdulto: React.FC = () => {
     if (!isEditing) {
       fetchAllRoutines();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEditing, idURL, usuarioActivo]);
 
   const handleSave = async () => {
@@ -151,10 +159,9 @@ const RecordatorioAdulto: React.FC = () => {
         };
 
         console.log("Creating recordatorio data:", createData);
-        await crearRecordatorio(createData as unknown as Recordatorio);
+        await crearRecordatorio(createData);
       }
 
-      // Redireccionar después de guardar exitosamente
       navigate("/adulto", {
         state: {
           message: isEditing
@@ -180,7 +187,6 @@ const RecordatorioAdulto: React.FC = () => {
 
         await eliminarRecordatorio(idrec);
 
-        // Redireccionar después de eliminar exitosamente
         navigate("/adulto", {
           state: { message: "Recordatorio eliminado exitosamente" },
         });
@@ -220,11 +226,8 @@ const RecordatorioAdulto: React.FC = () => {
       <h2 className="add-reminder-title">{title}</h2>
 
       {/* Mostrar error si existe */}
-      {error && (
-        <Typography color="error" sx={{ mb: 2 }}>
-          {error}
-        </Typography>
-      )}
+      {error && <div className="error-message">{error}</div>}
+
 
       {/* Rutina */}
       {!isEditing && (
@@ -256,12 +259,14 @@ const RecordatorioAdulto: React.FC = () => {
       <div className="form-row">
         <div className="form-group">
           <label>Día de la semana</label>
+
           <select
             value={day}
             onChange={(e) => setDay(e.target.value)}
             disabled={frequency === "Diaria"}
           >
             {daysOfWeek.map((d) => (
+
               <option key={d} value={d}>{d}</option>
             ))}
           </select>

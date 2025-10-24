@@ -14,6 +14,7 @@
   border-radius: 12px;
   min-height: 90vh; 
 
+
   .form-row {
     display: flex;
     gap: 2rem;
@@ -28,6 +29,8 @@
     text-align: center;
     flex-grow: 1;
     margin-bottom: 1rem;
+
+    
   }
 
   .form-group {
@@ -40,6 +43,7 @@
     label {
       font-weight: 600;
       font-family: variables.$font-family-primary;
+
     }
 
     input,
@@ -197,3 +201,4 @@
     }
   }
 }
+
