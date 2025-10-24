@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import { Button } from "@mui/material"
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline"
+import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
 import HelpModal from "./HelpModal"
 import "../styles/components/HelpButton.scss"
 
@@ -22,7 +22,7 @@ const HelpButton: React.FC<HelpButtonProps> = ({ onClick }) => {
         variant="contained"
         className="help-button"
         onClick={handleClick}
-        startIcon={<HelpOutlineIcon />}
+        startIcon={<PhoneAndroidIcon />}
         size="large"
       >
         Pedir ayuda

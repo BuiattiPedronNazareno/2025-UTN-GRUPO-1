@@ -14,6 +14,10 @@ $warning-color: #F39C12;
 $danger-color: #E74C3C;
 $help-color: #87C2D4;
 
+// Colores adicionales
+$black: #000000;
+$help-hover-color: #76AEC1;
+
 // Espaciado
 $spacing-xs: 0.5rem;
 $spacing-sm: 1rem;
@@ -25,6 +29,7 @@ $spacing-xl: 1rem;
 $border-radius: 3rem;
 $border-radius-lg: 1.5rem;
 $border-radius-xl: 2rem;
+$border-radius-full: 9999px;
 
 // Fuentes
 $font-family-primary: 'Comic Sans MS', 'Comic Sans', sans-serif;
@@ -33,6 +38,7 @@ $font-size-md: 1rem;
 $font-size-lg: 1.25rem;
 $font-size-xl: 1.45rem;
 $font-size-xxl: 2rem;
+$font-size-help-button: 1.5rem;
 
 // Sombras
 $shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
