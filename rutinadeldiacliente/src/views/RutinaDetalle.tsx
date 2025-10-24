@@ -14,6 +14,8 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import { crearCancelacion } from "../services/cancelacionService";
+import CancelModal from "../components/CancelModal";
+
 const RutinaDetalleInfante: React.FC = () => {
   const navigate = useNavigate();
   const { rutinaId } = useParams<{ rutinaId: string }>();
@@ -187,7 +189,7 @@ const RutinaDetalleInfante: React.FC = () => {
         </Box>
       </Container>
       {showNotification && (
-        <div className="cancel-notification">Rutina cancelada correctamente</div>
+        <CancelModal open={showNotification} onClose={() => setShowNotification(false)} />
       )}
     </Box>
   );

@@ -6,6 +6,8 @@ import { Box, Container, Card, CardContent, Typography, Avatar } from "@mui/mate
 import { useAppContext } from "../context/AppContext"
 import { obtenerUsuarioPorId } from "../services/UsuarioService"
 import type { UsuarioGetDTO, InfanteGetDTO } from "../services/UsuarioService"
+import defaultInfante from "../assets/default-infante.png"
+import defaultAdulto from "../assets/default-adulto.png"
 
 const SeleccionPerfil: React.FC = () => {
   const navigate = useNavigate()
@@ -76,7 +78,10 @@ const SeleccionPerfil: React.FC = () => {
                 backgroundColor: "#3E8596"
               }}
             >
-              <Avatar sx={{ width: 80, height: 80, mb: 2 }} />
+              <Avatar 
+                src={defaultInfante}
+                sx={{ width: 80, height: 80, mb: 2 }} 
+              />
               <CardContent>
                 <Typography variant="h6">{infante.nombre}</Typography>
               </CardContent>
@@ -100,7 +105,10 @@ const SeleccionPerfil: React.FC = () => {
                 backgroundColor: "#7FB069"
               }}
             >
-              <Avatar sx={{ width: 80, height: 80, mb: 2 }} />
+              <Avatar 
+                src={defaultAdulto} 
+                sx={{ width: 80, height: 80, mb: 2 }} 
+              />
               <CardContent>
                 <Typography variant="h6">Adulto</Typography>
               </CardContent>
