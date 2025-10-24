@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { useEffect, useState, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
@@ -10,16 +8,14 @@ import HelpButton from "../components/HelpButton"
 import "../styles/views/InicioInfante.scss"
 import { obtenerRutinaPorInfante } from "../services/rutinaService"
 import type { Rutina } from "../services/rutinaService"
-
 import "../styles/components/RoutineCard.scss";
 import "../styles/components/MainActionButton.scss";
-
 import { verificarRecordatorio } from "../services/recordatorioService"
-
 import { obtenerTutorialStatusInfante, completarTutorialInfante } from "../services/infanteService"
 import { useAppContext } from "../context/AppContext";
 import TutorialWizard from "../components/TutorialWizard";
 import ReminderNotification from "../components/ReminderNotification";
+import defaultCard from "../assets/default-card.png";
 
 const InicioInfante: React.FC = () => {
   const navigate = useNavigate()
@@ -119,7 +115,6 @@ const InicioInfante: React.FC = () => {
     fetchRutinas()
   }, [infanteActivo, getHandledReminders])
 
-
   // cuando la cola cambia, esperar 5s y luego mostrar todas las notificaciones (apiladas)
   useEffect(() => {
     if (!queuedReminders || queuedReminders.length === 0) return;
@@ -141,8 +136,6 @@ const InicioInfante: React.FC = () => {
           setTutorialMode("infante");
           setShowTutorial(true);
           setAutoStartTutorial(true);
-
-
           // El primer módulo obligatorio ya está definido por defecto
           // Se marca como completado en el backend
           await completarTutorialInfante(infanteActivo.id);
@@ -213,7 +206,6 @@ const InicioInfante: React.FC = () => {
             mt: 0
           }}
         >
-
           {routines
             .filter((routine) => (routine.estado || "").toLowerCase() !== "oculta")
             .map((routine) => (
@@ -256,7 +248,7 @@ const InicioInfante: React.FC = () => {
                   <CardMedia
                     component="img"
                     height="200"
-                    image={routine.imagen || "/placeholder.svg"}
+                    image={routine.imagen ? routine.imagen : defaultCard}
                     alt={routine.nombre}
                     className="routine-image"
                   />
@@ -268,7 +260,6 @@ const InicioInfante: React.FC = () => {
                 </Card>
               </Box>
             ))}
-
         </Box>
 
 

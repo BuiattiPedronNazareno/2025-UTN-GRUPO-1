@@ -11,6 +11,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
+import defaultCard from "../assets/default-card.png";
 
 const CrearRutina: React.FC = () => {
   const navigate = useNavigate();
@@ -77,7 +78,7 @@ const CrearRutina: React.FC = () => {
     try {
       const nuevaRutina = await crearRutina({
         nombre,
-        imagen,
+        imagen: imagen || defaultCard, 
         categoriaId: categoriaId === "" ? undefined : categoriaId,
         infanteId: infanteId === "" ? undefined : infanteId
       });

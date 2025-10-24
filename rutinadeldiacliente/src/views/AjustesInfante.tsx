@@ -1,5 +1,3 @@
-"use client"
-
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Container, Box, Button, Stack } from "@mui/material"
@@ -81,7 +79,7 @@ const AjustesInfante: React.FC = () => {
             className="back-button"
             onClick={handleBackClick}
             sx={{ backgroundColor: "#CD5C5C", color: "white", "&:hover": { backgroundColor: "#B22222" } }}
-          >
+          > 
             Volver
           </Button>
         </Box>

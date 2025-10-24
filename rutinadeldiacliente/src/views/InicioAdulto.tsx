@@ -30,6 +30,7 @@ import { verificarRecordatorio } from "../services/recordatorioService";
 import { obtenerTutorialStatus, completarTutorial } from "../services/UsuarioService";
 import { useAppContext } from "../context/AppContext";
 import TutorialWizard from "../components/TutorialWizard";
+import defaultCard from "../assets/default-card.png";
 
 const InicioAdulto: React.FC = () => {
   const navigate = useNavigate();
@@ -240,7 +241,7 @@ const InicioAdulto: React.FC = () => {
                   className="routine-image"
                   component="img"
                   height={200}
-                  image={routine.imagen || "/placeholder.svg"}
+                  image={routine.imagen ? routine.imagen : defaultCard}
                   alt={routine.nombre}
                   sx={{ objectFit: "cover" }}
                 />

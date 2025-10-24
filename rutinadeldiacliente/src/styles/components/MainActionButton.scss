@@ -1,24 +1,24 @@
-@use "../variables";
+@use "../variables" as v;
 @use "../mixins";
 @use "sass:color";
 
 .main-action-button {
-  background-color: #76B875 !important;
-  color: #000000 !important;
-  border: 1px solid #000000 !important;
-  border-radius: 9999px !important;
-  text-transform: none !important;
-  font-size: 1.5rem !important;
-  font-weight: 500 !important;
-  padding: 0.75rem 2rem !important;
+  @include mixins.button-base;
+  background-color: v.$success-color !important;
+  color: v.$black !important;
+  border: v.$border-width v.$border-style v.$border-color-default !important;
+  border-radius: v.$border-radius-full !important;
+  text-transform: v.$text-transform-none !important;
+  font-size: v.$font-size-help-button !important;
+  font-weight: v.$font-weight-medium !important;
+  padding: v.$spacing-help-button-y v.$spacing-help-button-x !important;
   width: 100%;
   max-width: 350px;
-  margin: 0 auto !important;
+  margin: 0 auto v.$spacing-sm !important;
   display: block;
-  margin-bottom: 0.9rem !important;
 
   &:hover {
-    background-color: #6aa966 !important;
+    background-color: color.adjust(v.$success-color, $lightness: -10%) !important;
   }
 }
 
