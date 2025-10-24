@@ -195,6 +195,6 @@ const RutinaDetalleInfante: React.FC = () => {
 
 export default RutinaDetalleInfante;
 
-        <Typography variant="h5" className="verde-finalizar"></Typography>
+   
 
 
