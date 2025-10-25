@@ -10,9 +10,11 @@ import type { Rutina } from "../services/rutinaService"
 import type { Paso } from "../services/pasoService";
 import "../styles/views/RutinaDetalle.scss";
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+
+import ChevronRight from "@mui/icons-material/ChevronRight";
+import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import { crearCancelacion } from "../services/cancelacionService";
+import CancelModal from "../components/CancelModal";
 
 const RutinaDetalleInfante: React.FC = () => {
   const navigate = useNavigate();
@@ -30,6 +32,7 @@ const RutinaDetalleInfante: React.FC = () => {
         setIsLoading(true);
         const [rutinaData, pasosData] = await Promise.all([
           obtenerRutinaPorId(Number(rutinaId)),
+
           obtenerPasosPorRutina(Number(rutinaId)).catch(() => []),
         ]);
 
@@ -40,6 +43,7 @@ const RutinaDetalleInfante: React.FC = () => {
         // Asegurar que currentStep esté en rango
         setCurrentStep(0);
 
+
       } catch (error) {
         console.error("Error al obtener rutina o pasos:", error);
       } finally {
@@ -49,6 +53,7 @@ const RutinaDetalleInfante: React.FC = () => {
 
     fetchRutinaYPasos();
   }, [rutinaId]);
+
 
   const handleHelpClick = () => {
     console.log("Solicitando ayuda...")
@@ -75,6 +80,7 @@ const RutinaDetalleInfante: React.FC = () => {
       console.error("Error al crear la cancelacion:", error);
     }
   };
+
 
   const handleNext = () => {
     if (currentStep < pasos.length - 1) {
@@ -104,27 +110,14 @@ const RutinaDetalleInfante: React.FC = () => {
     console.log("Pasos de la rutina:", pasos, pasos.length);
     return (
       <Container maxWidth="sm" sx={{ mt: 4 }}>
-        <Button
-          variant="contained"
-          fullWidth
-          sx={{
-            mb: 3,
-            backgroundColor: "#64B5F6", // azul suave
-            color: "white",
-            borderRadius: 2,
-            py: 1.5,
-            "&:hover": {
-              backgroundColor: "#42A5F5",
-            },
-          }}
-          onClick={handleCancelar}
-        >
+        <Button className="volver-button" onClick={handleCancelar}>
           Volver
         </Button>
-        <Typography variant="h5" component="h2" sx={{ textAlign: "center", mb: 2 }}>
+        <Typography variant="h5" align="center" sx={{ mb: 2 }}>
+
           {rutina?.nombre || "Rutina"}
         </Typography>
-        <Typography variant="body1" sx={{ textAlign: "center" }}>
+        <Typography variant="body1" align="center">
           No hay pasos disponibles para esta rutina.
         </Typography>
         {showNotification && <div className="cancel-notification">Rutina cancelada</div>}
@@ -134,85 +127,76 @@ const RutinaDetalleInfante: React.FC = () => {
   const paso = pasos[currentStep];
   console.log(paso.imagen);
 
-
   return (
     <Box className="rutina-detalle-infante">
-      <Container maxWidth="sm">
-        <Button
-          variant="contained"
-          color="error"
-          fullWidth
-          sx={{ mb: 3 }}
-          onClick={handleCancelar}
-        >
+      <Container maxWidth="xs">
+        <Button className="volver-button" onClick={handleCancelar}>
           Cancelar Rutina
         </Button>
 
-        <Typography variant="h5" component="h2" sx={{ textAlign: "center", mb: 1 }}>
+        <Typography variant="h5" align="center" className="rutina-titulo">
           {rutina?.nombre || `Rutina ${paso.rutinaId}`}
-        </Typography>
-
-        <Typography variant="h6" sx={{ textAlign: "center", mb: 2 }}>
-          {`Paso ${paso.orden}`}
         </Typography>
 
         <Card className="step-card">
           <Box className="step-image">
-            <img src={paso.imagen ? `/${paso.imagen}` : "/placeholder.svg"} alt={`Paso ${paso.orden}`} />
+            <img
+              src={paso.imagen ? `/${paso.imagen}` : "/placeholder.svg"}
+              alt={`Paso ${paso.orden}`}
+            />
           </Box>
-          <CardContent sx={{ textAlign: "center" }}>
-            <Typography variant="body1" sx={{ mb: 2 }}>
+
+          <CardContent className="step-content">
+            <Typography variant="body1" className="paso-descripcion">
               {paso.descripcion}
             </Typography>
 
-            <Button
-              variant="outlined"
-              fullWidth
-              sx={{
-                mb: 2,
-                borderColor: "white",
-                color: "white",
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
-                  borderColor: "white",
-                },
-              }}
-            >
+            <Button variant="contained" className="audio-button">
               <VolumeUpIcon />
             </Button>
 
-
-            <Box className="help-section" sx={{ textAlign: "center", mt: 4 }}>
-              <HelpButton onClick={handleHelpClick} />
-            </Box>
+            <HelpButton onClick={handleHelpClick} />
           </CardContent>
         </Card>
 
-
-        <Box className="step-buttons" sx={{ display: "flex", gap: 2, mt: 2 }}>
+        <Box className="step-buttons">
           <Button
             variant="contained"
-            sx={{ backgroundColor: "#FBC02D", color: "white", "&:hover": { backgroundColor: "#FDD835" } }}
+            className="naranja"
             onClick={handlePrev}
             disabled={currentStep === 0}
           >
-            <ArrowBackIcon />
+            <ChevronLeft />
           </Button>
 
-          <Button
-            variant="contained"
-            sx={{ backgroundColor: "#43A047", color: "white", "&:hover": { backgroundColor: "#66BB6A" } }}
-            onClick={handleNext}
-          >
-            {currentStep === pasos.length - 1 ? "Finalizar rutina" : <ArrowForwardIcon />}
-          </Button>
+          {currentStep === pasos.length - 1 ? 
+            <Button
+              variant="contained"
+              className="verde-finalizar"
+              onClick={handleNext}
+            >
+              <Typography variant="h5"> Finalizar </Typography> 
+            </Button>
+          : 
+            <Button
+              variant="contained"
+              className="verde"
+              onClick={handleNext}
+            >
+              <ChevronRight />
+            </Button>
+          }
         </Box>
       </Container>
       {showNotification && (
-        <div className="cancel-notification">Rutina cancelada correctamente</div>
+        <CancelModal open={showNotification} onClose={() => setShowNotification(false)} />
       )}
     </Box>
   );
 };
 
 export default RutinaDetalleInfante;
+
+   
+
+

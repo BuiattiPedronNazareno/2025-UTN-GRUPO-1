@@ -4,6 +4,9 @@ import { crearRutina } from "../services/rutinaService";
 import { obtenerCategorias } from "../services/categoriaService";
 import type { Categoria } from "../services/categoriaService";
 import "../styles/views/CrearRutina.scss";
+import ChevronRight from "@mui/icons-material/ChevronRight";
+import ChevronLeft from "@mui/icons-material/ChevronLeft";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const crearRutinaPrecargada: React.FC = () => {
   const navigate = useNavigate();
@@ -65,7 +68,16 @@ const crearRutinaPrecargada: React.FC = () => {
 
   return (
     <div className="crear-rutina-container">
-      <h2>Crear Rutina</h2>
+      
+      <button
+        className="volver-btn"
+        onClick={() => navigate("/adulto")}
+      >
+        <ChevronLeft className="volver-icon" />
+        Volver
+      </button>
+      
+      <h2 className="create-routine-title">Crear Rutina</h2>
 
       <div className="form-row">
         <div className="form-group">
@@ -118,26 +130,25 @@ const crearRutinaPrecargada: React.FC = () => {
           {programaciones.map((p, index) => (
             <div key={index} className="programacion-item">
               <span>{p.hora} hs - {p.dia}</span>
-              <button onClick={() => eliminarProgramacion(index)}>X</button>
+              <button
+                className="trash-btn"
+                onClick={() => eliminarProgramacion(index)}
+                aria-label="Eliminar programación"
+              >
+                <DeleteIcon />
+              </button>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="action-buttons">
-        <button
-          className="volver-btn"
-          onClick={() => navigate("/adulto")}
-        >
-          Volver
-        </button>
-        <button
-          className="crear-paso-btn"
-          onClick={handleCrearPaso}
-        >
-          Crear Paso
-        </button>
-      </div>
+      <button
+        className="crear-paso-btn-inferior"
+        onClick={handleCrearPaso}
+      >
+        Crear Paso
+        <ChevronRight className="crear-paso-icon"/>
+      </button>
     </div>
   );
 };

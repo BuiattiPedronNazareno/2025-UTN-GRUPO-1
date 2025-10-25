@@ -17,7 +17,6 @@ import {
   Edit,
   Delete,
   Schedule,
-  NotificationsActive,
   AlarmOn,
 } from "@mui/icons-material";
 import "../styles/views/ListaRecordatorioAdulto.scss";
@@ -119,30 +118,31 @@ const ListaRecordatorioAdulto: React.FC = () => {
     <Box className="lista-recordatorios">
       {/* Header */}
       <Box className="header">
-        <Box className="header-content">
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <IconButton className="back-button" onClick={handleBackToRutinas}>
-              <ArrowBack fontSize="large" />
-            </IconButton>
-            <Box>
-              <Typography variant="h4" component="h1" className="header-title">
-                Recordatorios
-              </Typography>
-              {rutina && (
-                <Typography variant="h6" className="rutina-subtitle">
-                  {rutina.nombre}
-                </Typography>
-              )}
-            </Box>
-          </Box>
-        </Box>
+        <IconButton
+          edge="start"
+          className="back-button"
+          onClick={handleBackToRutinas}
+        >
+          <ArrowBack fontSize="large" />
+        </IconButton>
 
-        <Box className="stats">
+        <Box className="header-center">
+          <Typography variant="h4" component="h1" className="header-title">
+            Recordatorios
+          </Typography>
+          {rutina && (
+            <Typography variant="h6" className="rutina-subtitle">
+              {rutina.nombre}
+            </Typography>
+          )}
           <Typography variant="body2" className="stats-text">
             TOTAL RECORDATORIOS: {recordatorios.length}
           </Typography>
         </Box>
+
+        <Box className="header-right" />
       </Box>
+
 
       <Container component="main" className="main-content" maxWidth="md">
         {recordatorios.length === 0 ? (
@@ -264,7 +264,7 @@ const ListaRecordatorioAdulto: React.FC = () => {
             className="create-recordatorio-button"
             onClick={handleCreateRecordatorio}
           >
-            Crear Recordatorio
+            Agregar Recordatorio
           </Button>
         </Box>
       </Container>

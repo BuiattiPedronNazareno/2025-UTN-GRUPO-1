@@ -1,26 +1,26 @@
-@use '../variables';
+@use '../variables' as v;
 @use '../mixins';
 
 .help-button {
-  background-color: #87C2D4 !important;
-  color: #000000 !important;
-  border: 2px solid #000000 !important;
-  border-radius: 9999px !important; 
-  text-transform: none !important;
-  font-size: 1.5rem !important; 
-  font-weight: 400 !important;
-  padding: 0.75rem 2rem !important;
+  background-color: v.$help-color !important;
+  color: v.$black !important;
+  border: v.$border-width v.$border-style v.$border-color-default !important;
+  border-radius: v.$border-radius-full !important;
+  text-transform: v.$text-transform-none !important;
+  font-size: v.$font-size-help-button !important;
+  font-weight: v.$font-weight-medium !important;
+  padding: v.$spacing-help-button-y v.$spacing-help-button-x !important;
 
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  display: v.$flex;
+  align-items: v.$center;
+  gap: v.$icon-gap;
 
   svg {
-    font-size: 2rem; 
-    color: #000000 !important;
+    font-size: v.$font-size-xxl;
+    color: v.$black !important;
   }
 
   &:hover {
-    background-color: #76aec1 !important;
+    background-color: v.$help-hover-color !important;
   }
 }

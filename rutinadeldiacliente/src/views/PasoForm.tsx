@@ -56,7 +56,7 @@ const PasoForm: React.FC = () => {
       <h2>{pasoId ? "Editar Paso" : "Crear Paso"}</h2>
 
       <div className="form-group">
-        <label>Descripción:</label>
+        <label>Descripción</label>
         <input
           type="text"
           value={descripcion}
@@ -66,7 +66,7 @@ const PasoForm: React.FC = () => {
       </div>
 
       <div className="form-group">
-        <label>Imagen:</label>
+        <label>Imagen</label>
         <select value={imagen} onChange={(e) => setImagen(e.target.value)}>
           <option value="">-- Selecciona una imagen --</option>
           <option value="jabon.jpg">Cepillo</option>
@@ -76,7 +76,7 @@ const PasoForm: React.FC = () => {
       </div>
 
       <div className="form-group">
-        <label>Audio:</label>
+        <label>Audio</label>
         <select value={audio} onChange={(e) => setAudio(e.target.value)}>
           <option value="">-- Selecciona un audio --</option>
           {audios.map((a) => (

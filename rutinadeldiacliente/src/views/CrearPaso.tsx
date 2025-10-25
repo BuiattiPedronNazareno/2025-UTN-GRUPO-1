@@ -51,12 +51,12 @@ const CrearPaso: React.FC = () => {
   };
 
   return (
-    <div className="crear-paso-container">
+    <div className="crear-paso-container" style={{ fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
       <h2>Crear Paso</h2>
 
       {/* Descripción */}
       <div className="form-group">
-        <label>Descripción:</label>
+        <label>Descripción</label>
         <input
           type="text"
           value={descripcion}
@@ -67,7 +67,7 @@ const CrearPaso: React.FC = () => {
 
       {/* Imagen */}
       <div className="form-group">
-        <label>Seleccionar Imagen:</label>
+        <label>Seleccionar Imagen</label>
         <select value={imagen} onChange={(e) => setImagen(e.target.value)}>
           <option value="">-- Selecciona una imagen --</option>
           <option value="jabon.jpg">Cepillo</option>
@@ -78,7 +78,7 @@ const CrearPaso: React.FC = () => {
 
       {/* Audio */}
       <div className="form-group">
-        <label>Seleccionar Audio:</label>
+        <label>Seleccionar Audio</label>
         <select value={audio} onChange={(e) => setAudio(e.target.value)}>
           <option value="">-- Selecciona un audio --</option>
           {audios.map((a) => (
@@ -95,7 +95,7 @@ const CrearPaso: React.FC = () => {
 
       {/* Lista de pasos agregados */}
       <div className="pasos-agregados">
-        <h3>Pasos agregados:</h3>
+        <h3>Pasos agregados</h3>
         <ul>
           {pasos.map((p) => (
             <li key={p.id}>

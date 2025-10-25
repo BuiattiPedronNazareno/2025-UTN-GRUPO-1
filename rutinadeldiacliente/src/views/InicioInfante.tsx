@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { useEffect, useState, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
@@ -10,11 +8,14 @@ import HelpButton from "../components/HelpButton"
 import "../styles/views/InicioInfante.scss"
 import { obtenerRutinaPorInfante } from "../services/rutinaService"
 import type { Rutina } from "../services/rutinaService"
+import "../styles/components/RoutineCard.scss";
+import "../styles/components/MainActionButton.scss";
 import { verificarRecordatorio } from "../services/recordatorioService"
 import { obtenerTutorialStatusInfante, completarTutorialInfante } from "../services/infanteService"
 import { useAppContext } from "../context/AppContext";
 import TutorialWizard from "../components/TutorialWizard";
 import ReminderNotification from "../components/ReminderNotification";
+import defaultCard from "../assets/default-card.png";
 
 const InicioInfante: React.FC = () => {
   const navigate = useNavigate()
@@ -25,6 +26,7 @@ const InicioInfante: React.FC = () => {
   const [tutorialMode, setTutorialMode] = useState<"adulto" | "infante">("infante");
   const [autoStartTutorial, setAutoStartTutorial] = useState(false);
   const [firstMandatoryModule] = useState<number>(1)
+
   const [showReminderOverlay, setShowReminderOverlay] = useState<boolean>(true);
   const [queuedReminders, setQueuedReminders] = useState<Array<{ id: number, title: string, description: string, visible: boolean, color?: string, time?: string }>>([]);
 
@@ -59,6 +61,7 @@ const InicioInfante: React.FC = () => {
       // ignore
     }
   }, [])
+
 
 
   useEffect(() => {
@@ -133,7 +136,6 @@ const InicioInfante: React.FC = () => {
           setTutorialMode("infante");
           setShowTutorial(true);
           setAutoStartTutorial(true);
-
           // El primer módulo obligatorio ya está definido por defecto
           // Se marca como completado en el backend
           await completarTutorialInfante(infanteActivo.id);
@@ -162,7 +164,7 @@ const InicioInfante: React.FC = () => {
 
   return (
     <Box className="inicio-infante">
-      <NavBar title="Mis Rutinas" showSettingsButton={true} onSettingsClick={handleSettingsClick} />
+      <NavBar title="Mis Rutinas" showSettingsButton={true} onSettingsClick={handleSettingsClick} alignLevel="left" />
 
       <Container component="main" className="main-content" maxWidth="md">
         {/* Overlay de notificación de recordatorio: aparece sobre la página y puede cerrarse. Se muestran apiladas. */}
@@ -201,7 +203,7 @@ const InicioInfante: React.FC = () => {
             flexWrap: 'wrap',
             gap: 3,
             justifyContent: 'center',
-            mt: 4
+            mt: 0
           }}
         >
           {routines
@@ -227,26 +229,10 @@ const InicioInfante: React.FC = () => {
                   }}
                 >
                   {/* icono de recordatorio en la esquina superior derecha si existe */}
-                  {hasReminderMap[routine.id] && (
-                    <IconButton
-                      aria-label="recordatorio activo"
-                      size="small"
-                      sx={{
-                        position: 'absolute',
-                        right: 8,
-                        top: 8,
-                        color: '#FFD54F',
-                        zIndex: 2
-                      }}
-                      onClick={(e) => { e.stopPropagation(); navigate(`/recordatorio-infante/${routine.id}`); }}
-                    >
-                      <NotificationsActiveIcon />
-                    </IconButton>
-                  )}
                   <CardMedia
                     component="img"
                     height="200"
-                    image={routine.imagen || "/placeholder.svg"}
+                    image={routine.imagen ? routine.imagen : defaultCard}
                     alt={routine.nombre}
                     className="routine-image"
                   />
@@ -255,16 +241,32 @@ const InicioInfante: React.FC = () => {
                       {routine.nombre}
                     </Typography>
                   </CardContent>
+                  {hasReminderMap[routine.id] && (
+                    <IconButton
+                      aria-label="recordatorio activo"
+                      size="small"
+                      sx={{
+                        position: 'absolute',
+                        right: 20,
+                        bottom: 20, 
+                        color: '#000000ff',
+                        zIndex: 2
+                      }}
+                      onClick={(e) => { e.stopPropagation(); navigate(`/recordatorio-infante/${routine.id}`); }}
+                    >
+                      <NotificationsActiveIcon />
+                    </IconButton>
+                  )}
                 </Card>
               </Box>
             ))}
         </Box>
 
-        <Box className="help-section" sx={{ textAlign: "center", mt: 4 }}>
-          <HelpButton onClick={handleHelpClick} />
-        </Box>
-      </Container>
 
+      </Container>
+       <Box className="help-section my-4" sx={{ textAlign: "center", mt: 4 }}>
+        <HelpButton onClick={handleHelpClick} />
+      </Box>
       <TutorialWizard
         open={showTutorial}
         onClose={() => setShowTutorial(false)}
@@ -273,8 +275,6 @@ const InicioInfante: React.FC = () => {
         initialModule={firstMandatoryModule}
         navigate={navigate}
       />
-
-
     </Box>
   )
 }

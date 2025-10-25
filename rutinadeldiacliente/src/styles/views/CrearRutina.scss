@@ -1,24 +1,26 @@
+@use '../variables';
+
 .crear-rutina-container {
-  max-width: 800px; // más ancho para escritorio
+  max-width: 800px; 
   margin: 2rem auto;
-  padding: 2rem;
-  background-color: #C5E1DA;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 0 2rem 0 2rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-
-  h2 {
-    text-align: center;
-    font-size: 2rem;
-    font-weight: bold;
-  }
+  font-family: variables.$font-family-primary;
 
   .form-row {
     display: flex;
     gap: 2rem;
     flex-wrap: wrap;
+  }
+
+  .create-routine-title {
+    font-size: variables.$font-size-xxl;
+    font-weight: 700;
+    color: #2C3E50;
+    text-align: center;
+    flex-grow: 1;
   }
 
   .form-group {
@@ -29,6 +31,7 @@
 
     label {
       font-weight: 600;
+      font-family: variables.$font-family-primary;
     }
 
     input, select {
@@ -36,94 +39,210 @@
       border-radius: 6px;
       border: 1px solid #888;
       font-size: 1rem;
+      height: 2.5rem;
     }
 
     .programacion-inputs {
       display: flex;
+      align-items: center;
       gap: 0.5rem;
+      background-color: #E8F0F0;
+      border: 1px solid #cccccc;
+      border-radius: 8px;
+      padding: 0.6rem;
       margin-top: 0.5rem;
 
       select {
         flex: 1;
+        border: 1px solid #888;
+        border-radius: 6px;
+        padding: 0.4rem 0.6rem;
+        font-size: 1rem;
+        background-color: #fff;
+        color: #333;
+        appearance: none;
       }
 
       button {
-        padding: 0.2rem 0.5rem;
-        border-radius: 4px;
-        background-color: #4CAF50;
-        color: white;
+        color: #000000;
+        border: 1px solid #000000 !important;
+        border-radius: 50%;
         font-weight: bold;
         cursor: pointer;
-        border: none;
-      }
-    }
-
-    .programaciones-list {
-      margin-top: 0.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-
-      .programacion-item {
+        width: 32px;
+        height: 32px;
+        font-size: 1.2rem;
+        line-height: 1;
         display: flex;
-        justify-content: space-between;
-        background-color: #E0F2F1;
-        padding: 0.5rem;
-        border-radius: 6px;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s ease;
 
-        button {
-          background-color: #FF6B6B;
-          border: none;
-          border-radius: 50%;
-          color: white;
-          font-weight: bold;
-          cursor: pointer;
-          width: 25px;
-          height: 25px;
+        &:hover {
+          background-color: #aaa;;
         }
       }
 
-      .empty {
-        text-align: center;
-        color: #555;
+      .hora-select-wrapper {
+        position: relative;
+        flex: 1.1;
+
+        select {
+          width: 100%;
+          padding: 0.4rem 2.2rem 0.4rem 0.6rem;
+          border: 1px solid #888;
+          border-radius: 6px;
+          font-size: 1rem;
+          background-color: #fff;
+          color: #333;
+          appearance: none;
+        }
+
+        .hora-icon {
+          position: absolute;
+          right: 0.6rem;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #555;
+          pointer-events: none;
+          font-size: 1.3rem;
+        }
+      }
+
+        select:not(.hora-select-wrapper select) {
+          flex: 0.9;
+        }
+
+    }
+  }
+
+  .programaciones-list {
+    margin-top: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-height: 80px;
+
+    .programacion-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #E8F0F0;
+      border: 1px solid #cccccc;
+      border-radius: 8px;
+      padding: 0.5rem 0.8rem;
+      font-size: 1rem;
+      color: #222;
+      margin: 0;
+
+      button {
+        border: none;
+        border-radius: 50%;
+        color: rgb(0, 0, 0);
+        font-weight: bold;
+        cursor: pointer;
+        width: 28px;
+        height: 28px;
+        font-size: 1rem;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          background-color: #cccccc;
+        }
       }
     }
-  }
 
-  .action-buttons {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1.5rem;
-
-  .crear-paso-btn {
-    flex: 1;
-    background-color: #43A047; // verde
-    color: white;
-    border: none;
-    padding: 0.8rem 1rem;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-
-    &:hover {
-      background-color: #66BB6A;
+    .empty {
+      display: flex;
+      font-weight: bold;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      min-height: 60px; 
+      color: #555;
+      font-size: 0.95rem;
+      padding: 0.4rem;
+      text-align: center;
+      width: 100%;
+      margin: 0;
     }
   }
+}
 
-  .volver-btn {
-    flex: 1;
-    background-color: #FBC02D; // amarillo
-    color: white;
-    border: none;
-    padding: 0.8rem 1rem;
-    border-radius: 8px;
+  .volver-btn-superior {
+    background-color: #FBC02D;
+    color: #000;
     font-weight: bold;
+    font-size: 1.1rem;
+    border: 1px solid #000000 !important;
+    border-radius: 8px;
+    padding: 0.8rem 1rem 0.8rem 2.5rem; 
     cursor: pointer;
+    text-align: center;
+    justify-content: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0;        
+    margin-bottom: 0.4rem;
+    width: auto;
+    justify-content: center;
+    position: relative;
 
     &:hover {
       background-color: #FFD54F;
     }
-  }
-}
 
-}
+    .volver-icon {
+      position: absolute;
+      left: 0.6rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .volver-text {
+      display: inline-block;
+      transform: translateX(-0.9rem);
+      transition: transform 0.12s ease;
+    }
+
+  }
+
+  .crear-paso-btn-inferior {
+    background-color: #43A047;
+    color: #000000 !important;
+    border: 1px solid #000000 !important;
+    padding: 0.8rem 3rem 0.8rem 0.5rem;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    &:hover {
+      background-color: #66BB6A;
+    }
+
+    .crear-paso-icon {
+      position: absolute;
+      right: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .crear-paso-text {
+      display: inline-block;
+      transform: translateX(1.1rem);
+      transition: transform 0.12s ease;
+    }
+
+  }
+
+
+

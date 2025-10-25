@@ -1,5 +1,3 @@
-"use client"
-
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Container, Box, Button, Stack } from "@mui/material"
@@ -19,6 +17,7 @@ const AjustesInfante: React.FC = () => {
     navigate("/seleccionperfil")
   }
 
+
   const handleLogrosClick = () => {
     navigate("/logros")
   }
@@ -33,7 +32,7 @@ const AjustesInfante: React.FC = () => {
 
   return (
     <Box className="ajustes-infante">
-      <NavBar title="Ajustes" showBackButton={true} onBackClick={handleBackClick} />
+      <NavBar title="Ajustes" showBackButton={true} onBackClick={handleBackClick} alignLevel="right" />
 
       <Container component="main" className="main-content" maxWidth="sm">
         <Stack spacing={3} className="ajustes-options">
@@ -81,7 +80,7 @@ const AjustesInfante: React.FC = () => {
             className="back-button"
             onClick={handleBackClick}
             sx={{ backgroundColor: "#CD5C5C", color: "white", "&:hover": { backgroundColor: "#B22222" } }}
-          >
+          > 
             Volver
           </Button>
         </Box>

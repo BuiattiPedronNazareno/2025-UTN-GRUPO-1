@@ -1,6 +1,7 @@
 @use "sass:color";
 @use '../variables';
 @use '../mixins';
+@use '../components/MainActionButton';
 
 .ajustes-infante {
   min-height: 100vh;
@@ -11,61 +12,41 @@
     max-width: 600px;
     margin: 0 auto;
     text-align: center;
+    padding-top: 0.4rem !important;
   }
   
   .ajustes-options {
     margin-bottom: variables.$spacing-xl;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: variables.$spacing-lg;
     
     .ajuste-button {
-      @include mixins.button-base;
-      font-size: variables.$font-size-xl;
-      padding: variables.$spacing-xl;
-      border-radius: variables.$border-radius-lg;
-      min-height: 80px;
-      font-weight: 700;
-      
-      &.adulto-button {
-        background-color: variables.$secondary-color;
-        color: variables.$white;
-        
-        &:hover {
-          background-color: color.adjust(variables.$secondary-color, $lightness: -10%);
-        }
-      }
-      
-      &.logros-button {
-        background-color: variables.$secondary-color;
-        color: variables.$white;
-        
-        &:hover {
-          background-color: color.adjust(variables.$secondary-color, $lightness: -10%);
-        }
-      }
+      @extend .main-action-button;
     }
   }
   
   .help-section {
-    margin-bottom: variables.$spacing-xl;
-    
+    margin-top: 5.5rem;
     .help-button {
       @include mixins.button-help;
       font-size: variables.$font-size-lg;
       padding: variables.$spacing-lg variables.$spacing-xl;
       border-radius: variables.$border-radius-lg;
       min-width: 200px;
+      margin-bottom: variables.$spacing-xl !important;
     }
   }
   
   .back-section {
+    display: flex;
+    justify-content: center;
+    margin-top: variables.$spacing-lg;
+
     .back-button {
-      @include mixins.button-danger;
-      font-size: variables.$font-size-lg;
-      padding: variables.$spacing-md variables.$spacing-lg;
-      border-radius: variables.$border-radius-lg;
-      min-width: 150px;
+      @extend .volver-button;
+      max-width: 150px;
     }
   }
 }

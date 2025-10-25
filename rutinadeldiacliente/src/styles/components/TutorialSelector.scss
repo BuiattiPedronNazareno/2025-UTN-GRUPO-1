@@ -1,0 +1,45 @@
+@use "../variables";
+@use "../mixins";
+
+.tutorial-selector {
+  background-color: variables.$background-color !important;
+  color: variables.$text-color !important;
+  font-family: 'Poppins', sans-serif !important;
+  border-radius: 20px !important;
+  padding: 2rem !important;
+
+  .MuiDialogTitle-root {
+    font-size: 1.8rem !important;
+    font-weight: 600 !important;
+  }
+
+  .MuiDialogContent-root {
+    text-align: center;
+  }
+
+  .MuiListItemButton-root {
+    border: 1.5px solid variables.$text-color !important;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    background-color: variables.$background-color-two !important;
+    color: #000 !important;
+
+    &:hover {
+      background-color: variables.$accent-color !important;
+    }
+  }
+
+  .MuiButton-root {
+    background-color: #76b875 !important;
+    color: #000 !important;
+    border-radius: 9999px;
+    text-transform: none;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: 1.5px solid variables.$text-color !important;
+
+    &:hover {
+      background-color: #6aa966 !important;
+    }
+  }
+}

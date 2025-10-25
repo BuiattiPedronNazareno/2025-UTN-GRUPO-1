@@ -7,6 +7,21 @@
   color: variables.$text-color;
   font-family: variables.$font-family-primary;
 
+  .MuiDialog-paper {
+    background-color: variables.$background-color !important;
+    color: variables.$text-color !important;
+    font-family: variables.$font-family-primary !important;
+  }
+
+  .MuiTypography-root {
+    font-family: variables.$font-family-primary !important;
+    color: variables.$text-color !important;
+  }
+
+  .MuiButton-root {
+    font-family: variables.$font-family-primary !important;
+  }
+
   .tutorial-title {
     font-size: 2.5rem; 
     font-weight: 800;
@@ -17,6 +32,7 @@
 
   .tutorial-content {
     padding: variables.$spacing-lg;
+    background-color: variables.$background-color !important;
     text-align: center;
 
     p {

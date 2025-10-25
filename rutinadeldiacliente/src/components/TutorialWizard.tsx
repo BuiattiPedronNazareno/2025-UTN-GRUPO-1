@@ -15,6 +15,7 @@ import {
   ListItemText,
 } from "@mui/material"
 import "../styles/components/TutorialWizard.scss"
+import "../styles/components/TutorialSelector.scss";
 import tutorial1 from '../assets/tutorialinfante1.png'
 import tutorial2 from '../assets/tutorialinfante2.png'
 import tutorial3 from '../assets/tutorialinfante3.png'
@@ -192,7 +193,6 @@ interface TutorialWizardProps {
   autoStart?: boolean
   initialModule?: number;
   navigate: (to: string, options?: { replace?: boolean; state?: any }) => void
-
 }
 
 const TutorialWizard: React.FC<TutorialWizardProps> = ({ open, onClose, mode, autoStart, initialModule, navigate }) => {
@@ -247,14 +247,14 @@ useEffect(() => {
 
   if (!activeModule) {
     return (
-      <Dialog open={open} onClose={onClose} fullScreen>
+      <Dialog open={open} onClose={onClose} fullScreen PaperProps={{ className: "tutorial-selector" }}>
         <DialogTitle sx={{ textAlign: "center", py: 2 }}>
           {mode === "adulto" ? "Tutorial Adulto" : "Tutorial Niño"}
         </DialogTitle>
         <DialogContent>
           <Typography variant="h6" sx={{ mb: 2, textAlign: "center" }}>
             {progress === 0
-              ? "Debes completar el primer módulo obligatorio antes de continuar."
+              ? "Debes completar el primer módulo obligatorio antes de continuar"
               : "Selecciona un módulo para continuar o repasar:"}
           </Typography>
           <List>
@@ -293,9 +293,6 @@ useEffect(() => {
       open={open}
       fullScreen
       className="tutorial-wizard"
-      PaperProps={{
-        sx: { backgroundColor: "#BFDBD8", boxShadow: "none" },
-      }}
     >
       <DialogTitle className="tutorial-title pb-2 mb-0" sx={{ textAlign: "center", py: 2 }}>
         {step.title}

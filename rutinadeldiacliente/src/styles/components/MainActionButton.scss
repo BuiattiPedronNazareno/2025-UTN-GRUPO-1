@@ -1,0 +1,41 @@
+@use "../variables" as v;
+@use "../mixins";
+@use "sass:color";
+
+.main-action-button {
+  @include mixins.button-base;
+  background-color: v.$success-color !important;
+  color: v.$black !important;
+  border: v.$border-width v.$border-style v.$border-color-default !important;
+  border-radius: v.$border-radius-full !important;
+  text-transform: v.$text-transform-none !important;
+  font-size: v.$font-size-help-button !important;
+  font-weight: v.$font-weight-medium !important;
+  padding: v.$spacing-help-button-y v.$spacing-help-button-x !important;
+  width: 100%;
+  max-width: 350px;
+  margin: 0 auto v.$spacing-sm !important;
+  display: block;
+
+  &:hover {
+    background-color: color.adjust(v.$success-color, $lightness: -10%) !important;
+  }
+}
+
+.volver-button {
+  @extend .main-action-button;
+  background-color: #C76E6E !important;
+
+  &:hover {
+    background-color: color.adjust(#C76E6E, $lightness: -10%) !important;
+  }
+}
+
+.guardar-button {
+  @extend .main-action-button;
+  background-color: #1FC44B !important;
+
+  &:hover {
+    background-color: color.adjust(#1FC44B, $lightness: -10%) !important;
+  }
+}

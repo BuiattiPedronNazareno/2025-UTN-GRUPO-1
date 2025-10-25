@@ -1,0 +1,45 @@
+@use '../variables';
+
+.navbar-adulto {
+  background-color: #EAF2F8;
+  padding: variables.$spacing-md variables.$spacing-lg;
+  box-shadow: none;
+
+  .navbar-adulto-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .header-content {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .back-button {
+      color: #2C3E50;
+    }
+
+    .header-title {
+      font-size: variables.$font-size-xxl;
+      margin-right: 2rem;
+      font-weight: 700;
+      color: #2C3E50;
+      text-align: center;
+      flex-grow: 1;
+    }
+
+    .settings-button {
+      position: absolute;
+      right: 0.5rem;
+      color: #2C3E50;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+    }
+  }
+}

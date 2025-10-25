@@ -13,6 +13,7 @@ interface NavBarProps {
   onBackClick?: () => void
   showSettingsButton?: boolean
   onSettingsClick?: () => void
+  alignLevel?: "left" | "right"
 }
 
 const NavBar: React.FC<NavBarProps> = ({
@@ -21,6 +22,7 @@ const NavBar: React.FC<NavBarProps> = ({
   onBackClick,
   showSettingsButton = false,
   onSettingsClick,
+  alignLevel = "left",
 }) => {
   const navigate = useNavigate()
 
@@ -40,14 +42,18 @@ const NavBar: React.FC<NavBarProps> = ({
         
         <Box className="navbar-left">
           {showBackButton && (
-            <IconButton edge="start" color="inherit" onClick={handleBackClick} className="navbar-button">
+            <IconButton edge="start" color="inherit" onClick={handleBackClick} className="navbar-button back-button">
               <ArrowBack />
             </IconButton>
           )}
-          <FlashOnIcon className="navbar-icon" />
-          <Typography variant="caption" className="navbar-subtitle" sx={{ fontWeight: "bold" }}>
-            PRINCIPIANTE
-          </Typography>
+          {alignLevel === "left" && (
+            <>
+              <FlashOnIcon className="navbar-icon" />
+              <Typography variant="caption" className="navbar-subtitle" sx={{ fontWeight: "bold" }}>
+                PRINCIPIANTE
+              </Typography>
+            </>
+          )}
         </Box>
 
         <Box className="navbar-center">
@@ -57,6 +63,14 @@ const NavBar: React.FC<NavBarProps> = ({
         </Box>
 
         <Box className="navbar-right">
+          {alignLevel === "right" && (
+            <>
+              <FlashOnIcon className="navbar-icon" />
+              <Typography variant="caption" className="navbar-subtitle" sx={{ fontWeight: "bold" }}>
+                PRINCIPIANTE
+              </Typography>
+            </>
+          )}
           {showSettingsButton && (
             <IconButton edge="end" color="inherit" onClick={handleSettingsClick} className="navbar-button">
               <Settings />

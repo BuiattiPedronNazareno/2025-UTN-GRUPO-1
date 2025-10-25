@@ -1,8 +1,16 @@
-"use client";
 
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { CircularProgress } from "@mui/material";
+
+import {
+  Box,
+  CircularProgress,
+} from "@mui/material";
+
+import ChevronLeft from "@mui/icons-material/ChevronLeft";
+import DeleteIcon from "@mui/icons-material/Delete";
+
+
 import { obtenerRutinaPorUsuario } from "../services/rutinaService";
 import type { Rutina } from "../services/rutinaService";
 import {
@@ -11,8 +19,15 @@ import {
   actualizarRecordatorio,
   eliminarRecordatorio,
 } from "../services/recordatorioService";
-import { useAppContext } from "../context/AppContext";
+
+
 import "../styles/views/RecordatorioAdulto.scss";
+import ChevronRight from "@mui/icons-material/ChevronRight";
+
+import { useAppContext } from "../context/AppContext"; // ✅ agregado
+import "../styles/views/RecordatorioAdulto.scss";
+
+
 
 const frequencies = ["Diaria", "Semanal"];
 const daysOfWeek = [
@@ -35,7 +50,7 @@ const RecordatorioAdulto: React.FC = () => {
   const [day, setDay] = useState(daysOfWeek[0]);
   const [time, setTime] = useState("08:00");
   const [description, setDescription] = useState("");
-  const [color, setColor] = useState("#ff0000");
+  const [color, setColor] = useState("#3E8596");
   const [sound, setSound] = useState(sounds[0]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -117,7 +132,7 @@ const RecordatorioAdulto: React.FC = () => {
 
       if (isEditing) {
         const updateData = {
-          descripcion: description,
+          descripcion: description || "Sin descripción",
           frecuencia: frequency,
           hora: time,
           diaSemana: day,
@@ -130,7 +145,7 @@ const RecordatorioAdulto: React.FC = () => {
         await actualizarRecordatorio(idrec, updateData);
       } else {
         const createData = {
-          descripcion: description,
+          descripcion: description || "Sin descripción",
           frecuencia: frequency,
           hora: time,
           diaSemana: day,
@@ -183,72 +198,77 @@ const RecordatorioAdulto: React.FC = () => {
   // Mostrar loading mientras se cargan los datos
   if (loading && isEditing) {
     return (
-      <div className="loading-container">
+      <Box
+        sx={{
+          height: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+
         <CircularProgress />
-      </div>
+      </Box>
     );
   }
 
   return (
-    <div className="recordatorio-adulto-container">
-      <h2>{title}</h2>
+    <Box className="recordatorio-adulto-container">
+
+      <button className="volver-btn-superior" onClick={() => navigate("/adulto")}>
+        <ChevronLeft className="volver-icon" />
+        <span className="volver-text">Volver</span>
+      </button>
+
+      <h2 className="add-reminder-title">{title}</h2>
 
       {/* Mostrar error si existe */}
       {error && <div className="error-message">{error}</div>}
 
-      <div className="form-row">
-        {/* Rutina - Solo en modo crear */}
-        {!isEditing && (
-          <div className="form-group">
-            <label>Rutina:</label>
-            <select
-              value={routine}
-              onChange={(e) => setRoutine(e.target.value)}
-            >
-              <option value="">-- Selecciona una rutina --</option>
-              {routines?.map((r: Rutina) => (
-                <option key={r.id} value={r.id}>
-                  {r.nombre}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
 
-        {/* Frecuencia */}
+      {/* Rutina */}
+      {!isEditing && (
         <div className="form-group">
-          <label>Frecuencia:</label>
+          <label>Seleccionar Rutina</label>
           <select
-            value={frequency}
-            onChange={(e) => setFrequency(e.target.value)}
+            value={routine}
+            onChange={(e) => setRoutine(e.target.value)}
           >
-            {frequencies.map((f) => (
-              <option key={f} value={f}>
-                {f}
-              </option>
+            <option value="">-- Selecciona una rutina --</option>
+            {routines.map((r) => (
+              <option key={r.id} value={r.id}>{r.nombre}</option>
             ))}
           </select>
         </div>
+      )}
 
-        {/* Día */}
+      {/* Frecuencia */}
+      <div className="form-group">
+        <label>Frecuencia</label>
+        <select value={frequency} onChange={(e) => setFrequency(e.target.value)}>
+          {frequencies.map((f) => (
+            <option key={f} value={f}>{f}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Día y Hora */}
+      <div className="form-row">
         <div className="form-group">
-          <label>Día de la Semana:</label>
+          <label>Día de la semana</label>
           <select
             value={day}
             onChange={(e) => setDay(e.target.value)}
             disabled={frequency === "Diaria"}
           >
             {daysOfWeek.map((d) => (
-              <option key={d} value={d}>
-                {d}
-              </option>
+              <option key={d} value={d}>{d}</option>
             ))}
           </select>
         </div>
 
-        {/* Hora */}
         <div className="form-group">
-          <label>Hora:</label>
+          <label>Hora</label>
           <input
             type="time"
             value={time}
@@ -257,74 +277,51 @@ const RecordatorioAdulto: React.FC = () => {
         </div>
       </div>
 
-      <div className="form-row">
-        {/* Descripción */}
-        <div className="form-group full-width">
-          <label>Descripción:</label>
-          <input
-            type="text"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Escribe una descripción"
-          />
-        </div>
+      {/* Descripción */}
+      <div className="form-group">
+        <label>Descripción</label>
+        <input
+          type="text"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Escribe una descripción"
+        />
       </div>
 
-      <div className="form-row">
-        {/* Color */}
-        <div className="form-group">
-          <label>Color:</label>
-          <div className="color-picker-wrapper">
-            <input
-              type="color"
-              value={color}
-              onChange={(e) => setColor(e.target.value)}
-              className="color-picker"
-            />
-            <span className="color-value">{color}</span>
-          </div>
-        </div>
-
-        {/* Sonido */}
-        <div className="form-group">
-          <label>Sonido:</label>
-          <select value={sound} onChange={(e) => setSound(e.target.value)}>
-            {sounds.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-        </div>
+      {/* Color */}
+      <div className="form-group color-picker">
+        <label>Color</label>
+        <input
+          type="color"
+          value={color}
+          onChange={(e) => setColor(e.target.value)}
+        />
       </div>
 
-      {/* Botones de acción */}
-      <div className="action-buttons">
-        <button
-          className="volver-btn"
-          onClick={() => navigate("/adulto")}
-          disabled={loading}
-        >
-          Volver
+      {/* Sonido */}
+      <div className="form-group">
+        <label>Sonido</label>
+        <select value={sound} onChange={(e) => setSound(e.target.value)}>
+          {sounds.map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Botón Guardar */}
+      <button className="guardar-btn" onClick={handleSave} disabled={loading}>
+        <span className="guardar-text">{loading ? "Guardando..." : "Guardar"}</span>
+        {!loading && <ChevronRight className="guardar-icon" />}
+      </button>
+
+      {/* Botón Eliminar */}
+      {isEditing && (
+        <button className="eliminar-btn" onClick={handleDelete} disabled={loading}>
+          <span className="eliminar-text">{loading ? "Eliminando..." : "Eliminar"}</span>
+          {!loading && <DeleteIcon className="eliminar-icon" />}
         </button>
-        <button
-          className="guardar-btn"
-          onClick={handleSave}
-          disabled={loading}
-        >
-          {loading ? <CircularProgress size={20} /> : "Guardar"}
-        </button>
-        {isEditing && (
-          <button
-            className="eliminar-btn"
-            onClick={handleDelete}
-            disabled={loading}
-          >
-            {loading ? <CircularProgress size={20} /> : "Eliminar"}
-          </button>
-        )}
-      </div>
-    </div>
+      )}
+    </Box>
   );
 };
 

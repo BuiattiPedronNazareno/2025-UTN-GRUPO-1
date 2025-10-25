@@ -1,112 +1,113 @@
 @use "sass:color";
-@use './variables';
+@use "./variables" as v;
 
-// Mixin para botones
+// Botón base
 @mixin button-base {
-  padding: variables.$spacing-md variables.$spacing-lg;
+  padding: v.$spacing-md v.$spacing-lg;
   border: none;
-  border-radius: variables.$border-radius;
-  font-family: variables.$font-family-primary;
-  font-size: variables.$font-size-lg;
-  font-weight: 600;
+  border-radius: v.$border-radius;
+  font-family: v.$font-family-primary;
+  font-size: v.$font-size-lg;
+  font-weight: v.$font-weight-semibold;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: variables.$shadow-sm;
-  
+  transition: all v.$transition-duration ease;
+  box-shadow: v.$shadow-sm;
+
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: variables.$shadow-md;
+    transform: translateY(v.$hover-translate-sm);
+    box-shadow: v.$shadow-md;
   }
-  
+
   &:active {
     transform: translateY(0);
   }
 }
 
+// Variantes de botón
 @mixin button-primary {
   @include button-base;
-  background-color: variables.$primary-color;
-  color: variables.$white;
-  
+  background-color: v.$primary-color;
+  color: v.$white;
+
   &:hover {
-    background-color: color.adjust(variables.$primary-color, $lightness: -10%);
+    background-color: color.adjust(v.$primary-color, $lightness: -10%);
   }
 }
 
 @mixin button-secondary {
   @include button-base;
-  background-color: variables.$secondary-color;
-  color: variables.$white;
-  
+  background-color: v.$secondary-color;
+  color: v.$white;
+
   &:hover {
-    background-color: color.adjust(variables.$secondary-color, $lightness: -10%);
+    background-color: color.adjust(v.$secondary-color, $lightness: -10%);
   }
 }
 
 @mixin button-help {
   @include button-base;
-  background-color: variables.$help-color;
-  color: variables.$white;
-  
+  background-color: v.$help-color;
+  color: v.$white;
+
   &:hover {
-    background-color: color.adjust(variables.$help-color, $lightness: -10%);
+    background-color: color.adjust(v.$help-color, $lightness: -10%);
   }
 }
 
 @mixin button-danger {
   @include button-base;
-  background-color: variables.$danger-color;
-  color: variables.$white;
-  
+  background-color: v.$danger-color;
+  color: v.$white;
+
   &:hover {
-    background-color: color.adjust(variables.$danger-color, $lightness: -10%);
+    background-color: color.adjust(v.$danger-color, $lightness: -10%);
   }
 }
 
-// Mixin para tarjetas
+// Tarjetas
 @mixin card {
-  background-color: variables.$card-color;
-  border-radius: variables.$border-radius-lg;
-  box-shadow: variables.$shadow-md;
-  padding: variables.$spacing-lg;
-  transition: all 0.3s ease;
-  
+  background-color: v.$card-color;
+  border-radius: v.$border-radius-lg;
+  box-shadow: v.$shadow-md;
+  padding: v.$spacing-lg;
+  transition: all v.$transition-duration ease;
+
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: variables.$shadow-lg;
+    transform: translateY(v.$hover-translate-md);
+    box-shadow: v.$shadow-lg;
   }
 }
 
-// Mixin para contenedores principales
+// Contenedor principal
 @mixin container {
-  max-width: 1200px;
+  max-width: v.$container-max-width;
   margin: 0 auto;
-  padding: 0 variables.$spacing-md;
-  
-  @media (min-width: variables.$tablet) {
-    padding: 0 variables.$spacing-lg;
+  padding: 0 v.$spacing-md;
+
+  @media (min-width: v.$tablet) {
+    padding: 0 v.$spacing-lg;
   }
 }
 
-// Mixin para centrar contenido
+// Centrado flexible
 @mixin flex-center {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-// Mixin para grid responsivo
-@mixin grid-responsive($columns: 2, $gap: $spacing-md) {
+// Grid responsivo
+@mixin grid-responsive($columns: 2, $gap: v.$spacing-md) {
   display: grid;
   grid-template-columns: 1fr;
   gap: $gap;
-  
-  @media (min-width: variables.$mobile) {
+
+  @media (min-width: v.$mobile) {
     grid-template-columns: repeat($columns, 1fr);
   }
 }
 
-// Mixin para texto truncado
+// Texto truncado
 @mixin text-truncate {
   overflow: hidden;
   text-overflow: ellipsis;

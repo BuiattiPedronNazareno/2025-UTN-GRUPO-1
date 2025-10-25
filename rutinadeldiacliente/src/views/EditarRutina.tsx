@@ -11,6 +11,10 @@ import type { InfanteGetDTO } from "../services/UsuarioService";
 import { useAppContext } from "../context/AppContext";
 import "../styles/views/CrearRutina.scss";
 import "../styles/views/EditarRutina.scss";
+import ChevronRight from "@mui/icons-material/ChevronRight";
+import ChevronLeft from "@mui/icons-material/ChevronLeft";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
 const EditarRutina: React.FC = () => {
   const { rutinaId } = useParams<{ rutinaId: string }>();
@@ -85,13 +89,18 @@ const EditarRutina: React.FC = () => {
   };
 
   return (
-    <div className="crear-rutina-container">
-      <h2>Editar Rutina</h2>
+    <div className="crear-rutina-container" style={{ fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
+      <button className="volver-btn" onClick={() => navigate("/adulto")}>
+        <ChevronLeft className="volver-icon" />
+        <span className="volver-text">Volver</span>
+      </button>
+
+      <h2 className="edit-routine-title">Editar Rutina</h2>
 
       {/* Nombre, Imagen, Categoría e Infante */}
       <div className="form-row">
         <div className="form-group">
-          <label>Nombre de la Rutina:</label>
+          <label>Nombre de la Rutina</label>
           <input
             type="text"
             value={nombre}
@@ -100,7 +109,7 @@ const EditarRutina: React.FC = () => {
         </div>
 
         <div className="form-group">
-          <label>Imagen:</label>
+          <label>Imagen</label>
           <select value={imagen} onChange={(e) => setImagen(e.target.value)}>
             <option value="">-- Selecciona una imagen --</option>
             <option value="lavarse-las-manos.jpg">Lavarse las manos</option>
@@ -110,7 +119,7 @@ const EditarRutina: React.FC = () => {
         </div>
 
         <div className="form-group">
-          <label>Categoría:</label>
+          <label>Categoría</label>
           <select
             value={categoriaId ?? ""}
             onChange={(e) => setCategoriaId(Number(e.target.value))}
@@ -125,7 +134,7 @@ const EditarRutina: React.FC = () => {
         </div>
 
         <div className="form-group">
-          <label>Infante:</label>
+          <label>Infante</label>
           <select
             value={infanteId ?? ""}
             onChange={(e) => setInfanteId(Number(e.target.value))}
@@ -140,29 +149,29 @@ const EditarRutina: React.FC = () => {
         </div>
       </div>
 
-      <div className="action-buttons">
-        <button className="volver-btn" onClick={() => navigate("/adulto")}>
-          Volver
-        </button>
-        <button className="crear-paso-btn" onClick={handleActualizarRutina}>
-          Guardar Rutina
-        </button>
-      </div>
+
 
       {/* Lista de pasos */}
       <div className="pasos-agregados">
-        <h3>Pasos:</h3>
+        <h3>Pasos</h3>
         <ul>
           {pasos.map((p) => (
             <li key={p.id}>
               <span>{p.descripcion}</span>
               <div className="paso-actions">
                 <button
+                  className="edit-btn"
                   onClick={() => navigate(`/rutina/${rutinaId}/paso/${p.id}`)}
                 >
-                  Editar
+                  <EditIcon />
                 </button>
-                <button onClick={() => handleEliminarPaso(p.id!)}>Eliminar</button>
+                
+                <button
+                  className="delete-btn"
+                  onClick={() => handleEliminarPaso(p.id!)}
+                >
+                  <DeleteIcon />
+                </button>
               </div>
             </li>
           ))}
@@ -175,6 +184,15 @@ const EditarRutina: React.FC = () => {
           Crear Paso Nuevo
         </button>
       </div>
+
+      <button
+        className="guardar-btn"
+        onClick={handleActualizarRutina}
+      >
+        <span className="guardar-text">Guardar Rutina</span>
+        <ChevronRight className="guardar-icon"/>
+      </button>
+
     </div>
   );
 };

@@ -3,7 +3,7 @@
 import React, {useState} from "react"
 import { useNavigate } from "react-router-dom"
 import { Container, Box, Button, Stack } from "@mui/material"
-import NavBar from "../components/NavBar"
+import NavBarAdulto from "../components/NavBarAdulto"
 import "../styles/views/AjustesAdulto.scss"
 import TutorialWizard from "../components/TutorialWizard"
 
@@ -20,7 +20,7 @@ const AjustesAdulto: React.FC = () => {
   }
 
   const handlePerfilClick = () => {
-    navigate("/perfil-adulto")
+    console.log("Cargando perfil...")
   }
 
   const handleBackClick = () => {
@@ -29,7 +29,7 @@ const AjustesAdulto: React.FC = () => {
 
   return (
     <Box className="ajustes-adulto">
-      <NavBar title="Ajustes" showBackButton={true} onBackClick={handleBackClick} />
+      <NavBarAdulto title="Ajustes" showBackButton={true} />
 
       <Container component="main" className="main-content" maxWidth="sm">
         <Stack spacing={3} className="ajustes-options">

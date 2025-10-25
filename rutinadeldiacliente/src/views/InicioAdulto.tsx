@@ -1,6 +1,5 @@
 "use client";
 
-
 import type React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +30,7 @@ import { verificarRecordatorio } from "../services/recordatorioService";
 import { obtenerTutorialStatus, completarTutorial } from "../services/UsuarioService";
 import { useAppContext } from "../context/AppContext";
 import TutorialWizard from "../components/TutorialWizard";
+import defaultCard from "../assets/default-card.png";
 
 const InicioAdulto: React.FC = () => {
   const navigate = useNavigate();
@@ -234,34 +234,61 @@ const InicioAdulto: React.FC = () => {
                   display: "flex",
                   flexDirection: "column",
                   overflow: "hidden",
+                  paddingBottom: "0rem",
                 }}
               >
                 <CardMedia
+                  className="routine-image"
                   component="img"
                   height={200}
-                  image={routine.imagen || "/placeholder.svg"}
+                  image={routine.imagen ? routine.imagen : defaultCard}
                   alt={routine.nombre}
                   sx={{ objectFit: "cover" }}
                 />
-                <CardContent sx={{ flexGrow: 1 }}>
+                <CardContent className="routine-content" sx={{ flexGrow: 1, width: "100%", padding: 0, paddingBottom: 0, }}>
                   <Box
                     className="routine-header"
                     sx={{
                       display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
+                      flexDirection: "column",
+                      width: "100%",
                     }}
                   >
                     <Typography
                       variant="h6"
                       component="h3"
                       className="routine-title"
+                      sx={{ 
+                        textAlign: "left",
+                        mb: 1 
+                      }}
                     >
                       {routine.nombre}
                     </Typography>
 
-                    <Box className="routine-actions">
-                      <IconButton
+
+                    <Box 
+                      className="routine-actions"
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        width: "100%",
+                        gap: 1
+                      }}
+                    >
+                      {/* 👇 Solo aparece si el backend confirmó recordatorio */}
+                      {routinesWithReminders.has(routine.id) && (
+                        <IconButton
+                          className="action-button notification-button"
+                          onClick={() =>
+                            navigate(`/lista-recordatorio-adulto/${routine.id}`)
+                          }
+                        >
+                          <NotificationsActive />
+                        </IconButton>
+                      )}
+                     <IconButton
+
                         onClick={() =>
                           handleCambiarEstadoRutina(routine.id, routine.estado ?? "Activa")
                         }
@@ -275,18 +302,6 @@ const InicioAdulto: React.FC = () => {
                       >
                         <Edit />
                       </IconButton>
-
-                      {/* 👇 Solo aparece si el backend confirmó recordatorio */}
-                      {routinesWithReminders.has(routine.id) && (
-                        <IconButton
-                          className="action-button notification-button"
-                          onClick={() =>
-                            navigate(`/lista-recordatorio-adulto/${routine.id}`)
-                          }
-                        >
-                          <NotificationsActive />
-                        </IconButton>
-                      )}
                     </Box>
                   </Box>
                 </CardContent>
@@ -299,7 +314,7 @@ const InicioAdulto: React.FC = () => {
           <Button
             variant="contained"
             size="large"
-            className="create-routine-button"
+            className="inicio-button create-routine-button"
             onClick={handleCreateRoutine}
             sx={{
               backgroundColor: "#7FB069",
@@ -322,7 +337,7 @@ const InicioAdulto: React.FC = () => {
           <Button
             variant="contained"
             size="large"
-            className="add-reminder-button"
+            className="inicio-button add-reminder-button"
             onClick={handleAddReminder}
             sx={{
               backgroundColor: "#7FB069",

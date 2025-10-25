@@ -21,7 +21,6 @@ const ValidarPinAdulto: React.FC = () => {
 
     try {
       await validarPinAdulto(usuarioId, Number(pin))
-      // PIN correcto, navegar a la vista adulta
       navigate("/adulto")
     } catch (err: any) {
       setError(err.response?.data || "PIN incorrecto")
@@ -29,9 +28,9 @@ const ValidarPinAdulto: React.FC = () => {
   }
 
   return (
-    <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#f5f5f5" }}>
+    <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#BFDBD8", fontFamily: '"Comic Sans MS", cursive, sans-serif'}}>
       <Container maxWidth="sm">
-        <Card sx={{ p: 3, borderRadius: 3, boxShadow: 3 }}>
+        <Card sx={{ p: 3, borderRadius: 3, boxShadow: 3, backgroundColor: "#E7F3F2", alignSelf: 'center'  }}>
           <CardContent>
             <Typography variant="h5" sx={{ mb: 2, textAlign: "center" }}>
               Validar PIN de adulto
@@ -43,20 +42,30 @@ const ValidarPinAdulto: React.FC = () => {
               fullWidth
               value={pin}
               onChange={(e) => setPin(e.target.value)}
-              sx={{ mb: 2 }}
+              sx={{ mb: 2, backgroundColor: "white", borderRadius: 1, "& fieldset": { border: "none" } }}
             />
 
             {error && (
-              <Typography color="error" sx={{ mb: 2 }}>
+              <Typography color="error" sx={{ mb: 2, textAlign: "center" }}>
                 {error}
               </Typography>
             )}
 
-            <Button variant="contained" fullWidth onClick={handleValidarPin}>
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{ mt: 1, py: 1.5, borderRadius: 2, backgroundColor: "#87C2D4", color: "black", fontSize: "1rem" }}
+              onClick={handleValidarPin}
+            >
               Validar
             </Button>
 
-            <Button variant="text" fullWidth sx={{ mt: 1 }} onClick={() => navigate(-1)}>
+            <Button
+              variant="text"
+              fullWidth
+              sx={{ mt: 1, color: "black" }}
+              onClick={() => navigate(-1)}
+            >
               Volver
             </Button>
           </CardContent>
