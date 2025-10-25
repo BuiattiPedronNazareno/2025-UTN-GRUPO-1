@@ -17,6 +17,7 @@ const AjustesInfante: React.FC = () => {
     navigate("/seleccionperfil")
   }
 
+
   const handleLogrosClick = () => {
     navigate("/logros")
   }

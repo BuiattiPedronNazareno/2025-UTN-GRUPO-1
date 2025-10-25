@@ -4,12 +4,12 @@ import { useNavigate, useLocation, useParams } from "react-router-dom";
 
 import {
   Box,
+  CircularProgress,
 } from "@mui/material";
 
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import { CircularProgress } from "@mui/material";
 
 import { obtenerRutinaPorUsuario } from "../services/rutinaService";
 import type { Rutina } from "../services/rutinaService";
@@ -25,8 +25,6 @@ import "../styles/views/RecordatorioAdulto.scss";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 
 import { useAppContext } from "../context/AppContext"; // ✅ agregado
-
-
 import "../styles/views/RecordatorioAdulto.scss";
 
 
@@ -52,7 +50,7 @@ const RecordatorioAdulto: React.FC = () => {
   const [day, setDay] = useState(daysOfWeek[0]);
   const [time, setTime] = useState("08:00");
   const [description, setDescription] = useState("");
-  const [color, setColor] = useState("#4A90A4");
+  const [color, setColor] = useState("#3E8596");
   const [sound, setSound] = useState(sounds[0]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -76,7 +74,6 @@ const RecordatorioAdulto: React.FC = () => {
   const title = isEditing ? "Editar Recordatorio" : "Agregar Recordatorio";
 
   // Función para obtener datos del recordatorio
-
   const fetchRecordatorio = async (id: string) => {
     if (!usuarioActivo?.id) {
       setError("No hay un usuario activo.");
@@ -87,7 +84,6 @@ const RecordatorioAdulto: React.FC = () => {
       setLoading(true);
       setError(null);
 
-
       const rec = await obtenerRecordatorio(Number(id));
       console.log("Recordatorio data:", rec);
 
@@ -97,7 +93,7 @@ const RecordatorioAdulto: React.FC = () => {
       setDay(rec.diaSemana || daysOfWeek[0]);
       setTime(rec.hora || "08:00");
       setDescription(rec.descripcion || "");
-      setColor(rec.color || "#4A90A4");
+      setColor(rec.color || "#ff0000");
       setSound(rec.sonido || sounds[0]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error desconocido");
@@ -136,7 +132,7 @@ const RecordatorioAdulto: React.FC = () => {
 
       if (isEditing) {
         const updateData = {
-          descripcion: description,
+          descripcion: description || "Sin descripción",
           frecuencia: frequency,
           hora: time,
           diaSemana: day,
@@ -149,7 +145,7 @@ const RecordatorioAdulto: React.FC = () => {
         await actualizarRecordatorio(idrec, updateData);
       } else {
         const createData = {
-          descripcion: description,
+          descripcion: description || "Sin descripción",
           frecuencia: frequency,
           hora: time,
           diaSemana: day,
@@ -210,6 +206,7 @@ const RecordatorioAdulto: React.FC = () => {
           alignItems: "center",
         }}
       >
+
         <CircularProgress />
       </Box>
     );
@@ -259,14 +256,12 @@ const RecordatorioAdulto: React.FC = () => {
       <div className="form-row">
         <div className="form-group">
           <label>Día de la semana</label>
-
           <select
             value={day}
             onChange={(e) => setDay(e.target.value)}
             disabled={frequency === "Diaria"}
           >
             {daysOfWeek.map((d) => (
-
               <option key={d} value={d}>{d}</option>
             ))}
           </select>

@@ -7,10 +7,9 @@ import {
     Box,
     Typography,
     Card,
-    CardContent,
-    IconButton,
+    CardContent
 } from "@mui/material";
-import { ArrowBack, NotificationsActive, Schedule, AlarmOn } from "@mui/icons-material";
+import {  NotificationsActive, Schedule, AlarmOn } from "@mui/icons-material";
 import {
     obtenerRecordatoriosPorRutina,
     obtenerRutinaPorId,
@@ -53,7 +52,7 @@ const RecordatorioDetalleInfante: React.FC = () => {
         fetch();
     }, [rutinaId]);
 
-    const handleBack = () => navigate("/inicio");
+    const handleBackClick = () => navigate("/inicio");
 
     const formatHora = (hora: string) => {
         return hora ? hora.substring(0, 5) : "";
@@ -61,16 +60,12 @@ const RecordatorioDetalleInfante: React.FC = () => {
 
     return (
         <Box className="recordatorio-detalle">
-            <NavBar title="Recordatorios" showSettingsButton={false} onSettingsClick={() => navigate('/inicio')} />
-
-            <Box className="header" sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2 }}>
-                <IconButton onClick={handleBack} aria-label="volver">
-                    <ArrowBack />
-                </IconButton>
-                <Box>
-                    <Typography variant="h5">Volver</Typography>
-                </Box>
-            </Box>
+        <NavBar
+            title="Recordatorios"
+            showBackButton={true}
+            onBackClick={handleBackClick}
+            alignLevel="right"
+        />
 
             <Box sx={{ padding: 2 }}>
                 {loading ? (

@@ -229,22 +229,6 @@ const InicioInfante: React.FC = () => {
                   }}
                 >
                   {/* icono de recordatorio en la esquina superior derecha si existe */}
-                  {hasReminderMap[routine.id] && (
-                    <IconButton
-                      aria-label="recordatorio activo"
-                      size="small"
-                      sx={{
-                        position: 'absolute',
-                        right: 8,
-                        top: 8,
-                        color: '#FFD54F',
-                        zIndex: 2
-                      }}
-                      onClick={(e) => { e.stopPropagation(); navigate(`/recordatorio-infante/${routine.id}`); }}
-                    >
-                      <NotificationsActiveIcon />
-                    </IconButton>
-                  )}
                   <CardMedia
                     component="img"
                     height="200"
@@ -257,6 +241,22 @@ const InicioInfante: React.FC = () => {
                       {routine.nombre}
                     </Typography>
                   </CardContent>
+                  {hasReminderMap[routine.id] && (
+                    <IconButton
+                      aria-label="recordatorio activo"
+                      size="small"
+                      sx={{
+                        position: 'absolute',
+                        right: 20,
+                        bottom: 20, 
+                        color: '#000000ff',
+                        zIndex: 2
+                      }}
+                      onClick={(e) => { e.stopPropagation(); navigate(`/recordatorio-infante/${routine.id}`); }}
+                    >
+                      <NotificationsActiveIcon />
+                    </IconButton>
+                  )}
                 </Card>
               </Box>
             ))}

@@ -17,7 +17,6 @@ import {
   Edit,
   Delete,
   Schedule,
-  NotificationsActive,
   AlarmOn,
 } from "@mui/icons-material";
 import "../styles/views/ListaRecordatorioAdulto.scss";

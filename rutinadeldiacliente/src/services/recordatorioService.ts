@@ -28,10 +28,6 @@ export interface Recordatorio {
   sonido: string;
 }
 
-export type RecordatorioInput = Omit<Recordatorio, "id" | "fechaCreacion" | "nombre"> & {
-  nombre?: string;
-};
-
 // 🔹 Obtener recordatorios de una rutina específica
 export const obtenerRecordatoriosPorRutina = async (
   rutinaId: number,
@@ -99,7 +95,6 @@ export const obtenerRecordatorio = async (
 
 export const crearRecordatorio = async (
   recordatorio: Omit<Recordatorio, 'id'>,
-  
 ): Promise<RecordatorioRutina> => {
   const response = await api.post<RecordatorioRutina>(
     "/Recordatorio/crearRecordatorio",
@@ -111,7 +106,6 @@ export const crearRecordatorio = async (
 export const actualizarRecordatorio = async (
   id: number,
   recordatorio: Omit<Recordatorio, 'id'>,
-
 ): Promise<RecordatorioRutina> => {
   const response = await api.put<RecordatorioRutina>(
     `/Recordatorio/actualizarRecordatorio/${id}`,
