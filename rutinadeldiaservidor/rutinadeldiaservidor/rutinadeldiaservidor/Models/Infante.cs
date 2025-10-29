@@ -23,5 +23,8 @@ namespace rutinadeldiaservidor.Models
 
         [ForeignKey("InfanteNivelId")]
         public virtual InfanteNivel InfanteNivel { get; set; }
+        // Relación con Motivaciones
+        public virtual ICollection<Motivacion> Motivaciones { get; set; }
+
     }
 }

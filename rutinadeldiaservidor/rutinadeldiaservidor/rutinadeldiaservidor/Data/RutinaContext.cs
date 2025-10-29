@@ -14,7 +14,8 @@ namespace rutinadeldiaservidor.Data
         public DbSet<Recordatorio> Recordatorios { get; set; }
         public DbSet<Cancelacion> Cancelaciones { get; set; }
         public DbSet<Categoria> Categorias { get; set; }
-        
+        public DbSet<Motivacion> Motivaciones { get; set; }
+
         // 👥 Entidades del dominio "Usuarios"  
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Infante> Infantes { get; set; }
@@ -42,7 +43,20 @@ namespace rutinadeldiaservidor.Data
             modelBuilder.Entity<Recordatorio>()
                 .Property(r => r.Hora)
                 .HasColumnType("varchar(5)"); // Para PostgreSQL: "08:30"
-                
+
+            modelBuilder.Entity<Motivacion>()
+                .HasOne(m => m.Infante)
+                .WithMany(i => i.Motivaciones)
+                .HasForeignKey(m => m.InfanteId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Motivacion>()
+                .HasOne(m => m.Rutina)
+                .WithMany(r => r.Motivaciones)
+                .HasForeignKey(m => m.RutinaId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
             // Aquí puedes agregar más configuraciones de entidades...
         }
     }
