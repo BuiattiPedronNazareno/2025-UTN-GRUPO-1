@@ -15,6 +15,10 @@ import ChevronRight from "@mui/icons-material/ChevronRight";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import { crearCancelacion } from "../services/cancelacionService";
 import CancelModal from "../components/CancelModal";
+import { crearMotivacion } from "../services/motivacionService";
+import { useAppContext } from "../context/AppContext";
+import MotivacionModal from "../components/MotivacionModal";
+import { obtenerInfanteNiveles } from "../services/infanteNivelService"; 
 
 const RutinaDetalleInfante: React.FC = () => {
   const navigate = useNavigate();
@@ -24,6 +28,10 @@ const RutinaDetalleInfante: React.FC = () => {
   const [rutina, setRutina] = useState<Rutina | null>(null);
   const [showNotification, setShowNotification] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const { infanteActivo, actualizarNivelInfante } = useAppContext();
+  const [motivacionModalOpen, setMotivacionModalOpen] = useState(false);
+  const [motivacionData, setMotivacionData] = useState<{ subioNivel?: boolean; nuevoNivel?: string }>({});
+
 
   useEffect(() => {
     const fetchRutinaYPasos = async () => {
@@ -82,14 +90,48 @@ const RutinaDetalleInfante: React.FC = () => {
   };
 
 
-  const handleNext = () => {
-    if (currentStep < pasos.length - 1) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      // Último paso, finalizar rutina
-      navigate("/inicio");
+const handleNext = async () => {
+  if (currentStep < pasos.length - 1) {
+    setCurrentStep(currentStep + 1);
+  } else {
+    // Último paso, crear motivación
+    try {
+      if (infanteActivo && rutina) {
+        const response = await crearMotivacion({
+          rutinaId: rutina.id,
+          infanteId: infanteActivo.id,
+        });
+
+        setMotivacionData({
+          subioNivel: response.subioNivel,
+          nuevoNivel: response.nuevoNivel,
+        });
+
+        // Si subió de nivel, actualizar el contexto
+          if (response.subioNivel && response.nuevoNivel) {
+            console.log("🚀 El infante subió de nivel:", response.nuevoNivel);
+            
+            // Buscar el ID del nuevo nivel
+            const niveles = await obtenerInfanteNiveles();
+            const nuevoNivel = niveles.find(n => n.descripcion === response.nuevoNivel);
+            
+            if (nuevoNivel) {
+              console.log("📈 Actualizando nivel en contexto:", { nuevoNivelId: nuevoNivel.id, descripcion: response.nuevoNivel });
+              actualizarNivelInfante(nuevoNivel.id, response.nuevoNivel);
+            } else {
+              console.warn("⚠️ No se encontró el nivel con descripción:", response.nuevoNivel);
+            }
+          }
+
+        setMotivacionModalOpen(true);
+      }
+    } catch (error) {
+      console.error("Error al crear motivación:", error);
     }
-  };
+  }
+};
+
+
 
 
   const handlePrev = () => {
@@ -191,6 +233,19 @@ const RutinaDetalleInfante: React.FC = () => {
       {showNotification && (
         <CancelModal open={showNotification} onClose={() => setShowNotification(false)} />
       )}
+      {motivacionModalOpen && (
+        <MotivacionModal
+          open={motivacionModalOpen}
+          onClose={() => {
+            setMotivacionModalOpen(false);
+            navigate("/inicio");
+          }}
+          mensaje="¡Completaste la rutina!"
+          subioNivel={!!motivacionData.subioNivel}
+          nuevoNivel={motivacionData.nuevoNivel}
+        />
+      )}
+
     </Box>
   );
 };

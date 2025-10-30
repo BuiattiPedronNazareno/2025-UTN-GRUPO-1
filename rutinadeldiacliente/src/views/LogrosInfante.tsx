@@ -1,6 +1,6 @@
 "use client"
 
-import type React from "react"
+import React from "react";
 import { useNavigate } from "react-router-dom"
 import { Container, Box, Button, List, ListItem, ListItemIcon, ListItemText, Typography, Stack } from "@mui/material"
 import { CheckCircle, RadioButtonUnchecked } from "@mui/icons-material"
@@ -8,6 +8,7 @@ import BoltIcon from "@mui/icons-material/Bolt";
 import NavBar from "../components/NavBar"
 import HelpButton from "../components/HelpButton"
 import "../styles/views/LogrosInfante.scss"
+import { useAppContext } from "../context/AppContext";
 
 interface Achievement {
   id: string
@@ -18,7 +19,7 @@ interface Achievement {
 
 const LogrosInfante: React.FC = () => {
   const navigate = useNavigate()
-  const currentLevel = "PRINCIPIANTE"
+  const { nivelDescripcion } = useAppContext();
 
   const achievements: Achievement[] = [
     { id: "1", title: "Lavarse los dientes", completed: true, icon: "✓" },
@@ -43,8 +44,12 @@ const LogrosInfante: React.FC = () => {
 
           <Box className="nivel-actual">
             <BoltIcon className="nivel-icon" />
-            <Typography variant="h6" className="nivel-text">
-              {currentLevel}
+            <Typography 
+            className="nivel-text"
+            variant="h4" // más grande que h6
+            sx={{ textTransform: "uppercase", fontWeight: "bold" }}
+            >
+              {nivelDescripcion}
             </Typography>
           </Box>
         </Box>

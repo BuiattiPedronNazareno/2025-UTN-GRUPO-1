@@ -1,11 +1,12 @@
 "use client"
 
-import type React from "react"
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"
 import { AppBar, Toolbar, Typography, IconButton, Box } from "@mui/material"
 import { ArrowBack, Settings } from "@mui/icons-material"
 import FlashOnIcon from "@mui/icons-material/FlashOn"
 import "../styles/components/NavBar.scss"
+import { useAppContext } from "../context/AppContext";
 
 interface NavBarProps {
   title: string
@@ -25,6 +26,7 @@ const NavBar: React.FC<NavBarProps> = ({
   alignLevel = "left",
 }) => {
   const navigate = useNavigate()
+  const { nivelDescripcion } = useAppContext();
 
   const handleBackClick = () => {
     if (onBackClick) onBackClick()
@@ -49,8 +51,8 @@ const NavBar: React.FC<NavBarProps> = ({
           {alignLevel === "left" && (
             <>
               <FlashOnIcon className="navbar-icon" />
-              <Typography variant="caption" className="navbar-subtitle" sx={{ fontWeight: "bold" }}>
-                PRINCIPIANTE
+              <Typography variant="caption" className="navbar-subtitle" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>
+                {nivelDescripcion}
               </Typography>
             </>
           )}
@@ -66,8 +68,8 @@ const NavBar: React.FC<NavBarProps> = ({
           {alignLevel === "right" && (
             <>
               <FlashOnIcon className="navbar-icon" />
-              <Typography variant="caption" className="navbar-subtitle" sx={{ fontWeight: "bold" }}>
-                PRINCIPIANTE
+              <Typography variant="caption" className="navbar-subtitle" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>
+                {nivelDescripcion}
               </Typography>
             </>
           )}
