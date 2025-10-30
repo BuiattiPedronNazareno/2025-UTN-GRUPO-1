@@ -15,7 +15,7 @@ const MotivacionModal: React.FC<MotivacionModalProps> = ({
   onClose,
   subioNivel,
   nuevoNivel,
-  mensaje = "¡Completaste la rutina!",
+  mensaje = "¡COMPLETASTE LA RUTINA!",
 }) => {
   return (
     <Modal
@@ -33,12 +33,12 @@ const MotivacionModal: React.FC<MotivacionModalProps> = ({
     >
       {/* Cerrar modal al hacer click sobre el Box */}
       <Box
-        onClick={onClose} // ✅ Cierra al hacer click
+        onClick={onClose} 
         sx={{
           width: 320,
           height: 320,
           borderRadius: "50%",
-          backgroundColor: "#2196F3", // ✅ Azul
+          backgroundColor: "#76B875",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -46,20 +46,20 @@ const MotivacionModal: React.FC<MotivacionModalProps> = ({
           textAlign: "center",
           color: "white",
           p: 3,
-          cursor: "pointer", // para indicar que se puede clickear
+          cursor: "pointer", 
         }}
       >
         <EmojiEventsIcon sx={{ fontSize: 60, mb: 2 }} />
-        <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
+        <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1, textTransform: "uppercase" }}>
           {mensaje}
         </Typography>
 
         {subioNivel && nuevoNivel ? (
           <Typography variant="body1" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>
-             ¡Subiste al nivel <b>{nuevoNivel}</b>!
+             ¡SUBISTE AL NIVEL <b>{nuevoNivel}</b>!
           </Typography>
         ) : (
-          <Typography variant="body1">¡Buen trabajo! Seguí así 💪</Typography>
+          <Typography variant="body1">¡FELICITACIONES!</Typography>
         )}
       </Box>
     </Modal>
