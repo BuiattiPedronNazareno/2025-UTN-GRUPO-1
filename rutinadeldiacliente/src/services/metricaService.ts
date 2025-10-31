@@ -22,6 +22,32 @@ export interface RendimientoProgresionDTO {
   periodos: RendimientoPeriodoDTO[];
 }
 
+export interface RachaDTO {
+  infanteId: number;
+  rachaActual: number;
+  mejorRacha: number;
+  ultimaCompletacion: string;
+}
+
+export interface RendimientoPorRutinaDTO {
+  rutinaId: number;
+  nombreRutina: string;
+  vecesCompletada: number;
+  vecesCancelada: number;
+  rendimiento: number;
+  ultimaCompletacion: string | null;
+}
+
+export interface TasaMejoraDTO {
+  infanteId: number;
+  periodoAnterior: number;
+  periodoActual: number;
+  mejora: number;
+  tendencia: string;
+  nombrePeriodoAnterior: string;
+  nombrePeriodoActual: string;
+}
+
 // Obtener rendimiento de proceso (global del infante)
 export const obtenerRendimientoProceso = async (
   infanteId: number
@@ -39,6 +65,40 @@ export const obtenerRendimientoProgresion = async (
 ): Promise<RendimientoProgresionDTO> => {
   const response = await api.get<RendimientoProgresionDTO>(
     `/Metrica/rendimientoProgresion/${infanteId}`,
+    {
+      params: { tipo },
+    }
+  );
+  return response.data;
+};
+
+// Obtener racha de completaciones
+export const obtenerRacha = async (
+  infanteId: number
+): Promise<RachaDTO> => {
+  const response = await api.get<RachaDTO>(
+    `/Metrica/racha/${infanteId}`
+  );
+  return response.data;
+};
+
+// Obtener rendimiento por rutina individual
+export const obtenerRendimientoPorRutina = async (
+  infanteId: number
+): Promise<RendimientoPorRutinaDTO[]> => {
+  const response = await api.get<RendimientoPorRutinaDTO[]>(
+    `/Metrica/rendimientoPorRutina/${infanteId}`
+  );
+  return response.data;
+};
+
+// Obtener tasa de mejora
+export const obtenerTasaMejora = async (
+  infanteId: number,
+  tipo: "semanal" | "mensual" = "semanal"
+): Promise<TasaMejoraDTO> => {
+  const response = await api.get<TasaMejoraDTO>(
+    `/Metrica/tasaMejora/${infanteId}`,
     {
       params: { tipo },
     }
