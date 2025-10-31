@@ -18,6 +18,7 @@ import ListaRecordatorioAdulto from "../views/ListaRecordatorioAdulto";
 import EditarRutina from "../views/EditarRutina";
 import PasoForm from "../views/PasoForm";
 import CrearRutinaPrecargada from "../views/CrearRutinaPrecargada";
+import IndicadoresProgreso from "../views/IndicadoresProgreso";
 
 
 export const router = createBrowserRouter([
@@ -96,5 +97,8 @@ export const router = createBrowserRouter([
     path: "/crear-rutina-precargada",
     element: <CrearRutinaPrecargada />
   },
+  { path:"/indicadores-progreso",
+    element:<IndicadoresProgreso />
+  }
 
 ]);

@@ -355,8 +355,17 @@ const InicioAdulto: React.FC = () => {
           >
             Agregar Recordatorio
           </Button>
-        </Box>
-      </Container>
+          
+          <Button
+              variant="contained"
+              size="large"
+              className="inicio-button indicators-button"
+              onClick={() => navigate("/indicadores-progreso")}
+            >
+              Indicadores de Progreso
+            </Button>
+          </Box>
+        </Container>
 
       {/* Snackbar estético para advertencias */}
       <Snackbar
