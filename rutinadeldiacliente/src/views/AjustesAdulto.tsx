@@ -1,22 +1,23 @@
 "use client"
 
-import React, {useState} from "react"
+import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Container, Box, Button, Stack } from "@mui/material"
 import NavBarAdulto from "../components/NavBarAdulto"
 import "../styles/views/AjustesAdulto.scss"
 import TutorialWizard from "../components/TutorialWizard"
+import { useAppContext } from "../context/AppContext"
 
 const AjustesAdulto: React.FC = () => {
   const navigate = useNavigate()
-   const [tutorialOpen, setTutorialOpen] = useState(false)
+  const [tutorialOpen, setTutorialOpen] = useState(false)
 
   const handleTutorialClick = () => {
     setTutorialOpen(true)
   }
 
   const handleCambiarPerfilClick = () => {
-    navigate("/seleccionperfil") 
+    navigate("/seleccionperfil")
   }
 
   const handlePerfilClick = () => {
@@ -27,13 +28,24 @@ const AjustesAdulto: React.FC = () => {
     navigate("/adulto")
   }
 
+  const { setUsuarioActivo, setInfanteActivo, setTipoUsuario } = useAppContext()
+
+  const handleLogout = () => {
+    // Limpiar contexto y localStorage (AppContext se encarga de persistencia)
+    setUsuarioActivo(null)
+    setInfanteActivo(null)
+    setTipoUsuario(null)
+    // Volver a login
+    navigate("/login", { replace: true })
+  }
+
   return (
     <Box className="ajustes-adulto">
       <NavBarAdulto title="Ajustes" showBackButton={true} />
 
       <Container component="main" className="main-content" maxWidth="sm">
         <Stack spacing={3} className="ajustes-options">
-          
+
           <Button
             variant="contained"
             size="large"
@@ -43,7 +55,7 @@ const AjustesAdulto: React.FC = () => {
           >
             Tutorial Adulto
           </Button>
-          
+
           <Button
             variant="contained"
             size="large"
@@ -75,6 +87,18 @@ const AjustesAdulto: React.FC = () => {
             sx={{ backgroundColor: "#CD5C5C", color: "white", "&:hover": { backgroundColor: "#B22222" } }}
           >
             Volver
+          </Button>
+        </Box>
+
+        {/* Sección separada para cerrar sesión */}
+        <Box className="logout-section" sx={{ textAlign: "center", mt: 4 }}>
+          <Button
+            variant="contained"
+            className="logout-button"
+            onClick={handleLogout}
+            sx={{ backgroundColor: "#D32F2F", color: "white", py: 1.8, px: 4, fontSize: "1rem", '&:hover': { backgroundColor: '#B71C1C' } }}
+          >
+            Cerrar sesión
           </Button>
         </Box>
       </Container>

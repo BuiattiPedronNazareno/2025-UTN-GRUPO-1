@@ -2,29 +2,36 @@
 
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { useAppContext } from "../context/AppContext"
 import { Container, Card, CardContent, Typography, TextField, Button, Box } from "@mui/material"
 import { loginUsuario } from "../services/UsuarioService"
 import type { UsuarioLoginDTO } from "../services/UsuarioService"
 
 const Login: React.FC = () => {
   const navigate = useNavigate()
+  // location no se usa ahora que siempre redirigimos a /seleccionperfil
+  const { setUsuarioActivo } = useAppContext()
 
   const [email, setEmail] = useState("")
   const [clave, setClave] = useState("")
 
   const handleLogin = async () => {
-  try {
-    const loginData: UsuarioLoginDTO = { email, clave }
-    const usuario = await loginUsuario(loginData)
-    
-    alert("Bienvenido " + usuario.email)
+    try {
+      const loginData: UsuarioLoginDTO = { email, clave }
+      const usuario = await loginUsuario(loginData)
+      // Guardar el usuario en el contexto para que RequireAuth lo detecte
+      setUsuarioActivo(usuario)
 
-    // Redirigir según corresponda, por ejemplo al inicio del infante
-    navigate("/seleccionperfil", { state: { usuarioId: usuario.id } })
-  } catch (error: any) {
-    alert(error.response?.data || "Usuario o contraseña incorrecta")
+      alert("Bienvenido " + usuario.email)
+
+      // Siempre redirigir a seleccionperfil tras login exitoso
+      navigate("/seleccionperfil", { replace: true })
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: string } } | undefined
+      const message = err?.response?.data || "Usuario o contraseña incorrecta"
+      alert(message)
+    }
   }
-}
 
 
   return (

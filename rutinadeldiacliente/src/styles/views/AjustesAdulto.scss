@@ -13,14 +13,14 @@
     max-width: 600px;
     margin: 0 auto;
   }
-  
+
   .ajustes-options {
     margin-bottom: variables.$spacing-xl;
     display: flex;
     align-items: center;
     flex-direction: column;
     gap: variables.$spacing-lg;
-    
+
     .ajuste-button {
       @extend .main-action-button;
     }
@@ -41,6 +41,24 @@
     .guardar-button {
       @extend .guardar-button;
       max-width: 150px;
+    }
+  }
+
+  .logout-section {
+    display: flex;
+    justify-content: center;
+    margin-top: variables.$spacing-xl;
+
+    .logout-button {
+      @extend .main-action-button;
+      background-color: #D32F2F;
+      color: white;
+      max-width: 260px;
+      padding: 0.9rem 1.6rem;
+
+      &:hover {
+        background-color: #B71C1C;
+      }
     }
   }
 }
