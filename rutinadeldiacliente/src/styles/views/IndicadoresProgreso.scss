@@ -1,0 +1,263 @@
+@use '../variables.scss';
+@use '../mixins.scss';
+
+.indicadores-progreso {
+  min-height: 100vh;
+  background-color: #B8D4D6;
+  padding-bottom: 2rem;
+
+  .header {
+    background-color: #B8D4D6;
+    padding: 1.5rem 1rem 1rem;
+    text-align: center;
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      max-width: 960px;
+      margin: 0 auto;
+      gap: 1rem;
+
+      .back-button {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        position: absolute;
+        left: 0;
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.3);
+        }
+      }
+
+      .header-title {
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-weight: bold;
+        color: variables.$text-color;
+        text-align: center;
+        flex: 1;
+      }
+    }
+  }
+
+  .main-content {
+    padding: 1rem 1rem;
+
+    .metric-card {
+      @include mixins.card;
+      background-color: #4A90A4;
+      color: #fff;
+      border-radius: 2rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      margin-bottom: 1.5rem;
+      padding: 1.5rem;
+
+      h5 {
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+
+        .metric-item {
+          text-align: center;
+          padding: 1rem;
+          background-color: rgba(255, 255, 255, 0.15);
+          border-radius: 1rem;
+          transition: transform 0.2s ease;
+
+          &:hover {
+            transform: scale(1.05);
+          }
+
+          h3 {
+            margin-bottom: 0.5rem;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+          }
+
+          p {
+            font-size: 0.95rem;
+            opacity: 0.95;
+          }
+        }
+      }
+    }
+
+    .chart-card {
+      @include mixins.card;
+      background-color: #fff;
+      border-radius: 2rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+
+      h5 {
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-weight: bold;
+        color: variables.$text-color;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .recharts-wrapper {
+        .recharts-cartesian-axis-tick-value {
+          font-size: 0.75rem;
+          fill: variables.$text-color;
+        }
+
+        .recharts-legend-item-text {
+          font-size: 0.85rem;
+          color: variables.$text-color;
+        }
+      }
+    }
+  }
+
+  // Estilos para el FormControl
+  .MuiFormControl-root {
+    .MuiInputLabel-root {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      color: variables.$text-color;
+
+      &.Mui-focused {
+        color: #4A90A4;
+      }
+    }
+
+    .MuiOutlinedInput-root {
+      background-color: white;
+      border-radius: 2rem;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+
+      &:hover .MuiOutlinedInput-notchedOutline {
+        border-color: #4A90A4;
+      }
+
+      &.Mui-focused .MuiOutlinedInput-notchedOutline {
+        border-color: #4A90A4;
+      }
+
+      .MuiOutlinedInput-notchedOutline {
+        border-color: rgba(74, 144, 164, 0.5);
+        border-width: 2px;
+      }
+    }
+  }
+
+  // Estilos para el ToggleButtonGroup
+  .MuiToggleButtonGroup-root {
+    background-color: white;
+    border-radius: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(74, 144, 164, 0.3);
+
+    .MuiToggleButton-root {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-weight: bold;
+      text-transform: none;
+      padding: 0.75rem 2rem;
+      color: variables.$text-color;
+      border: none;
+
+      &:first-of-type {
+        border-radius: 2rem 0 0 2rem;
+      }
+
+      &:last-of-type {
+        border-radius: 0 2rem 2rem 0;
+      }
+
+      &.Mui-selected {
+        background-color: #4A90A4;
+        color: white;
+
+        &:hover {
+          background-color: #3A7A8A;
+        }
+      }
+
+      &:hover {
+        background-color: rgba(74, 144, 164, 0.1);
+      }
+    }
+  }
+
+  // Alert personalizado
+  .MuiAlert-root {
+    border-radius: 1.5rem;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Responsive
+@media (max-width: variables.$mobile) {
+  .indicadores-progreso {
+    .header {
+      padding: 1rem 0.5rem;
+
+      .header-content {
+        .header-title {
+          font-size: 1.5rem;
+        }
+
+        .back-button {
+          svg {
+            font-size: 1.8rem;
+          }
+        }
+      }
+    }
+
+    .main-content {
+      padding: 0.5rem;
+
+      .metric-card {
+        padding: 1rem;
+
+        h5 {
+          font-size: 1.2rem;
+        }
+
+        .metrics-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 0.75rem;
+
+          .metric-item {
+            padding: 0.75rem;
+
+            h3 {
+              font-size: 1.5rem;
+            }
+
+            p {
+              font-size: 0.8rem;
+            }
+          }
+        }
+      }
+
+      .chart-card {
+        padding: 1rem;
+
+        h5 {
+          font-size: 1.2rem;
+        }
+      }
+    }
+
+    .MuiToggleButtonGroup-root {
+      .MuiToggleButton-root {
+        padding: 0.5rem 1.5rem;
+        font-size: 0.9rem;
+      }
+    }
+  }
+}

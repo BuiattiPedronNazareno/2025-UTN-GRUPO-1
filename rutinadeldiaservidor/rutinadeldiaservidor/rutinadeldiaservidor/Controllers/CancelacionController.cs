@@ -59,6 +59,25 @@ namespace rutinadeldiaservidor.Controllers
             return Ok(cancelaciones);
         }
 
+        // GET api/cancelacion/obtenerCancelacionesPorInfante/3
+        [HttpGet("obtenerCancelacionesPorInfante/{infanteId}")]
+        public async Task<ActionResult<IEnumerable<CancelacionReadDTO>>> GetAllByInfante(int infanteId)
+        {
+            var cancelaciones = await _context.Cancelaciones
+                .Where(c => c.rutinaID != null &&
+                            _context.Rutinas.Any(r => r.Id == c.rutinaID && r.InfanteId == infanteId))
+                .Select(c => new CancelacionReadDTO
+                {
+                    Id = c.Id,
+                    fechaHora = c.fechaHora,
+                    rutinaID = c.rutinaID
+                })
+                .ToListAsync();
+
+            return Ok(cancelaciones);
+        }
+
+
         // GET api/Cancelacion/5
         [HttpGet("{id}")]
         public async Task<ActionResult<CancelacionReadDTO>> GetById(int id)
@@ -69,8 +88,8 @@ namespace rutinadeldiaservidor.Controllers
                 {
                     Id = c.Id,
                     fechaHora = c.fechaHora,
-                    rutinaID= c.rutinaID,
-                    
+                    rutinaID = c.rutinaID,
+
                 })
                 .FirstOrDefaultAsync();
 
@@ -96,8 +115,8 @@ namespace rutinadeldiaservidor.Controllers
             {
                 Id = cancelacion.Id,
                 rutinaID = cancelacion.rutinaID,
-                fechaHora = cancelacion.fechaHora 
-                
+                fechaHora = cancelacion.fechaHora
+
             };
 
             return CreatedAtAction(nameof(GetById), new { id = cancelacion.Id }, cancelacionReadDTO);
