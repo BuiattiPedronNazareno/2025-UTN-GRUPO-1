@@ -22,6 +22,12 @@ namespace rutinadeldiaservidor
             builder.Services.AddSwaggerGen();
             builder.Services.AddHttpClient();
 
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<VerificationCodeService>();
+            builder.Services.AddScoped<TelegramService>();
+            builder.Services.AddScoped<HelpNotificationService>();
+            builder.Services.AddScoped<CancelNotificationService>();
+
             // 1. Configurar CORS
             builder.Services.AddCors(options =>
             {
