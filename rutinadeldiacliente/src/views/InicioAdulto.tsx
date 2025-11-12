@@ -49,7 +49,7 @@ const InicioAdulto: React.FC = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [openGenerarRutinaIA, setOpenGenerarRutinaIA] = useState(false);
 
-
+  
 
   useEffect(() => {
     const fetchRutinas = async () => {
@@ -184,6 +184,11 @@ const InicioAdulto: React.FC = () => {
     }
   };
 
+  const activeRoutinesCount = routines.filter(
+    (r) => (r.estado || "").trim().toLowerCase() === "activa"
+  ).length;
+  const totalRoutinesCount = routines.length;
+
   return (
     <Box className="inicio-adulto">
       <Box className="header">
@@ -200,12 +205,12 @@ const InicioAdulto: React.FC = () => {
           </IconButton>
         </Box>
 
-        <Box className="stats">
+         <Box className="stats">
           <Typography variant="body2" className="stats-text">
-            RUTINAS ACTIVAS: 5/5
+            RUTINAS ACTIVAS: {activeRoutinesCount}/{totalRoutinesCount}
           </Typography>
           <Typography variant="body2" className="stats-text">
-            TOTAL RUTINAS CREADAS: 10
+            TOTAL RUTINAS CREADAS: {totalRoutinesCount}
           </Typography>
         </Box>
       </Box>
