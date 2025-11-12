@@ -30,6 +30,8 @@ import { verificarRecordatorio } from "../services/recordatorioService";
 import { obtenerTutorialStatus, completarTutorial } from "../services/UsuarioService";
 import { useAppContext } from "../context/AppContext";
 import TutorialWizard from "../components/TutorialWizard";
+import GenerarRutinaIAModal from "../components/GenerarRutinaIAModal";
+import type { RutinaIAResponse } from "../services/rutinaIAService";
 import defaultCard from "../assets/default-card.png";
 
 const InicioAdulto: React.FC = () => {
@@ -45,8 +47,9 @@ const InicioAdulto: React.FC = () => {
   const [firstMandatoryModule, setFirstMandatoryModule] = useState<number>(1)
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [openGenerarRutinaIA, setOpenGenerarRutinaIA] = useState(false);
 
-
+  
 
   useEffect(() => {
     const fetchRutinas = async () => {
@@ -125,8 +128,12 @@ const InicioAdulto: React.FC = () => {
     checkTutorial();
   }, [usuarioActivo]);
 
-
-
+  const handleGenerarRutinaConIA = (rutina: RutinaIAResponse) => {
+    setRoutines((prev) => [...prev, rutina as unknown as Rutina]);
+    
+    setSnackbarMessage(`¡Rutina "${rutina.nombre}" creada exitosamente.`);
+    setSnackbarOpen(true);
+  };
 
   const handleRoutineEdit = (routineId: number) => {
     navigate(`/editar-rutina/${routineId}`);
@@ -177,6 +184,11 @@ const InicioAdulto: React.FC = () => {
     }
   };
 
+  const activeRoutinesCount = routines.filter(
+    (r) => (r.estado || "").trim().toLowerCase() === "activa"
+  ).length;
+  const totalRoutinesCount = routines.length;
+
   return (
     <Box className="inicio-adulto">
       <Box className="header">
@@ -193,12 +205,12 @@ const InicioAdulto: React.FC = () => {
           </IconButton>
         </Box>
 
-        <Box className="stats">
+         <Box className="stats">
           <Typography variant="body2" className="stats-text">
-            RUTINAS ACTIVAS: 5/5
+            RUTINAS ACTIVAS: {activeRoutinesCount}/{totalRoutinesCount}
           </Typography>
           <Typography variant="body2" className="stats-text">
-            TOTAL RUTINAS CREADAS: 10
+            TOTAL RUTINAS CREADAS: {totalRoutinesCount}
           </Typography>
         </Box>
       </Box>
@@ -347,6 +359,7 @@ const InicioAdulto: React.FC = () => {
               px: 4,
               fontSize: "1.1rem",
               fontWeight: "bold",
+              mb: 2,
               width: "100%",
               "&:hover": {
                 backgroundColor: "#6FA055",
@@ -355,19 +368,55 @@ const InicioAdulto: React.FC = () => {
           >
             Agregar Recordatorio
           </Button>
+
+          <Button
+            variant="contained"
+            size="large"
+            className="inicio-button"
+            onClick={() => setOpenGenerarRutinaIA(true)}
+            sx={{
+              backgroundColor: "#8FBC8F",
+              color: "white",
+              borderRadius: "25px",
+              py: 2,
+              px: 4,
+              fontSize: "1.1rem",
+              fontWeight: "bold",
+              mb: 2,
+              width: "100%",
+              "&:hover": {
+                backgroundColor: "#7BA87B",
+              },
+            }}
+          >
+            Generar Rutina con IA
+          </Button>
           
           <Button
-              variant="contained"
-              size="large"
-              className="inicio-button indicators-button"
-              onClick={() => navigate("/indicadores-progreso")}
-            >
-              Indicadores de Progreso
-            </Button>
-          </Box>
-        </Container>
+            variant="contained"
+            size="large"
+            className="inicio-button indicators-button"
+            onClick={() => navigate("/indicadores-progreso")}
+            sx={{
+              backgroundColor: "#7FB069",
+              color: "white",
+              borderRadius: "25px",
+              py: 2,
+              px: 4,
+              fontSize: "1.1rem",
+              fontWeight: "bold",
+              width: "100%",
+              "&:hover": {
+                backgroundColor: "#6FA055",
+              },
+            }}
+          >
+            Indicadores de Progreso
+          </Button>
+        </Box>
+      </Container>
 
-      {/* Snackbar estético para advertencias */}
+      {/* Snackbar estético para advertencias y éxitos */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}
@@ -379,7 +428,7 @@ const InicioAdulto: React.FC = () => {
       >
         <Alert
           onClose={() => setSnackbarOpen(false)}
-          severity="warning"
+          severity={snackbarMessage.includes('exitosamente') ? 'success' : 'warning'}
           sx={{ width: '100%' }}
         >
           {snackbarMessage}
@@ -393,6 +442,13 @@ const InicioAdulto: React.FC = () => {
         autoStart={autoStartTutorial}
         initialModule={firstMandatoryModule ?? undefined}
         navigate={navigate}
+      />
+
+      <GenerarRutinaIAModal
+        open={openGenerarRutinaIA}
+        onClose={() => setOpenGenerarRutinaIA(false)}
+        usuarioId={usuarioActivo?.id || 0}
+        onRutinaGenerada={handleGenerarRutinaConIA}
       />
 
     </Box>
