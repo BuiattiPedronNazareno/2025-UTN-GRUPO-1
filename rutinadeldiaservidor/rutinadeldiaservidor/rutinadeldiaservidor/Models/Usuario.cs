@@ -28,6 +28,7 @@ namespace rutinadeldiaservidor.Models
         
         public virtual Adulto Adulto { get; set; }
         public virtual ICollection<Infante> Infantes { get; set; }
+        public virtual ICollection<Notificacion> Notificaciones { get; set; } = new List<Notificacion>();
 
     }
 }
