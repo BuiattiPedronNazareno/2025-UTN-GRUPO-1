@@ -5,19 +5,22 @@ using System.Threading.Tasks;
 using rutinadeldiaservidor.Models;
 using rutinadeldiaservidor.DTOs;
 using Microsoft.Extensions.Logging;
+using Telegram.Bot.Types;
+using rutinadeldiaservidor.Data;
+
 
 namespace rutinadeldiaservidor.Services
 {
     public class UserService : IUserService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly RutinaContext _context;
         private readonly IConfiguration _configuration;
         private readonly ILogger<UserService> _logger;
         private readonly VerificationCodeService _verificationCodeService;
         private readonly TelegramService _telegramService;
 
         public UserService(
-            ApplicationDbContext context,
+            RutinaContext context,
             IConfiguration configuration,
             ILogger<UserService> logger,
             VerificationCodeService verificationCodeService,
@@ -28,6 +31,7 @@ namespace rutinadeldiaservidor.Services
             _logger = logger;
             _verificationCodeService = verificationCodeService;
             _telegramService = telegramService;
+            _context = context;
         }
 
         public async Task<Usuario> GetUserByTelegramChatId(string chatId)

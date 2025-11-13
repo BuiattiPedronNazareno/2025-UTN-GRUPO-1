@@ -4,9 +4,18 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using rutinadeldiaservidor.Models;
+using rutinadeldiaservidor.DTOs;
+using rutinadeldiaservidor.Services;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Telegram.Bot.Types;
+using Telegram.Bot;
 
 namespace rutinadeldiaservidor.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TelegramController : ControllerBase

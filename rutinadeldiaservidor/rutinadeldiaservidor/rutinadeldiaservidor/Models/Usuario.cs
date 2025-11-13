@@ -24,7 +24,7 @@ namespace rutinadeldiaservidor.Models
         //campos de verificación para Telegram
         public bool TelegramVerified { get; set; }       
         public bool EmailVerified { get; set; } 
-        public bool PhoneVerified { get; set; }  public bool EmailVerified { get; set; }       public bool PhoneVerified { get; set; } 
+        public bool PhoneVerified { get; set; }  
         
         public virtual Adulto Adulto { get; set; }
         public virtual ICollection<Infante> Infantes { get; set; }
