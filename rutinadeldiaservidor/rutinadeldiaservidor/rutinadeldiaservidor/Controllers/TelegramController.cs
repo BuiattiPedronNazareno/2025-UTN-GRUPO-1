@@ -12,77 +12,77 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Telegram.Bot.Types;
 using Telegram.Bot;
+using rutinadeldiaservidor.Data;
+
 
 namespace rutinadeldiaservidor.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TelegramController : ControllerBase
     {
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
-        private readonly UserService _userService;
+        private readonly IUserService _userService; 
         private readonly VerificationCodeService _verificationCodeService;
         private readonly TelegramService _telegramService;
+
+        private readonly RutinaContext _context;
 
         public TelegramController(
             HttpClient httpClient, 
             IConfiguration configuration,
-            UserService userService,
+            IUserService userService,
             VerificationCodeService verificationCodeService,
-            TelegramService telegramService)
+            TelegramService telegramService,
+            RutinaContext context)
         {
             _httpClient = httpClient;
             _configuration = configuration;
             _userService = userService;
             _verificationCodeService = verificationCodeService;
             _telegramService = telegramService;
+            _context = context;
         }
 
         [HttpPost("webhook")]
         public async Task<IActionResult> HandleWebhook([FromBody] Update update)
         {
-            if (update?.Message == null) 
+            Console.WriteLine("WEBHOOK RECIBIDO:");
+            Console.WriteLine(JsonSerializer.Serialize(update));
+
+            if (update == null || update.Message == null)
                 return Ok();
 
             var chatId = update.Message.Chat.Id.ToString();
-            
+            var text = update.Message.Text?.ToLower();
+
+            Console.WriteLine($"CHAT ID = {chatId}");
+            Console.WriteLine($"MENSAJE = {text}");
+
             var user = await _userService.GetUserByTelegramChatId(chatId);
-            
+
             if (user == null)
             {
+                Console.WriteLine("Usuario no existe → creando...");
                 user = await _userService.CreateUserFromTelegram(update);
             }
 
-            if (!string.IsNullOrEmpty(update.Message.Text))
+            if (text == "ayuda")
             {
-                if (update.Message.Text.ToLower() == "ayuda" || 
-                    update.Message.Text.Contains("solicitar ayuda"))
-                {
-                    await SendHelpNotification(user.Id);
-
-                    await SendMessageToTelegram(chatId, "¡Notificación enviada! El adulto responsable será notificado inmediatamente.");
-                }
-                else if (update.Message.Text.ToLower() == "cancelar" || 
-                         update.Message.Text.Contains("cancelar"))
-                {
-                    await SendCancelNotification(user.Id);
-                    
-                    await SendMessageToTelegram(chatId, "¡Rutina cancelada! El adulto responsable será notificado.");
-                }
-                else if (update.Message.Text.ToLower() == "verificar email")
-                {
-                    await StartVerificationProcess(user, "email");
-                }
-                else if (update.Message.Text.ToLower() == "verificar teléfono")
-                {
-                    await StartVerificationProcess(user, "phone");
-                }
+                await SendHelpNotification(new HelpNotificationRequest { UserId = user.Id });
+                await SendMessageToTelegram(chatId, "¡Notificación enviada!");
+            }
+            else if (text == "cancelar")
+            {
+                await SendCancelNotification(new CancelNotificationRequest { UserId = user.Id });
+                await SendMessageToTelegram(chatId, "¡Rutina cancelada!");
             }
 
             return Ok();
         }
+
+
 
         [HttpPost("verify")]
         public async Task<IActionResult> VerifyContact([FromBody] VerifyContactDTO dto)
@@ -129,6 +129,8 @@ namespace rutinadeldiaservidor.Controllers
                 return NotFound();
             }
 
+            Console.WriteLine("ENVIANDO AYUDA A CHAT ID: " + user.TelegramChatId);
+
             await _telegramService.SendMessage(
                 user.TelegramChatId, 
                 $"¡Atención! Solicitud de ayuda de un niño.");
@@ -155,12 +157,21 @@ namespace rutinadeldiaservidor.Controllers
         private async Task SendMessageToTelegram(string chatId, string message)
         {
             var url = $"https://api.telegram.org/bot{_configuration["TelegramBot:Token"]}/sendMessage";
-            var content = new StringContent(
-                $"{{\"chat_id\":\"{chatId}\",\"text\":\"{message}\"}}", 
-                Encoding.UTF8, 
-                "application/json");
+
+            var payload = new
+            {
+                chat_id = long.Parse(chatId), 
+                text = message
+            };
+
+            var json = JsonSerializer.Serialize(payload);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(url, content);
+
+            var resp = await response.Content.ReadAsStringAsync();
+            Console.WriteLine("RESPUESTA TELEGRAM:");
+            Console.WriteLine(resp);
         }
 
         private async Task StartVerificationProcess(Usuario user, string contactType)

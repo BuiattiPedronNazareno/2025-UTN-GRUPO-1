@@ -21,6 +21,7 @@ namespace rutinadeldiaservidor.Data
         public DbSet<Infante> Infantes { get; set; }
         public DbSet<InfanteNivel> InfanteNiveles { get; set; }
         public DbSet<Adulto> Adultos { get; set; }
+        public DbSet<Notificacion> Notificaciones { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

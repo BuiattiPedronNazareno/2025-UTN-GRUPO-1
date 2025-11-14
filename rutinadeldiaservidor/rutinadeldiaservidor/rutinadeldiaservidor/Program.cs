@@ -1,6 +1,6 @@
-
 using Microsoft.EntityFrameworkCore;
 using rutinadeldiaservidor.Data;
+using rutinadeldiaservidor.Services;
 using System;
 
 namespace rutinadeldiaservidor
@@ -25,8 +25,6 @@ namespace rutinadeldiaservidor
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<VerificationCodeService>();
             builder.Services.AddScoped<TelegramService>();
-            builder.Services.AddScoped<HelpNotificationService>();
-            builder.Services.AddScoped<CancelNotificationService>();
 
             // 1. Configurar CORS
             builder.Services.AddCors(options =>

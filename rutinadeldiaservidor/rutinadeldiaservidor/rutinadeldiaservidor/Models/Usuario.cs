@@ -30,5 +30,9 @@ namespace rutinadeldiaservidor.Models
         public virtual ICollection<Infante> Infantes { get; set; }
         public virtual ICollection<Notificacion> Notificaciones { get; set; } = new List<Notificacion>();
 
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+
     }
 }
