@@ -1,6 +1,6 @@
-
 using Microsoft.EntityFrameworkCore;
 using rutinadeldiaservidor.Data;
+using rutinadeldiaservidor.Services;
 using System;
 
 namespace rutinadeldiaservidor
@@ -21,6 +21,10 @@ namespace rutinadeldiaservidor
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddHttpClient();
+
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<VerificationCodeService>();
+            builder.Services.AddScoped<TelegramService>();
 
             // 1. Configurar CORS
             builder.Services.AddCors(options =>
