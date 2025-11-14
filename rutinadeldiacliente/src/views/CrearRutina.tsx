@@ -82,6 +82,7 @@ const CrearRutina: React.FC = () => {
         categoriaId: categoriaId === "" ? undefined : categoriaId,
         infanteId: infanteId === "" ? undefined : infanteId
       });
+      localStorage.setItem("infanteId", infanteId.toString())
       navigate(`/crear-paso/${nuevaRutina.id}`);
     } catch (error) {
       console.error("Error al crear rutina:", error);

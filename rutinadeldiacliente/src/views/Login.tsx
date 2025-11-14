@@ -22,7 +22,9 @@ const Login: React.FC = () => {
       // Guardar el usuario en el contexto para que RequireAuth lo detecte
       setUsuarioActivo(usuario)
 
-      alert("Bienvenido " + usuario.email)
+      localStorage.setItem("userId", usuario.id.toString())
+
+      alert("Bienvenido!")
 
       // Siempre redirigir a seleccionperfil tras login exitoso
       navigate("/seleccionperfil", { replace: true })

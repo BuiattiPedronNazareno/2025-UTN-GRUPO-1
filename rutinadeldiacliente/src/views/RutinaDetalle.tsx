@@ -45,6 +45,9 @@ const RutinaDetalleInfante: React.FC = () => {
         ]);
 
         setRutina(rutinaData);
+
+        localStorage.setItem("routineId", rutinaData.id.toString());
+
         // Filtrar solo pasos con estado 'Activo' (si estado es undefined, asumimos 'Activo')
         const pasosActivos = pasosData.filter((p: Paso) => p.estado?.toLowerCase() === 'activo');
         setPasos(pasosActivos);

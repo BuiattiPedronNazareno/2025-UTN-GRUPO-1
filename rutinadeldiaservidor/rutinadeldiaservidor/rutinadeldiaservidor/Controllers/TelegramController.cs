@@ -18,7 +18,7 @@ using rutinadeldiaservidor.Data;
 namespace rutinadeldiaservidor.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class TelegramController : ControllerBase
     {
         private readonly HttpClient _httpClient;
@@ -26,8 +26,8 @@ namespace rutinadeldiaservidor.Controllers
         private readonly IUserService _userService; 
         private readonly VerificationCodeService _verificationCodeService;
         private readonly TelegramService _telegramService;
-
         private readonly RutinaContext _context;
+        private readonly TemporalVerificationCodeService _temporalCodeService;
 
         public TelegramController(
             HttpClient httpClient, 
@@ -35,7 +35,8 @@ namespace rutinadeldiaservidor.Controllers
             IUserService userService,
             VerificationCodeService verificationCodeService,
             TelegramService telegramService,
-            RutinaContext context)
+            RutinaContext context, 
+            TemporalVerificationCodeService temporalCodeService)
         {
             _httpClient = httpClient;
             _configuration = configuration;
@@ -43,45 +44,8 @@ namespace rutinadeldiaservidor.Controllers
             _verificationCodeService = verificationCodeService;
             _telegramService = telegramService;
             _context = context;
+            _temporalCodeService = temporalCodeService;
         }
-
-        [HttpPost("webhook")]
-        public async Task<IActionResult> HandleWebhook([FromBody] Update update)
-        {
-            Console.WriteLine("WEBHOOK RECIBIDO:");
-            Console.WriteLine(JsonSerializer.Serialize(update));
-
-            if (update == null || update.Message == null)
-                return Ok();
-
-            var chatId = update.Message.Chat.Id.ToString();
-            var text = update.Message.Text?.ToLower();
-
-            Console.WriteLine($"CHAT ID = {chatId}");
-            Console.WriteLine($"MENSAJE = {text}");
-
-            var user = await _userService.GetUserByTelegramChatId(chatId);
-
-            if (user == null)
-            {
-                Console.WriteLine("Usuario no existe → creando...");
-                user = await _userService.CreateUserFromTelegram(update);
-            }
-
-            if (text == "ayuda")
-            {
-                await SendHelpNotification(new HelpNotificationRequest { UserId = user.Id });
-                await SendMessageToTelegram(chatId, "¡Notificación enviada!");
-            }
-            else if (text == "cancelar")
-            {
-                await SendCancelNotification(new CancelNotificationRequest { UserId = user.Id });
-                await SendMessageToTelegram(chatId, "¡Rutina cancelada!");
-            }
-
-            return Ok();
-        }
-
 
 
         [HttpPost("verify")]
@@ -190,5 +154,124 @@ namespace rutinadeldiaservidor.Controllers
             var random = new Random();
             return random.Next(1000, 9999).ToString();
         }
+
+        [HttpPost("send-help-detailed")]
+        public async Task<IActionResult> SendHelpDetailed([FromBody] HelpNotificationDetailedRequest request)
+        {
+            var infante = await _context.Infantes.FindAsync(request.InfanteId);
+            if (infante == null)
+                return NotFound("Infante no encontrado.");
+
+            int userIdResponsable = infante.UsuarioId; 
+
+            var user = await _context.Usuarios.FindAsync(userIdResponsable);
+            if (user == null)
+                return NotFound("Adulto responsable no encontrado.");
+
+            if (user.TelegramChatId == null)
+                return BadRequest("El adulto responsable no tiene Telegram configurado.");
+
+            string rutinaNombre = "rutina actual";
+            if (request.RoutineId != 0 && request.RoutineId != null) 
+            {
+                var rutina = await _context.Rutinas.FindAsync(request.RoutineId);
+                if (rutina != null)
+                    rutinaNombre = rutina.Nombre;
+            }
+
+            string mensaje = $"¡{infante.Nombre} necesita ayuda! En la rutina \"{rutinaNombre}\".";
+
+            await _telegramService.SendMessage(user.TelegramChatId, mensaje);
+
+            Console.WriteLine($"ENVIANDO AYUDA A CHAT ID DEL ADULTO RESPONSABLE ({user.Id}): {user.TelegramChatId}");
+            Console.WriteLine($"MENSAJE: {mensaje}");
+
+            return Ok(new { success = true, message = "Notificación de ayuda enviada al adulto responsable." });
+        }
+
+        [HttpPost("webhook")]
+        public async Task<IActionResult> HandleWebhook([FromBody] Update update)
+        {
+            Console.WriteLine("WEBHOOK RECIBIDO:");
+            Console.WriteLine(JsonSerializer.Serialize(update));
+
+            if (update?.Message?.Text == null)
+                return Ok(); 
+
+            var chatId = update.Message.Chat.Id.ToString(); 
+            var text = update.Message.Text.Trim();
+            var userIdFromTelegram = update.Message.From?.Id; 
+
+            Console.WriteLine($"MENSAJE RECIBIDO DEL CHAT ID: {chatId}, USER ID: {userIdFromTelegram}, TEXTO: '{text}'");
+
+            var userIdForCode = FindUserIdByVerificationCode(text);
+
+            if (!string.IsNullOrEmpty(userIdForCode))
+            {
+                if (userIdForCode.StartsWith("telegram_verify_"))
+                {
+                    var userIdString = userIdForCode.Substring("telegram_verify_".Length);
+                    if (int.TryParse(userIdString, out int userId))
+                    {
+                        var user = await _context.Usuarios.FindAsync(userId);
+                        if (user != null)
+                        {
+                            user.TelegramChatId = chatId; 
+                            user.TelegramVerified = true; 
+
+                            await _context.SaveChangesAsync();
+
+                            Console.WriteLine($"[VERIFICACIÓN] Usuario ID {user.Id} verificado. ChatId guardado: {chatId}");
+
+                            await _telegramService.SendMessage(chatId, "¡Tu número ha sido verificado! Ahora recibirás notificaciones de la aplicación.");
+
+                            return Ok();
+                        }
+                        else
+                        {
+                            Console.WriteLine($"[VERIFICACIÓN ERROR] Código válido pero usuario ID {userId} no encontrado en DB.");
+                            await _telegramService.SendMessage(chatId, "Hubo un error al verificar tu cuenta. Inténtalo de nuevo.");
+                            return Ok();
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"[VERIFICACIÓN ERROR] Código válido pero userId en clave inválido: {userIdForCode} (valor intentado: {userIdString})");
+                        await _telegramService.SendMessage(chatId, "Hubo un error al verificar tu cuenta. Inténtalo de nuevo.");
+                        return Ok();
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"[VERIFICACIÓN ERROR] Clave encontrada no coincide con el formato esperado: {userIdForCode}");
+                    await _telegramService.SendMessage(chatId, "Hubo un error al verificar tu cuenta. Inténtalo de nuevo.");
+                    return Ok();
+                }
+            }
+
+            return Ok();
+        }
+
+        private string FindUserIdByVerificationCode(string codeToFind)
+        {
+            foreach (var kvp in _temporalCodeService.GetAllCodes()) 
+            {
+                if (kvp.Value.Code == codeToFind && DateTime.UtcNow < kvp.Value.Expiry)
+                {
+                    if (_temporalCodeService.TryGetAndRemoveCode(kvp.Key, out _))
+                    {
+                        Console.WriteLine($"[VERIFICACIÓN] Código encontrado y removido: {codeToFind} para clave: {kvp.Key}");
+                        return kvp.Key; 
+                    }
+                    else
+                    {
+                        Console.WriteLine($"[VERIFICACIÓN] Código encontrado pero no se pudo remover inmediatamente: {codeToFind}");
+                        return kvp.Key;
+                    }
+                }
+            }
+            return null; 
+        }
+
     }
 }

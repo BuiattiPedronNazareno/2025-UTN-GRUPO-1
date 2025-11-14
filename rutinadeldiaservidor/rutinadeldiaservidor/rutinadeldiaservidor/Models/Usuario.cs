@@ -19,12 +19,10 @@ namespace rutinadeldiaservidor.Models
         public string Telefono { get; set; }
         public bool HasSeenAdultTutorial { get; set; } = false;
 
-        public string TelegramChatId { get; set; } 
-
-        //campos de verificación para Telegram
-        public bool TelegramVerified { get; set; }       
-        public bool EmailVerified { get; set; } 
-        public bool PhoneVerified { get; set; }  
+        public string? TelegramChatId { get; set; } 
+        public bool TelegramVerified { get; set; } = false;
+        public bool EmailVerified { get; set; } = false; 
+        public bool PhoneVerified { get; set; } = false; 
         
         public virtual Adulto Adulto { get; set; }
         public virtual ICollection<Infante> Infantes { get; set; }

@@ -3,7 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using rutinadeldiaservidor.Data;
 using rutinadeldiaservidor.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using rutinadeldiaservidor.DTOs;
+using rutinadeldiaservidor.Services; 
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace rutinadeldiaservidor.Controllers
@@ -13,11 +17,22 @@ namespace rutinadeldiaservidor.Controllers
     public class UsuarioController : ControllerBase
     {
         private readonly RutinaContext _context;
+        private readonly TemporalVerificationCodeService _temporalCodeService;
+        private readonly ISmsService _smsService;
+        private readonly ILogger<UsuarioController> _logger;
 
-        public UsuarioController(RutinaContext context)
+        public UsuarioController(
+            RutinaContext context,
+            TemporalVerificationCodeService temporalCodeService,
+            ISmsService smsService,
+            ILogger<UsuarioController> logger)
         {
             _context = context;
+            _temporalCodeService = temporalCodeService;
+            _smsService = smsService;
+            _logger = logger;
         }
+
 
         // POST api/usuario/registrarUsuario
         [HttpPost("registrarUsuario")]
@@ -170,7 +185,57 @@ namespace rutinadeldiaservidor.Controllers
         }
 
 
+        [HttpPost("initiate-telegram-link")]
+        [AllowAnonymous] 
+        public async Task<IActionResult> InitiateTelegramLink([FromBody] InitiateTelegramDTO dto)
+        {
+            if (dto == null || dto.UserId <= 0)
+                return BadRequest("Datos inválidos");
 
+            var user = await _context.Usuarios.FindAsync(dto.UserId);
+            if (user == null)
+                return NotFound("Usuario no encontrado");
+
+            if (string.IsNullOrWhiteSpace(user.Telefono))
+                return BadRequest("El usuario no tiene un número de teléfono válido.");
+
+
+            var code = GenerateVerificationCode();
+
+            var userIdKey = $"telegram_verify_{user.Id}";
+            var validityPeriod = TimeSpan.FromMinutes(10);
+            _temporalCodeService.StoreCode(userIdKey, code, validityPeriod);
+
+            var message = $"Bienvenido a Rutina del Dia. Para vincular tu cuenta de Telegram, inicia una conversación con nuestro bot en @TuBotDeRutinasBot y envía este código: {code}";
+
+            var smsSent = await _smsService.SendSmsAsync(user.Telefono, message);
+            if (!smsSent)
+            {
+                _temporalCodeService.TryGetAndRemoveCode(userIdKey, out _); // eliminar código temporal si falla
+                return StatusCode(500, "Error al enviar el código de verificación. Inténtalo más tarde.");
+            }
+
+            return Ok(new { success = true, message = "Vinculación iniciada" });
+        }
+
+        // Función auxiliar para generar código de 4 dígitos
+        private string GenerateVerificationCode()
+        {
+            var random = new Random();
+            int codeNumber = random.Next(1000, 9999);
+            return codeNumber.ToString();
+        }
+
+        private int GetUserIdFromContext()
+        {
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(userIdClaim, out int userId))
+            {
+                return userId;
+            }
+            
+            return 0; 
+        }
 
 
     }
