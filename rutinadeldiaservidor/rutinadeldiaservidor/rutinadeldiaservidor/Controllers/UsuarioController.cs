@@ -3,7 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using rutinadeldiaservidor.Data;
 using rutinadeldiaservidor.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using rutinadeldiaservidor.DTOs;
+using rutinadeldiaservidor.Services; 
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace rutinadeldiaservidor.Controllers
@@ -13,11 +17,19 @@ namespace rutinadeldiaservidor.Controllers
     public class UsuarioController : ControllerBase
     {
         private readonly RutinaContext _context;
+        private readonly TemporalVerificationCodeService _temporalCodeService;
+        private readonly ILogger<UsuarioController> _logger;
 
-        public UsuarioController(RutinaContext context)
+        public UsuarioController(
+            RutinaContext context,
+            TemporalVerificationCodeService temporalCodeService,
+            ILogger<UsuarioController> logger)
         {
             _context = context;
+            _temporalCodeService = temporalCodeService;
+            _logger = logger;
         }
+
 
         // POST api/usuario/registrarUsuario
         [HttpPost("registrarUsuario")]
@@ -99,6 +111,7 @@ namespace rutinadeldiaservidor.Controllers
                     Id = i.Id,
                     Nombre = i.Nombre,
                     InfanteNivelId = i.InfanteNivelId,
+                    UsuarioId = i.UsuarioId
                 }).ToList()
             };
 
@@ -140,6 +153,7 @@ namespace rutinadeldiaservidor.Controllers
                     Id = i.Id,
                     Nombre = i.Nombre,
                     InfanteNivelId = i.InfanteNivelId,
+                    UsuarioId = i.UsuarioId 
                 }).ToList() ?? new List<InfanteGetDTO>() 
             };
 
@@ -170,7 +184,69 @@ namespace rutinadeldiaservidor.Controllers
         }
 
 
+        [HttpPost("initiate-telegram-link")]
+        public async Task<IActionResult> InitiateTelegramLink([FromBody] InitiateTelegramDTO dto)
+        {
+            if (dto == null || dto.UserId <= 0)
+                return BadRequest("Datos inválidos");
 
+            var usuario = await _context.Usuarios.FindAsync(dto.UserId);
+            if (usuario == null)
+                return NotFound("Usuario no encontrado");
+
+            var codigo = new Random().Next(1000, 9999).ToString();
+            usuario.CodigoVerificacion = codigo;
+            usuario.CodigoExpira = DateTime.UtcNow.AddMinutes(5);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                success = true,
+                message = "Código generado",
+                codigo
+            });
+        }
+
+        [HttpPost("verificar-codigo")]
+        public async Task<IActionResult> VerificarCodigo([FromBody] VerificarCodigoDTO dto)
+        {
+            if (dto == null)
+                return BadRequest("Datos inválidos");
+
+            var usuario = await _context.Usuarios.FindAsync(dto.UsuarioId);
+            if (usuario == null)
+                return NotFound("Usuario no encontrado.");
+
+            if (usuario.CodigoExpira < DateTime.UtcNow)
+                return BadRequest("El código expiró.");
+
+            if (usuario.CodigoVerificacion != dto.CodigoIngresado)
+                return BadRequest("Código incorrecto.");
+
+            usuario.Verificado = true;
+            usuario.CodigoVerificacion = null;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, message = "Cuenta verificada" });
+        }
+
+        private string GenerarCodigo()
+        {
+            var random = new Random();
+            return random.Next(100000, 999999).ToString();
+        }
+
+        private int GetUserIdFromContext()
+        {
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(userIdClaim, out int userId))
+            {
+                return userId;
+            }
+            
+            return 0; 
+        }
 
 
     }
