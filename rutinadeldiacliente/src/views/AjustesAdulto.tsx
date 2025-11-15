@@ -2,12 +2,14 @@
 
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { Container, Box, Button, Stack } from "@mui/material"
+import { Container, Box, Button, Stack, FormControlLabel, Switch } from "@mui/material"
 import NavBarAdulto from "../components/NavBarAdulto"
 import "../styles/views/AjustesAdulto.scss"
 import TutorialWizard from "../components/TutorialWizard"
 import LinkTelegramSection from "../components/Settings/LinkTelegramSection"
 import { useAppContext } from "../context/AppContext"
+import api from "../services/api";
+
 
 const AjustesAdulto: React.FC = () => {
   const navigate = useNavigate()
@@ -29,7 +31,7 @@ const AjustesAdulto: React.FC = () => {
     navigate("/adulto")
   }
 
-  const { setUsuarioActivo, setInfanteActivo, setTipoUsuario } = useAppContext()
+  const { usuarioActivo, setUsuarioActivo, setInfanteActivo, setTipoUsuario } = useAppContext()
 
   const handleLogout = () => {
     // Limpiar contexto y localStorage (AppContext se encarga de persistencia)
@@ -67,6 +69,7 @@ const AjustesAdulto: React.FC = () => {
             Cambiar de Perfil
           </Button>
 
+
           <Button
             variant="contained"
             size="large"
@@ -76,6 +79,21 @@ const AjustesAdulto: React.FC = () => {
           >
             Mi Perfil
           </Button>
+
+          <FormControlLabel
+            control={
+              <Switch
+                checked={usuarioActivo?.recibeNotificacionesCancelacion}
+                onChange={async (e) => {
+                  const resp = await api.put(`/usuario/${usuarioActivo.id}/notificaciones-cancelacion`, {
+                    recibeNotificaciones: e.target.checked
+                  });
+                  setUsuarioActivo(resp.data);
+                }}
+              />
+            }
+            label="Recibir notificaciones por cancelación"
+          />
 
           <Box className="vincular-telegram-section" sx={{ mt: 0, pt: 0, borderTop: "1px solid #ccc" }}>
             <LinkTelegramSection />

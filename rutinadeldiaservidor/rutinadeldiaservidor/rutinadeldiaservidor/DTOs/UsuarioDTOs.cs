@@ -16,6 +16,8 @@
         public int Id { get; set; }
         public int PinAdulto { get; set; }
         public List<InfanteGetDTO> Infantes { get; set; }
+
+        public bool RecibeNotificacionesCancelacion { get; set; }
     }
 
     public class UsuarioLoginDTO

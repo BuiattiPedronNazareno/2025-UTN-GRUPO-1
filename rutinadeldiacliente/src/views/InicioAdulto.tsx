@@ -33,6 +33,8 @@ import TutorialWizard from "../components/TutorialWizard";
 import GenerarRutinaIAModal from "../components/GenerarRutinaIAModal";
 import type { RutinaIAResponse } from "../services/rutinaIAService";
 import defaultCard from "../assets/default-card.png";
+import { hayCancelacionesSinLeer, obtenerCancelacionesPorUsuario } from "../services/cancelacionService";
+
 
 const InicioAdulto: React.FC = () => {
   const navigate = useNavigate();
@@ -48,8 +50,29 @@ const InicioAdulto: React.FC = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [openGenerarRutinaIA, setOpenGenerarRutinaIA] = useState(false);
+  const [tieneCancelacionesNuevas, setTieneCancelacionesNuevas] = useState(false);
 
-  
+  useEffect(() => {
+    async function checkCancelaciones() {
+      if (!usuarioActivo) return;
+      const data = await obtenerCancelacionesPorUsuario(usuarioActivo.id);
+      const hayNuevas = hayCancelacionesSinLeer(usuarioActivo.id, data);
+      setTieneCancelacionesNuevas(hayNuevas);
+    }
+
+    checkCancelaciones();
+    
+    // ✅ Refrescar cuando la ventana vuelve a tener foco
+    const handleFocus = () => {
+      checkCancelaciones();
+    };
+    
+    window.addEventListener('focus', handleFocus);
+    
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [usuarioActivo]);
 
   useEffect(() => {
     const fetchRutinas = async () => {
@@ -216,6 +239,38 @@ const InicioAdulto: React.FC = () => {
       </Box>
 
       <Container component="main" className="main-content" maxWidth="md">
+
+        <Button
+          className="historial-cancelacion-btn"
+          onClick={() => navigate("/historial-cancelacion")}
+          sx={{
+            width: "100%",
+            backgroundColor: "#5B818B",
+            border: "1px solid black",
+            color: "black",
+            borderRadius: "25px",
+            padding: "10px 20px",
+            fontSize: "1.2rem",
+            fontWeight: "bold",
+            mb: 3,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 2,
+            "&:hover": { backgroundColor: "#5C7A84" }
+          }}
+        >
+          Historial de Cancelación
+          {tieneCancelacionesNuevas && (
+            <NotificationsActive 
+              sx={{ 
+                fontSize: "1.8rem",
+                color: "red", 
+                animation: "pulse 1.5s ease-in-out infinite"
+              }} 
+            />
+          )}
+        </Button>
 
         <Box
           className="routines-container"

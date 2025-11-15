@@ -27,6 +27,7 @@ namespace rutinadeldiaservidor.Models
         public string? CodigoVerificacion { get; set; }  
         public DateTime? CodigoExpira { get; set; }     
         public bool Verificado { get; set; } = false; 
+        public bool RecibeNotificacionesCancelacion { get; set; } = true;
         
         public virtual Adulto Adulto { get; set; }
         public virtual ICollection<Infante> Infantes { get; set; }

@@ -13,7 +13,7 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
-import { crearCancelacion } from "../services/cancelacionService";
+import { crearCancelacion, cancelarRutina } from "../services/cancelacionService";
 import CancelModal from "../components/CancelModal";
 import { crearMotivacion } from "../services/motivacionService";
 import { useAppContext } from "../context/AppContext";
@@ -70,25 +70,22 @@ const RutinaDetalleInfante: React.FC = () => {
     console.log("Solicitando ayuda...")
   }
 
-  const handleCancelar = () => {
+  const handleCancelar = async () => {
     try {
-      if (!rutinaId) return;
+      if (!rutinaId || !infanteActivo) return;
 
-      const cancelacion = {
-        rutinaID: Number(rutinaId),
-        fechaHora: new Date()
-      }
-
-      crearCancelacion(cancelacion);
+      // ✅ Usar cancelarRutina que envía notificación por Telegram
+      await cancelarRutina(Number(rutinaId), infanteActivo.id);
+      
       setShowNotification(true);
 
-      // Ocultar después de 0.5 segundos y navegar
+      // Ocultar después de 2.5 segundos y navegar
       setTimeout(() => {
         setShowNotification(false);
         navigate("/inicio");
       }, 2500);
     } catch (error) {
-      console.error("Error al crear la cancelacion:", error);
+      console.error("Error al cancelar la rutina:", error);
     }
   };
 

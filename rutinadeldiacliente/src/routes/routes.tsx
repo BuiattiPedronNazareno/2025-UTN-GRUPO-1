@@ -20,7 +20,7 @@ import PasoForm from "../views/PasoForm";
 import CrearRutinaPrecargada from "../views/CrearRutinaPrecargada";
 import IndicadoresProgreso from "../views/IndicadoresProgreso";
 import RequireAuth from "../components/RequireAuth";
-
+import HistorialCancelacion from "../views/HistorialCancelacion";
 
 export const router = createBrowserRouter([
   // Rutas públicas
@@ -57,6 +57,7 @@ export const router = createBrowserRouter([
       { path: "/editar-recordatorio-adulto/:id", element: <RecordatorioAdulto /> },
       { path: "/crear-rutina-precargada", element: <CrearRutinaPrecargada /> },
       { path: "/indicadores-progreso", element: <IndicadoresProgreso /> },
+      { path: "/historial-cancelacion", element: <HistorialCancelacion /> },
     ],
   },
 ]);
