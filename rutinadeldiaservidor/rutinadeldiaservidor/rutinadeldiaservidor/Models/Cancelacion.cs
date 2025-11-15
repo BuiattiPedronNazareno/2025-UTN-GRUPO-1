@@ -12,9 +12,11 @@ namespace rutinadeldiaservidor.Models
 
         [Required]
         public DateTime fechaHora { get; set; }
-        public int? rutinaID { get; set; }
+
         [ForeignKey("Rutina")]
-        public virtual Rutina? rutina { get; set; }
+        public int? rutinaID { get; set; }
+        
+        public virtual Rutina? Rutina { get; set; }
 
     }
 }

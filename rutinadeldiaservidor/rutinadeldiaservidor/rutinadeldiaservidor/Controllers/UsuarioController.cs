@@ -74,13 +74,15 @@ namespace rutinadeldiaservidor.Controllers
                 Id = usuario.Id,
                 Email = usuario.Email,
                 Telefono = usuario.Telefono,
-                PinAdulto = adulto.Pin,
-                Infantes = usuario.Infantes?.Select(i => new InfanteGetDTO
+                PinAdulto = usuario.Adulto?.Pin ?? 0,
+                Infantes = usuario.Infantes.Select(i => new InfanteGetDTO
                 {
                     Id = i.Id,
                     Nombre = i.Nombre,
                     InfanteNivelId = i.InfanteNivelId,
-                }).ToList() ?? new List<InfanteGetDTO>()
+                    UsuarioId = i.UsuarioId
+                }).ToList(),
+                RecibeNotificacionesCancelacion = usuario.RecibeNotificacionesCancelacion
             };
 
 
@@ -106,6 +108,7 @@ namespace rutinadeldiaservidor.Controllers
                 Email = usuario.Email,
                 Telefono = usuario.Telefono,
                 PinAdulto = usuario.Adulto?.Pin ?? 0,
+                RecibeNotificacionesCancelacion = usuario.RecibeNotificacionesCancelacion,
                 Infantes = usuario.Infantes.Select(i => new InfanteGetDTO
                 {
                     Id = i.Id,
@@ -148,6 +151,7 @@ namespace rutinadeldiaservidor.Controllers
                 Email = usuario.Email,
                 Telefono = usuario.Telefono,
                 PinAdulto = usuario.Adulto?.Pin ?? 0,
+                RecibeNotificacionesCancelacion = usuario.RecibeNotificacionesCancelacion, 
                 Infantes = usuario.Infantes?.Select(i => new InfanteGetDTO
                 {
                     Id = i.Id,
@@ -230,6 +234,41 @@ namespace rutinadeldiaservidor.Controllers
 
             return Ok(new { success = true, message = "Cuenta verificada" });
         }
+
+        [HttpPut("{usuarioId}/notificaciones-cancelacion")]
+        public async Task<IActionResult> ActualizarNotificaciones(int usuarioId, [FromBody] UpdateNotificacionesDTO dto)
+        {
+            var usuario = await _context.Usuarios
+                .Include(u => u.Adulto)           
+                .Include(u => u.Infantes)       
+                .FirstOrDefaultAsync(u => u.Id == usuarioId);
+            if (usuario == null) return NotFound();
+            usuario.RecibeNotificacionesCancelacion = dto.RecibeNotificaciones;
+            await _context.SaveChangesAsync();
+            var usuarioDTO = new UsuarioGetDTO
+            {
+                Id = usuario.Id,
+                Email = usuario.Email,
+                Telefono = usuario.Telefono,
+                PinAdulto = usuario.Adulto?.Pin ?? 0,
+                RecibeNotificacionesCancelacion = usuario.RecibeNotificacionesCancelacion,
+                Infantes = usuario.Infantes.Select(i => new InfanteGetDTO
+                {
+                    Id = i.Id,
+                    Nombre = i.Nombre,
+                    InfanteNivelId = i.InfanteNivelId,
+                    UsuarioId = i.UsuarioId
+                }).ToList()
+            };
+
+            return Ok(usuarioDTO);
+        }
+
+        public class UpdateNotificacionesDTO
+        {
+            public bool RecibeNotificaciones { get; set; }
+        }
+
 
         private string GenerarCodigo()
         {

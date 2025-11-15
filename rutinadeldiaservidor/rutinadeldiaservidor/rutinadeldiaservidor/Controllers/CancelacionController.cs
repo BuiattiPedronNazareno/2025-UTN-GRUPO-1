@@ -60,11 +60,17 @@ namespace rutinadeldiaservidor.Controllers
                             _context.Infantes.Any(i => i.Id == r.InfanteId && i.UsuarioId == usuarioId)
                         )
                 )
+                .Include(c => c.Rutina)  
+                    .ThenInclude(r => r.Infante)
                 .Select(c => new CancelacionReadDTO
                 {
                     Id = c.Id,
                     fechaHora = c.fechaHora,
-                    rutinaID = c.rutinaID
+                    rutinaID = c.rutinaID,
+                    nombreRutina = c.Rutina != null ? c.Rutina.Nombre : "Rutina desconocida",  // ✅
+                    nombreInfante = c.Rutina != null && c.Rutina.Infante != null 
+                        ? c.Rutina.Infante.Nombre 
+                        : "Infante desconocido" 
                 })
                 .ToListAsync();
 
