@@ -26,7 +26,6 @@ namespace rutinadeldiaservidor
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<VerificationCodeService>();
             builder.Services.AddSingleton<TemporalVerificationCodeService>(); // Singleton para almacenamiento simple en memoria
-            builder.Services.AddScoped<ISmsService, SimulatedSmsService>(); 
             builder.Services.AddScoped<TelegramService>();
 
             // 1. Configurar CORS

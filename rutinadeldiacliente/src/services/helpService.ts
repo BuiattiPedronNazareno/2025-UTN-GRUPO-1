@@ -1,11 +1,10 @@
 import api from "./api"; 
 
-export async function sendHelp(userId: number, routineId?: number, infanteId?: number) {
+export async function sendHelp(infanteId: number, routineId?: number) {
   
   return api.post("/telegram/send-help-detailed", { 
-    userId,
-    routineId: routineId || null,
-    infanteId
+    infanteId,
+    routineId: routineId || 0,
   });
   
 }

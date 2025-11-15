@@ -28,6 +28,7 @@ namespace rutinadeldiaservidor.Controllers
         private readonly TelegramService _telegramService;
         private readonly RutinaContext _context;
         private readonly TemporalVerificationCodeService _temporalCodeService;
+        private readonly ILogger<TelegramController> _logger; 
 
         public TelegramController(
             HttpClient httpClient, 
@@ -36,7 +37,8 @@ namespace rutinadeldiaservidor.Controllers
             VerificationCodeService verificationCodeService,
             TelegramService telegramService,
             RutinaContext context, 
-            TemporalVerificationCodeService temporalCodeService)
+            TemporalVerificationCodeService temporalCodeService,
+            ILogger<TelegramController> logger)
         {
             _httpClient = httpClient;
             _configuration = configuration;
@@ -45,6 +47,7 @@ namespace rutinadeldiaservidor.Controllers
             _telegramService = telegramService;
             _context = context;
             _temporalCodeService = temporalCodeService;
+            _logger = logger;
         }
 
 
@@ -158,99 +161,111 @@ namespace rutinadeldiaservidor.Controllers
         [HttpPost("send-help-detailed")]
         public async Task<IActionResult> SendHelpDetailed([FromBody] HelpNotificationDetailedRequest request)
         {
-            var infante = await _context.Infantes.FindAsync(request.InfanteId);
-            if (infante == null)
+            _logger.LogInformation($"🔔 Solicitud de ayuda - InfanteId: {request.InfanteId}, RoutineId: {request.RoutineId}");
+            var infante = await _context.Infantes
+                .Include(i => i.Usuario) 
+                .FirstOrDefaultAsync(i => i.Id == request.InfanteId);
+            if (infante == null) {
+                _logger.LogWarning($"❌ Infante no encontrado - ID: {request.InfanteId}");
                 return NotFound("Infante no encontrado.");
-
-            int userIdResponsable = infante.UsuarioId; 
-
-            var user = await _context.Usuarios.FindAsync(userIdResponsable);
-            if (user == null)
-                return NotFound("Adulto responsable no encontrado.");
-
-            if (user.TelegramChatId == null)
-                return BadRequest("El adulto responsable no tiene Telegram configurado.");
-
-            string rutinaNombre = "rutina actual";
-            if (request.RoutineId != 0 && request.RoutineId != null) 
-            {
-                var rutina = await _context.Rutinas.FindAsync(request.RoutineId);
-                if (rutina != null)
-                    rutinaNombre = rutina.Nombre;
             }
 
-            string mensaje = $"¡{infante.Nombre} necesita ayuda! En la rutina \"{rutinaNombre}\".";
+            _logger.LogInformation($"✅ Infante: {infante.Nombre} (ID: {infante.Id}, UsuarioId: {infante.UsuarioId})");
 
-            await _telegramService.SendMessage(user.TelegramChatId, mensaje);
+            var adulto = infante.Usuario;
+            if (adulto == null){
+                _logger.LogError($"❌ Usuario no encontrado para InfanteId: {request.InfanteId}");
+                return NotFound("Adulto responsable no encontrado.");
+            }
 
-            Console.WriteLine($"ENVIANDO AYUDA A CHAT ID DEL ADULTO RESPONSABLE ({user.Id}): {user.TelegramChatId}");
-            Console.WriteLine($"MENSAJE: {mensaje}");
+            _logger.LogInformation($"✅ Adulto: {adulto.Email} (ID: {adulto.Id}, ChatId: {adulto.TelegramChatId ?? "NULL"})");
 
-            return Ok(new { success = true, message = "Notificación de ayuda enviada al adulto responsable." });
+            if (string.IsNullOrEmpty(adulto.TelegramChatId)){
+                _logger.LogWarning($"⚠️ Adulto {adulto.Email} sin Telegram vinculado");
+                return BadRequest("El adulto responsable no ha vinculado Telegram.");
+            }
+            if (!adulto.TelegramVerified){
+                _logger.LogWarning($"⚠️ Adulto {adulto.Email} sin verificar Telegram");
+                return BadRequest("El adulto responsable no ha verificado su cuenta de Telegram.");
+            }
+
+            string mensaje;
+    
+            if (request.RoutineId != 0)
+            {
+                var rutina = await _context.Rutinas.FindAsync(request.RoutineId);
+                string rutinaNombre = rutina?.Nombre ?? "rutina desconocida";
+                
+                mensaje = $"🆘 ¡{infante.Nombre} necesita ayuda!\n\n" +
+                        $"📋 En la Rutina: \"{rutinaNombre}\"";
+                
+                _logger.LogInformation($"📋 Ayuda solicitada desde rutina: {rutinaNombre} (ID: {request.RoutineId})");
+            }
+            else
+            {
+                mensaje = $"🆘 ¡{infante.Nombre} necesita ayuda!";
+                
+                _logger.LogInformation($"🏠 Ayuda solicitada sin rutina específica");
+            }
+
+            try
+            {
+                await _telegramService.SendMessage(adulto.TelegramChatId, mensaje);
+                
+                _logger.LogInformation(
+                    $"✅ Notificación enviada - Infante: {infante.Nombre} (ID: {infante.Id}) → " +
+                    $"Adulto: {adulto.Email} (ID: {adulto.Id}, ChatID: {adulto.TelegramChatId})");
+
+                return Ok(new { 
+                    success = true, 
+                    message = "Notificación de ayuda enviada al adulto responsable.",
+                    tipoAyuda = request.RoutineId != 0 ? "rutina_especifica" : "general",
+                    debug = new {
+                        infanteId = infante.Id,
+                        infanteNombre = infante.Nombre,
+                        adultoId = adulto.Id,
+                        adultoEmail = adulto.Email,
+                        adultoChatId = adulto.TelegramChatId,
+                        rutinaId = request.RoutineId
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"❌ Error al enviar mensaje - Adulto ID: {adulto.Id}");
+                return StatusCode(500, "Error al enviar notificación de ayuda.");
+            }
         }
+
 
         [HttpPost("webhook")]
         public async Task<IActionResult> HandleWebhook([FromBody] Update update)
         {
-            Console.WriteLine("WEBHOOK RECIBIDO:");
-            Console.WriteLine(JsonSerializer.Serialize(update));
+            if (update?.Message?.Text == null) return Ok();
 
-            if (update?.Message?.Text == null)
-                return Ok(); 
+            var chatId = update.Message.Chat.Id.ToString();
+            var code = update.Message.Text.Trim();
 
-            var chatId = update.Message.Chat.Id.ToString(); 
-            var text = update.Message.Text.Trim();
-            var userIdFromTelegram = update.Message.From?.Id; 
+            // Buscar usuario por código
+            var usuario = await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.CodigoVerificacion == code && u.CodigoExpira > DateTime.UtcNow);
 
-            Console.WriteLine($"MENSAJE RECIBIDO DEL CHAT ID: {chatId}, USER ID: {userIdFromTelegram}, TEXTO: '{text}'");
-
-            var userIdForCode = FindUserIdByVerificationCode(text);
-
-            if (!string.IsNullOrEmpty(userIdForCode))
+            if (usuario != null)
             {
-                if (userIdForCode.StartsWith("telegram_verify_"))
-                {
-                    var userIdString = userIdForCode.Substring("telegram_verify_".Length);
-                    if (int.TryParse(userIdString, out int userId))
-                    {
-                        var user = await _context.Usuarios.FindAsync(userId);
-                        if (user != null)
-                        {
-                            user.TelegramChatId = chatId; 
-                            user.TelegramVerified = true; 
+                usuario.TelegramChatId = chatId;
+                usuario.TelegramVerified = true;
+                usuario.CodigoVerificacion = null;
+                await _context.SaveChangesAsync();
 
-                            await _context.SaveChangesAsync();
+                await _telegramService.SendMessage(chatId, $"¡Bienvenido {usuario.Email}! Ahora recibirás notificaciones de tus niños.");
 
-                            Console.WriteLine($"[VERIFICACIÓN] Usuario ID {user.Id} verificado. ChatId guardado: {chatId}");
-
-                            await _telegramService.SendMessage(chatId, "¡Tu número ha sido verificado! Ahora recibirás notificaciones de la aplicación.");
-
-                            return Ok();
-                        }
-                        else
-                        {
-                            Console.WriteLine($"[VERIFICACIÓN ERROR] Código válido pero usuario ID {userId} no encontrado en DB.");
-                            await _telegramService.SendMessage(chatId, "Hubo un error al verificar tu cuenta. Inténtalo de nuevo.");
-                            return Ok();
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine($"[VERIFICACIÓN ERROR] Código válido pero userId en clave inválido: {userIdForCode} (valor intentado: {userIdString})");
-                        await _telegramService.SendMessage(chatId, "Hubo un error al verificar tu cuenta. Inténtalo de nuevo.");
-                        return Ok();
-                    }
-                }
-                else
-                {
-                    Console.WriteLine($"[VERIFICACIÓN ERROR] Clave encontrada no coincide con el formato esperado: {userIdForCode}");
-                    await _telegramService.SendMessage(chatId, "Hubo un error al verificar tu cuenta. Inténtalo de nuevo.");
-                    return Ok();
-                }
+                return Ok();
             }
 
+            await _telegramService.SendMessage(chatId, "Código inválido o expirado. Intenta nuevamente.");
             return Ok();
         }
+
 
         private string FindUserIdByVerificationCode(string codeToFind)
         {

@@ -18,18 +18,15 @@ namespace rutinadeldiaservidor.Controllers
     {
         private readonly RutinaContext _context;
         private readonly TemporalVerificationCodeService _temporalCodeService;
-        private readonly ISmsService _smsService;
         private readonly ILogger<UsuarioController> _logger;
 
         public UsuarioController(
             RutinaContext context,
             TemporalVerificationCodeService temporalCodeService,
-            ISmsService smsService,
             ILogger<UsuarioController> logger)
         {
             _context = context;
             _temporalCodeService = temporalCodeService;
-            _smsService = smsService;
             _logger = logger;
         }
 
@@ -114,6 +111,7 @@ namespace rutinadeldiaservidor.Controllers
                     Id = i.Id,
                     Nombre = i.Nombre,
                     InfanteNivelId = i.InfanteNivelId,
+                    UsuarioId = i.UsuarioId
                 }).ToList()
             };
 
@@ -155,6 +153,7 @@ namespace rutinadeldiaservidor.Controllers
                     Id = i.Id,
                     Nombre = i.Nombre,
                     InfanteNivelId = i.InfanteNivelId,
+                    UsuarioId = i.UsuarioId 
                 }).ToList() ?? new List<InfanteGetDTO>() 
             };
 
@@ -186,44 +185,56 @@ namespace rutinadeldiaservidor.Controllers
 
 
         [HttpPost("initiate-telegram-link")]
-        [AllowAnonymous] 
         public async Task<IActionResult> InitiateTelegramLink([FromBody] InitiateTelegramDTO dto)
         {
             if (dto == null || dto.UserId <= 0)
                 return BadRequest("Datos inválidos");
 
-            var user = await _context.Usuarios.FindAsync(dto.UserId);
-            if (user == null)
+            var usuario = await _context.Usuarios.FindAsync(dto.UserId);
+            if (usuario == null)
                 return NotFound("Usuario no encontrado");
 
-            if (string.IsNullOrWhiteSpace(user.Telefono))
-                return BadRequest("El usuario no tiene un número de teléfono válido.");
+            var codigo = new Random().Next(1000, 9999).ToString();
+            usuario.CodigoVerificacion = codigo;
+            usuario.CodigoExpira = DateTime.UtcNow.AddMinutes(5);
 
+            await _context.SaveChangesAsync();
 
-            var code = GenerateVerificationCode();
-
-            var userIdKey = $"telegram_verify_{user.Id}";
-            var validityPeriod = TimeSpan.FromMinutes(10);
-            _temporalCodeService.StoreCode(userIdKey, code, validityPeriod);
-
-            var message = $"Bienvenido a Rutina del Dia. Para vincular tu cuenta de Telegram, inicia una conversación con nuestro bot en @TuBotDeRutinasBot y envía este código: {code}";
-
-            var smsSent = await _smsService.SendSmsAsync(user.Telefono, message);
-            if (!smsSent)
+            return Ok(new
             {
-                _temporalCodeService.TryGetAndRemoveCode(userIdKey, out _); // eliminar código temporal si falla
-                return StatusCode(500, "Error al enviar el código de verificación. Inténtalo más tarde.");
-            }
-
-            return Ok(new { success = true, message = "Vinculación iniciada" });
+                success = true,
+                message = "Código generado",
+                codigo
+            });
         }
 
-        // Función auxiliar para generar código de 4 dígitos
-        private string GenerateVerificationCode()
+        [HttpPost("verificar-codigo")]
+        public async Task<IActionResult> VerificarCodigo([FromBody] VerificarCodigoDTO dto)
+        {
+            if (dto == null)
+                return BadRequest("Datos inválidos");
+
+            var usuario = await _context.Usuarios.FindAsync(dto.UsuarioId);
+            if (usuario == null)
+                return NotFound("Usuario no encontrado.");
+
+            if (usuario.CodigoExpira < DateTime.UtcNow)
+                return BadRequest("El código expiró.");
+
+            if (usuario.CodigoVerificacion != dto.CodigoIngresado)
+                return BadRequest("Código incorrecto.");
+
+            usuario.Verificado = true;
+            usuario.CodigoVerificacion = null;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, message = "Cuenta verificada" });
+        }
+
+        private string GenerarCodigo()
         {
             var random = new Random();
-            int codeNumber = random.Next(1000, 9999);
-            return codeNumber.ToString();
+            return random.Next(100000, 999999).ToString();
         }
 
         private int GetUserIdFromContext()

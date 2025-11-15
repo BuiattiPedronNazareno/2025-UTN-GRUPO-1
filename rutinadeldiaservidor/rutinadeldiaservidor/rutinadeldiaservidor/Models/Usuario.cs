@@ -23,6 +23,10 @@ namespace rutinadeldiaservidor.Models
         public bool TelegramVerified { get; set; } = false;
         public bool EmailVerified { get; set; } = false; 
         public bool PhoneVerified { get; set; } = false; 
+
+        public string? CodigoVerificacion { get; set; }  
+        public DateTime? CodigoExpira { get; set; }     
+        public bool Verificado { get; set; } = false; 
         
         public virtual Adulto Adulto { get; set; }
         public virtual ICollection<Infante> Infantes { get; set; }

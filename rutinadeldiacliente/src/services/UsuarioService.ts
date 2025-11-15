@@ -24,6 +24,7 @@ export interface InfanteGetDTO {
   id: number
   nombre: string
   infanteNivelId: number
+  usuarioId?: number 
 }
 
 // Crear usuario
