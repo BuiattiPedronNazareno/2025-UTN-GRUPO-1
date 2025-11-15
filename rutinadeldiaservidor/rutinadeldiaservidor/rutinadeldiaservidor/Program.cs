@@ -1,6 +1,9 @@
+using rutinadeldiaservidor.Services;
+using SignalRReminder.Hubs;
 using Microsoft.EntityFrameworkCore;
 using rutinadeldiaservidor.Data;
-using rutinadeldiaservidor.Services;
+using Hangfire;
+using Hangfire.PostgreSql;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 
@@ -15,10 +18,7 @@ namespace rutinadeldiaservidor
             builder.Services.AddDbContext<RutinaContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddHttpClient();
@@ -34,29 +34,67 @@ namespace rutinadeldiaservidor
                 options.AddPolicy("AllowReactApp",
                     policy =>
                     {
-                        policy.WithOrigins("http://localhost:5173") // la URL de tu React
+                        policy.WithOrigins("http://localhost:5173", "http://localhost")
                               .AllowAnyHeader()
-                              .AllowAnyMethod();
+                              .AllowAnyMethod()
+                              .AllowCredentials();
                     });
             });
 
+            builder.Services.AddSignalR();
+
+            builder.Services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UsePostgreSqlStorage(options =>
+                    options.UseNpgsqlConnection(
+                        builder.Configuration.GetConnectionString("DefaultConnection")),
+                    new PostgreSqlStorageOptions
+                    {
+                        QueuePollInterval = TimeSpan.FromSeconds(1), // 🔄 CAMBIAR ESTO (era TimeSpan.Zero)
+                        PrepareSchemaIfNecessary = true,
+                        SchemaName = "hangfire"
+                    }));
+            builder.Services.AddHangfireServer();
+
+            // 🆕 Registrar servicio
+            builder.Services.AddScoped<IRecordatorioService, RecordatorioService>();
+
             var app = builder.Build();
 
+            app.UseHangfireDashboard("/hangfire");
+
+
+            // ✅ UseCors debe ir ANTES de otros middlewares
             app.UseCors("AllowReactApp");
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
-
             app.MapControllers();
+            app.MapHub<RemindersHub>("/remindersHub");
+
+            // para hacer mas aestetic los logs
+            app.Use(async (context, next) =>
+{
+    var start = DateTime.Now;
+
+    await next(); // deja que la request siga su curso
+
+    var elapsed = DateTime.Now - start;
+    var method = context.Request.Method;
+    var path = context.Request.Path;
+    var status = context.Response.StatusCode;
+
+    Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] {method} {path} → {status} ({elapsed.TotalMilliseconds} ms)");
+});
+
 
             app.Run();
         }

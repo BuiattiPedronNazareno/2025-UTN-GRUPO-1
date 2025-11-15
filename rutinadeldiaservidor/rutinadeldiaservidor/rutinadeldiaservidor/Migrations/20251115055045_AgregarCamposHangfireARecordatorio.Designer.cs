@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using rutinadeldiaservidor.Data;
@@ -11,9 +12,11 @@ using rutinadeldiaservidor.Data;
 namespace rutinadeldiaservidor.Migrations
 {
     [DbContext(typeof(RutinaContext))]
-    partial class RutinaContextModelSnapshot : ModelSnapshot
+    [Migration("20251115055045_AgregarCamposHangfireARecordatorio")]
+    partial class AgregarCamposHangfireARecordatorio
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -325,12 +328,6 @@ namespace rutinadeldiaservidor.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("CodigoExpira")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CodigoVerificacion")
-                        .HasColumnType("text");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -352,6 +349,7 @@ namespace rutinadeldiaservidor.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("TelegramChatId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("TelegramVerified")
@@ -359,9 +357,6 @@ namespace rutinadeldiaservidor.Migrations
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("Verificado")
-                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 

@@ -1,6 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import ReactDOM from "react-dom/client"; import 'bootstrap/dist/css/bootstrap.min.css';
 import App from "./App.tsx";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -29,8 +28,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AppProvider> 
-          <App />
+      <AppProvider>
+        <App />
       </AppProvider>
     </ThemeProvider>
   </React.StrictMode>
