@@ -1,21 +1,23 @@
 import type React from "react"
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { Container, Card, CardContent, CardMedia, Typography, Box, IconButton } from "@mui/material"
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive'
 import NavBar from "../components/NavBar"
 import HelpButton from "../components/HelpButton"
 import "../styles/views/InicioInfante.scss"
-import { obtenerRutinaPorInfante } from "../services/rutinaService"
+import { obtenerRutinaPorInfante, obtenerRutinaPorId } from "../services/rutinaService"
 import type { Rutina } from "../services/rutinaService"
 import "../styles/components/RoutineCard.scss";
 import "../styles/components/MainActionButton.scss";
+import * as signalR from "@microsoft/signalr";
 import { verificarRecordatorio } from "../services/recordatorioService"
 import { obtenerTutorialStatusInfante, completarTutorialInfante } from "../services/infanteService"
 import { useAppContext } from "../context/AppContext";
 import TutorialWizard from "../components/TutorialWizard";
 import ReminderNotification from "../components/ReminderNotification";
 import defaultCard from "../assets/default-card.png";
+import type { RecordatorioNotificacion } from "../services/recordatorioService";
 
 const InicioInfante: React.FC = () => {
   const navigate = useNavigate()
@@ -27,11 +29,14 @@ const InicioInfante: React.FC = () => {
   const [autoStartTutorial, setAutoStartTutorial] = useState(false);
   const [firstMandatoryModule] = useState<number>(1)
 
-  const [showReminderOverlay, setShowReminderOverlay] = useState<boolean>(true);
-  const [queuedReminders, setQueuedReminders] = useState<Array<{ id: number, title: string, description: string, visible: boolean, color?: string, time?: string }>>([]);
+  const [queuedReminders, setQueuedReminders] = useState<Array<{ id: number, routineId: number, routineName: string, description: string, visible: boolean, color?: string, time?: string }>>([]);
+
+  const connectionRef = useRef<signalR.HubConnection | null>(null);
+  const hasLoadedPending = useRef<boolean>(false);
 
   // helpers para persistir recordatorios manejados entre visitas usando cookies
   const HANDLED_KEY = 'handled_reminders'
+  const PENDING_KEY = 'pending_reminders'
 
   const getCookie = (name: string): string | null => {
     const cookies = document.cookie ? document.cookie.split('; ') : []
@@ -62,7 +67,149 @@ const InicioInfante: React.FC = () => {
     }
   }, [])
 
+  // Cargar notificaciones pendientes al inicio (solo una vez)
+  useEffect(() => {
+    if (!infanteActivo || hasLoadedPending.current) return;
 
+    try {
+      const raw = getCookie(PENDING_KEY)
+      if (raw) {
+        const pending = JSON.parse(raw) as Array<{ id: number, routineId: number, routineName: string, description: string, visible: boolean, color?: string, time?: string }>
+        if (pending.length > 0) {
+          console.log("📋 Recuperando notificaciones pendientes:", pending)
+          setQueuedReminders(pending)
+          hasLoadedPending.current = true
+        }
+      }
+    } catch (err) {
+      console.error("Error cargando notificaciones pendientes:", err)
+    }
+  }, [infanteActivo])
+
+  // Guardar notificaciones pendientes cuando cambien
+  useEffect(() => {
+    if (!hasLoadedPending.current) return; // No guardar hasta que se hayan cargado las pendientes
+
+    try {
+      if (queuedReminders.length > 0) {
+        setCookie(PENDING_KEY, JSON.stringify(queuedReminders), 365)
+        console.log("💾 Guardando notificaciones pendientes:", queuedReminders.length)
+      } else {
+        // Limpiar cookie si no hay recordatorios
+        document.cookie = `${PENDING_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
+        console.log("🗑️ Limpiando notificaciones pendientes")
+      }
+    } catch (err) {
+      console.error("Error guardando notificaciones:", err)
+    }
+  }, [queuedReminders])
+
+  // Configurar SignalR - SOLO UNA VEZ
+  useEffect(() => {
+    if (!infanteActivo) return;
+
+    // Si ya hay una conexión activa, no crear otra
+    if (connectionRef.current && connectionRef.current.state === signalR.HubConnectionState.Connected) {
+      console.log("⚠️ Ya existe una conexión activa");
+      return;
+    }
+
+    const connectToHub = async () => {
+      try {
+        const connection = new signalR.HubConnectionBuilder()
+          .withUrl(`http://localhost:5012/remindersHub?userId=${infanteActivo.id}`)
+          .withAutomaticReconnect()
+          .configureLogging(signalR.LogLevel.Information)
+          .build();
+
+        // Escuchar mensajes desde el servidor
+        connection.on("ReceiveNotification", (message: RecordatorioNotificacion | string) => {
+          console.log("📩 Notificación recibida desde SignalR:", message);
+
+          // Ignorar mensajes de texto simple (como mensajes de bienvenida)
+          if (typeof message === 'string') {
+            console.log("ℹ️ Mensaje de texto ignorado:", message);
+            return;
+          }
+
+          // Verificar que tenga la estructura correcta de RecordatorioNotificacion
+          if (!message.id || !message.descripcion) {
+            console.log("⚠️ Mensaje sin estructura válida ignorado:", message);
+            return;
+          }
+
+          // Verificar que el recordatorio no haya sido manejado antes
+          const handled = getHandledReminders();
+          if (!handled.includes(message.id)) {
+            // Agregar el nuevo recordatorio a la cola
+            const handleReminder = async () => {
+              // Verificar duplicados antes de hacer la petición
+              setQueuedReminders(prev => {
+                const exists = prev.some(r => r.id === message.id);
+                if (exists) {
+                  console.log("⚠️ Recordatorio duplicado ignorado:", message.id);
+                  return prev;
+                }
+                return prev; // No hacemos nada aún, esperamos la respuesta de la API
+              });
+
+              try {
+                console.log("✅ Obteniendo rutina para recordatorio:", message.id);
+                const rutinaAsociada = await obtenerRutinaPorId(message.rutinaId);
+
+                const newReminder = {
+                  id: message.id,
+                  description: message.descripcion,
+                  visible: false,
+                  color: message.color || '#ff0000',
+                  time: message.hora,
+                  routineName: rutinaAsociada.nombre,
+                  routineId: message.rutinaId
+                };
+
+                setQueuedReminders(prev => {
+                  // Verificar duplicados nuevamente antes de agregar
+                  const exists = prev.some(r => r.id === message.id);
+                  if (exists) {
+                    console.log("⚠️ Recordatorio duplicado ignorado en segundo check:", message.id);
+                    return prev;
+                  }
+                  console.log("✅ Recordatorio agregado a la cola:", message.id);
+                  hasLoadedPending.current = true; // Marcar como cargado después de la primera notificación
+                  return [...prev, newReminder];
+                });
+              } catch (err) {
+                console.error("Error obteniendo rutina:", err);
+              }
+            };
+
+            handleReminder();
+          } else {
+            console.log("ℹ️ Recordatorio ya fue manejado anteriormente:", message.id);
+          }
+        });
+
+        // Iniciar la conexión
+        await connection.start();
+        console.log("✅ Conectado a SignalR como usuario:", infanteActivo.id);
+        connectionRef.current = connection;
+      } catch (err) {
+        console.error("❌ Error al conectar a SignalR:", err);
+        connectionRef.current = null;
+      }
+    };
+
+    connectToHub();
+
+    // Cleanup: desconectar al desmontar el componente
+    return () => {
+      if (connectionRef.current) {
+        console.log("🔌 Desconectando SignalR...");
+        connectionRef.current.stop();
+        connectionRef.current = null;
+      }
+    };
+  }, [infanteActivo, getHandledReminders]);
 
   useEffect(() => {
     const fetchRutinas = async () => {
@@ -90,40 +237,27 @@ const InicioInfante: React.FC = () => {
           })
         )
         setHasReminderMap(map)
-        // construir cola de recordatorios basados en el map (solo si existen) y solo para rutinas visibles
-        // Mockear color y hora para cada recordatorio
-        const allReminders = data
-          .filter(d => map[d.id] && ((d.estado || "").trim().toLowerCase() !== "oculta"))
-          .map(d => ({
-            id: d.id,
-            title: `Recordatorio: ${d.nombre}`,
-            description: `Es el momento de realizar ${d.nombre}. Toca para ver los pasos.`,
-            visible: false,
-            color: '#ff0000', // color mock (puede cambiarse por valor del servicio)
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          }))
-
-        // filtrar recordatorios ya manejados (persistidos en localStorage)
-        const handled = getHandledReminders()
-        const reminders = allReminders.filter(r => !handled.includes(r.id))
-        setQueuedReminders(reminders)
       } catch (error) {
         console.error("Error al obtener rutinas:", error)
       }
     }
 
     fetchRutinas()
-  }, [infanteActivo, getHandledReminders])
+  }, [infanteActivo])
 
-  // cuando la cola cambia, esperar 5s y luego mostrar todas las notificaciones (apiladas)
+  // cuando la cola cambia y hay recordatorios nuevos, mostrarlos automáticamente
   useEffect(() => {
     if (!queuedReminders || queuedReminders.length === 0) return;
 
-    const timer = setTimeout(() => {
-      setQueuedReminders(prev => prev.map(r => ({ ...r, visible: true })))
-    }, 5000)
+    // Si hay recordatorios que no están visibles, mostrarlos después de 1 segundo
+    const hasInvisible = queuedReminders.some(r => !r.visible);
+    if (hasInvisible) {
+      const timer = setTimeout(() => {
+        setQueuedReminders(prev => prev.map(r => ({ ...r, visible: true })))
+      }, 1000)
 
-    return () => clearTimeout(timer)
+      return () => clearTimeout(timer)
+    }
   }, [queuedReminders])
 
   useEffect(() => {
@@ -168,14 +302,14 @@ const InicioInfante: React.FC = () => {
 
       <Container component="main" className="main-content" maxWidth="md">
         {/* Overlay de notificación de recordatorio: aparece sobre la página y puede cerrarse. Se muestran apiladas. */}
-        {showReminderOverlay && queuedReminders.length > 0 && (
+        {queuedReminders.length > 0 && (
           <Box className="reminder-overlay-container">
-            {[...queuedReminders].slice().reverse().map((rem) => (
+            {queuedReminders.map((rem) => (
               rem.visible && (
                 <Box key={rem.id} className="stack-item">
                   <ReminderNotification
+                    routineName={rem.routineName}
                     className="overlay"
-                    title={rem.title}
                     description={rem.description}
                     time={rem.time}
                     color={rem.color}
@@ -186,10 +320,15 @@ const InicioInfante: React.FC = () => {
                       setHandledReminders(updated)
                       // remover de la lista mostrada y navegar
                       setQueuedReminders(prev => prev.filter(p => p.id !== rem.id))
-                      setShowReminderOverlay(false)
-                      navigate(`/rutina/${rem.id}/pasos`)
+                      navigate(`/rutina/${rem.routineId}/pasos`)
                     }}
-                    onClose={() => setQueuedReminders(prev => prev.filter(p => p.id !== rem.id))}
+                    onClose={() => {
+                      // marcar como manejada y remover de la lista
+                      const handled = getHandledReminders()
+                      const updated = Array.from(new Set([...handled, rem.id]))
+                      setHandledReminders(updated)
+                      setQueuedReminders(prev => prev.filter(p => p.id !== rem.id))
+                    }}
                   />
                 </Box>
               )
@@ -248,7 +387,7 @@ const InicioInfante: React.FC = () => {
                       sx={{
                         position: 'absolute',
                         right: 20,
-                        bottom: 20, 
+                        bottom: 20,
                         color: '#000000ff',
                         zIndex: 2
                       }}
@@ -264,7 +403,7 @@ const InicioInfante: React.FC = () => {
 
 
       </Container>
-       <Box className="help-section my-4" sx={{ textAlign: "center", mt: 4 }}>
+      <Box className="help-section my-4" sx={{ textAlign: "center", mt: 4 }}>
         <HelpButton onClick={handleHelpClick} />
       </Box>
       <TutorialWizard

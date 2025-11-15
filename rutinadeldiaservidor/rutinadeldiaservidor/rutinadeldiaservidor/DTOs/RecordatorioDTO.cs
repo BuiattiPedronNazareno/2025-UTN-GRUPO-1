@@ -45,4 +45,14 @@ namespace rutinadeldiaservidor.Models
         [Required]
         public int RutinaId { get; set; }
     }
+
+    public class RecordatorioNotificacionDto
+    {
+        public int Id { get; set; }
+        public string Descripcion { get; set; } = string.Empty;
+        public string Hora { get; set; } = string.Empty;
+        public string Color { get; set; } = string.Empty;
+        public string Sonido { get; set; } = string.Empty;
+        public int RutinaId { get; set; }
+    }
 }

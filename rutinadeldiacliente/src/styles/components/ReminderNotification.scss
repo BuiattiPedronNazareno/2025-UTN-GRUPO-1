@@ -6,11 +6,13 @@
     border-radius: 10px;
     padding: 10px 12px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    gap: 8px;
 }
 
 .reminder-notification.overlay {
     /* the container (.reminder-overlay-container) is fixed; individual notifications should not be fixed to allow stacking */
     width: 100%;
+    max-width: 340px;
     box-sizing: border-box;
 }
 
@@ -18,12 +20,18 @@
 .reminder-overlay-container {
     position: fixed;
     right: 20px;
-    top: 20px;
+    top: 80px; /* Más abajo para no tapar el navbar */
     z-index: 1200;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     width: 340px;
+    max-width: calc(100vw - 40px);
+    pointer-events: none; /* Permite clicks en el fondo */
+}
+
+.reminder-overlay-container > * {
+    pointer-events: auto; /* Pero las notificaciones sí reciben clicks */
 }
 
 /* animación de entrada breve */
@@ -32,12 +40,10 @@
         transform: translateY(-10px) scale(0.98);
         opacity: 0;
     }
-
     60% {
         transform: translateY(4px) scale(1.01);
         opacity: 1;
     }
-
     100% {
         transform: translateY(0) scale(1);
         opacity: 1;
@@ -51,13 +57,13 @@
 }
 
 .reminder-icon {
-    margin-right: 12px;
+    flex-shrink: 0;
 }
 
 .reminder-left {
     display: flex;
     align-items: center;
-    gap: 8px;
+    flex-shrink: 0;
 }
 
 .reminder-color-dot {
@@ -69,31 +75,40 @@
 
 .reminder-content {
     flex: 1 1 auto;
+    min-width: 0; // Permite que el texto se trunque si es muy largo
     min-height: 42px;
     /* helps avoid layout jump when animation finishes */
 }
 
 .reminder-title {
     font-weight: 600;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .reminder-desc {
     color: #5f6368;
+    font-size: 0.875rem;
 }
 
 .reminder-time {
     color: #606770;
     display: block;
     margin-top: 4px;
+    font-size: 0.75rem;
 }
 
 .reminder-actions {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 6px;
-    margin-left: 8px;
+    gap: 4px;
+    flex-shrink: 0;
 }
 
+.reminder-action {
+    min-width: auto !important;
+}
 
 .reminder-close {
     color: #7a7a7a;

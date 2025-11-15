@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using rutinadeldiaservidor.Data;
 using rutinadeldiaservidor.Models;
+using SignalRReminder.Hubs;
+using SignalRReminder.Services;
+
 
 namespace rutinadeldiaservidor.Controllers
 {
@@ -10,12 +14,13 @@ namespace rutinadeldiaservidor.Controllers
     public class RecordatorioController : ControllerBase
     {
         private readonly RutinaContext _context;
+        private readonly IHubContext<RemindersHub> _hubContext;
 
-        public RecordatorioController(RutinaContext context)
+        public RecordatorioController(RutinaContext context, IHubContext<RemindersHub> hubContext)
         {
             _context = context;
+            _hubContext = hubContext;
         }
-
         // GET api/recordatorio/obtenerRecordatorios
         [HttpGet("obtenerRecordatorios")]
         public async Task<ActionResult<IEnumerable<RecordatorioReadDTO>>> GetAll()
@@ -38,81 +43,81 @@ namespace rutinadeldiaservidor.Controllers
 
             return Ok(recordatorios);
         }
-        
-    // GET api/recordatorio/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult<RecordatorioReadDTO>> GetById(int id)
-    {
-        var recordatorio = await _context.Recordatorios
-            .Include(r => r.Rutina)
-            .Where(r => r.Id == id)
-            .Select(r => new RecordatorioReadDTO
-            {
-                Id = r.Id,
-                Descripcion = r.Descripcion,
-                Frecuencia = r.Frecuencia,
-                Hora = r.Hora,
-                DiaSemana = r.DiaSemana,
-                Sonido = r.Sonido,
-                Color = r.Color,
-                RutinaId = r.RutinaId,
-                RutinaNombre = r.Rutina.Nombre
-            })
-            .FirstOrDefaultAsync();
 
-        return recordatorio == null ? NotFound() : Ok(recordatorio);
-    }
-
-
-    // POST api/recordatorio/crearRecordatorio
-    [HttpPost("crearRecordatorio")]
-    public async Task<ActionResult<RecordatorioReadDTO>> Create(RecordatorioCreateDTO recordatorioDTO)
-    {
-        // Verificar que la rutina existe
-        var rutina = await _context.Rutinas.FindAsync(recordatorioDTO.RutinaId);
-        if (rutina == null)
-            return BadRequest("La rutina especificada no existe");
-
-        // 🎯 NUEVA VALIDACIÓN: Verificar límite de 5 recordatorios por rutina
-        var recordatoriosExistentes = await _context.Recordatorios
-            .Where(r => r.RutinaId == recordatorioDTO.RutinaId)
-            .CountAsync();
-        
-        if (recordatoriosExistentes > 5)
+        // GET api/recordatorio/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<RecordatorioReadDTO>> GetById(int id)
         {
-            return BadRequest("No se pueden crear más de 5 recordatorios de frecuencia diaria para esta rutina");
+            var recordatorio = await _context.Recordatorios
+                .Include(r => r.Rutina)
+                .Where(r => r.Id == id)
+                .Select(r => new RecordatorioReadDTO
+                {
+                    Id = r.Id,
+                    Descripcion = r.Descripcion,
+                    Frecuencia = r.Frecuencia,
+                    Hora = r.Hora,
+                    DiaSemana = r.DiaSemana,
+                    Sonido = r.Sonido,
+                    Color = r.Color,
+                    RutinaId = r.RutinaId,
+                    RutinaNombre = r.Rutina.Nombre
+                })
+                .FirstOrDefaultAsync();
+
+            return recordatorio == null ? NotFound() : Ok(recordatorio);
         }
 
-        var recordatorio = new Recordatorio
+
+        // POST api/recordatorio/crearRecordatorio
+        [HttpPost("crearRecordatorio")]
+        public async Task<ActionResult<RecordatorioReadDTO>> Create(RecordatorioCreateDTO recordatorioDTO)
         {
-            Descripcion = recordatorioDTO.Descripcion,
-            Frecuencia = recordatorioDTO.Frecuencia,
-            Hora = recordatorioDTO.Hora,
-            DiaSemana = recordatorioDTO.DiaSemana,
-            Sonido = recordatorioDTO.Sonido,
-            Color = recordatorioDTO.Color,
-            RutinaId = recordatorioDTO.RutinaId,
-            Rutina = rutina
-        };
-    
-        _context.Recordatorios.Add(recordatorio);
-        await _context.SaveChangesAsync();
-    
-        var recordatorioReadDTO = new RecordatorioReadDTO
-        {
-            Id = recordatorio.Id,
-            Descripcion = recordatorio.Descripcion,
-            Frecuencia = recordatorio.Frecuencia,
-            Hora = recordatorio.Hora,
-            DiaSemana = recordatorio.DiaSemana,
-            Sonido = recordatorio.Sonido,
-            Color = recordatorio.Color,
-            RutinaId = recordatorio.RutinaId,
-            RutinaNombre = rutina.Nombre
-        };
-    
-        return CreatedAtAction(nameof(GetById), new { id = recordatorio.Id }, recordatorioReadDTO);
-    }
+            // Verificar que la rutina existe
+            var rutina = await _context.Rutinas.FindAsync(recordatorioDTO.RutinaId);
+            if (rutina == null)
+                return BadRequest("La rutina especificada no existe");
+
+            // 🎯 NUEVA VALIDACIÓN: Verificar límite de 5 recordatorios por rutina
+            var recordatoriosExistentes = await _context.Recordatorios
+                .Where(r => r.RutinaId == recordatorioDTO.RutinaId)
+                .CountAsync();
+
+            if (recordatoriosExistentes > 5)
+            {
+                return BadRequest("No se pueden crear más de 5 recordatorios de frecuencia diaria para esta rutina");
+            }
+
+            var recordatorio = new Recordatorio
+            {
+                Descripcion = recordatorioDTO.Descripcion,
+                Frecuencia = recordatorioDTO.Frecuencia,
+                Hora = recordatorioDTO.Hora,
+                DiaSemana = recordatorioDTO.DiaSemana,
+                Sonido = recordatorioDTO.Sonido,
+                Color = recordatorioDTO.Color,
+                RutinaId = recordatorioDTO.RutinaId,
+                Rutina = rutina
+            };
+
+            _context.Recordatorios.Add(recordatorio);
+            await _context.SaveChangesAsync();
+
+            var recordatorioReadDTO = new RecordatorioReadDTO
+            {
+                Id = recordatorio.Id,
+                Descripcion = recordatorio.Descripcion,
+                Frecuencia = recordatorio.Frecuencia,
+                Hora = recordatorio.Hora,
+                DiaSemana = recordatorio.DiaSemana,
+                Sonido = recordatorio.Sonido,
+                Color = recordatorio.Color,
+                RutinaId = recordatorio.RutinaId,
+                RutinaNombre = rutina.Nombre
+            };
+
+            return CreatedAtAction(nameof(GetById), new { id = recordatorio.Id }, recordatorioReadDTO);
+        }
 
         // PUT api/recordatorio/actualizarRecordatorio/5
         [HttpPut("actualizarRecordatorio/{id}")]
@@ -176,6 +181,53 @@ namespace rutinadeldiaservidor.Controllers
                 .ToListAsync();
 
             return recordatorios.Any() ? Ok(recordatorios) : NotFound();
+        }
+
+
+        // 📬 Enviar recordatorio programado manualmente
+        [HttpPost("enviarProgramado/{recordatorioId}")]
+        public async Task<IActionResult> EnviarRecordatorioProgramado(int recordatorioId)
+        {
+            var recordatorio = await _context.Recordatorios
+                .Include(r => r.Rutina)
+                    .ThenInclude(rutina => rutina.Infante)
+                .FirstOrDefaultAsync(r => r.Id == recordatorioId);
+
+            if (recordatorio == null)
+                return NotFound(new { mensaje = "❌ Recordatorio no encontrado" });
+
+            var infante = recordatorio.Rutina?.Infante;
+            if (infante == null)
+                return BadRequest(new { mensaje = "⚠️ El recordatorio no tiene un usuario asociado" });
+
+            var infanteId = infante.Id.ToString();
+
+            // 🔍 Buscar conexiones activas del usuario
+            if (ConnectionStore.Connections.TryGetValue(infanteId, out var connectionIds))
+            {
+                var notificacion = new RecordatorioNotificacionDto
+                {
+                    Id = recordatorio.Id,
+                    Descripcion = recordatorio.Descripcion,
+                    Hora = recordatorio.Hora,
+                    Sonido = recordatorio.Sonido,
+                    Color = recordatorio.Color,
+                    RutinaId = recordatorio.RutinaId,
+                };
+
+                foreach (var connectionId in connectionIds)
+                {
+                    await _hubContext.Clients.Client(connectionId).SendAsync(
+                        "ReceiveNotification",
+                        notificacion
+                    );
+                }
+
+                return Ok(new { mensaje = $"✅ Recordatorio enviado al usuario {infanteId}" });
+            }
+
+            // ❌ Usuario desconectado
+            return Ok(new { mensaje = $"⚠️ Usuario {infanteId} no conectado. No se pudo enviar el recordatorio." });
         }
     }
 }

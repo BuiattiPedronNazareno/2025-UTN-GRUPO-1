@@ -1,4 +1,5 @@
 import api from "./api";
+import * as signalR from "@microsoft/signalr";
 
 export interface RecordatorioRutina {
   id: number;
@@ -27,6 +28,17 @@ export interface Recordatorio {
   color: string;
   sonido: string;
 }
+
+
+export interface RecordatorioNotificacion {
+  id: number;
+  descripcion: string;
+  hora: string;
+  color: string;
+  sonido: string;
+  rutinaId: number;
+}
+
 
 // 🔹 Obtener recordatorios de una rutina específica
 export const obtenerRecordatoriosPorRutina = async (
@@ -113,3 +125,29 @@ export const actualizarRecordatorio = async (
   );
   return response.data;
 };
+
+export const recordatorioHub = async (infanteId: number): Promise<signalR.HubConnection | null> => {
+  // Crea la conexión con el hub
+  const connection = new signalR.HubConnectionBuilder()
+    .withUrl(`http://localhost:5012/remindersHub?userId=${infanteId}`)
+    .withAutomaticReconnect()
+    .configureLogging(signalR.LogLevel.Information)
+    .build();
+
+  // Escuchar mensajes desde el servidor
+  connection.on("ReceiveNotification", (message: RecordatorioNotificacion) => {
+    console.log("📩 Notificación recibida:", message);
+  });
+
+  try {
+    await connection.start();
+    console.log("✅ Conectado correctamente como", infanteId);
+    alert(`Conectado como ${infanteId}`);
+    return connection;
+  } catch (err) {
+    console.error("❌ Error al conectar:", err);
+    alert("Error al conectar al servidor");
+    return null;
+  }
+};
+
