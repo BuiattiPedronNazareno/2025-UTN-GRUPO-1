@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using rutinadeldiaservidor.Data;
@@ -11,9 +12,11 @@ using rutinadeldiaservidor.Data;
 namespace rutinadeldiaservidor.Migrations
 {
     [DbContext(typeof(RutinaContext))]
-    partial class RutinaContextModelSnapshot : ModelSnapshot
+    [Migration("20251114050745_TelegramChatIdNullable")]
+    partial class TelegramChatIdNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -232,11 +235,6 @@ namespace rutinadeldiaservidor.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("Activo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
-
                     b.Property<string>("Color")
                         .IsRequired()
                         .HasColumnType("text");
@@ -252,10 +250,6 @@ namespace rutinadeldiaservidor.Migrations
                     b.Property<string>("Frecuencia")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<string>("HangfireJobId")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Hora")
                         .IsRequired()
@@ -325,12 +319,6 @@ namespace rutinadeldiaservidor.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("CodigoExpira")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CodigoVerificacion")
-                        .HasColumnType("text");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -359,9 +347,6 @@ namespace rutinadeldiaservidor.Migrations
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("Verificado")
-                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 

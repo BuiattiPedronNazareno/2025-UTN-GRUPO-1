@@ -6,6 +6,7 @@ import { Container, Box, Button, Stack } from "@mui/material"
 import NavBarAdulto from "../components/NavBarAdulto"
 import "../styles/views/AjustesAdulto.scss"
 import TutorialWizard from "../components/TutorialWizard"
+import LinkTelegramSection from "../components/Settings/LinkTelegramSection"
 import { useAppContext } from "../context/AppContext"
 
 const AjustesAdulto: React.FC = () => {
@@ -75,6 +76,11 @@ const AjustesAdulto: React.FC = () => {
           >
             Mi Perfil
           </Button>
+
+          <Box className="vincular-telegram-section" sx={{ mt: 0, pt: 0, borderTop: "1px solid #ccc" }}>
+            <LinkTelegramSection />
+          </Box>
+
         </Stack>
 
         <TutorialWizard open={tutorialOpen} onClose={() => setTutorialOpen(false)} mode="adulto" />

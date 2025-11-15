@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using rutinadeldiaservidor.Data;
 using Hangfire;
 using Hangfire.PostgreSql;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using System;
 
 namespace rutinadeldiaservidor
 {
@@ -23,6 +25,7 @@ namespace rutinadeldiaservidor
 
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<VerificationCodeService>();
+            builder.Services.AddSingleton<TemporalVerificationCodeService>(); // Singleton para almacenamiento simple en memoria
             builder.Services.AddScoped<TelegramService>();
 
             // 1. Configurar CORS
