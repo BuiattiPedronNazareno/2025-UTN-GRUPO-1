@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Hangfire;
 using rutinadeldiaservidor.Data;
 using rutinadeldiaservidor.Models;
+using rutinadeldiaservidor.Services;
 using SignalRReminder.Hubs;
-using SignalRReminder.Services;
-
 
 namespace rutinadeldiaservidor.Controllers
 {
@@ -15,12 +15,18 @@ namespace rutinadeldiaservidor.Controllers
     {
         private readonly RutinaContext _context;
         private readonly IHubContext<RemindersHub> _hubContext;
+        private readonly IRecordatorioService _recordatorioService; // 🆕
 
-        public RecordatorioController(RutinaContext context, IHubContext<RemindersHub> hubContext)
+        public RecordatorioController(
+            RutinaContext context, 
+            IHubContext<RemindersHub> hubContext,
+            IRecordatorioService recordatorioService) // 🆕
         {
             _context = context;
             _hubContext = hubContext;
+            _recordatorioService = recordatorioService; // 🆕
         }
+
         // GET api/recordatorio/obtenerRecordatorios
         [HttpGet("obtenerRecordatorios")]
         public async Task<ActionResult<IEnumerable<RecordatorioReadDTO>>> GetAll()
@@ -36,6 +42,7 @@ namespace rutinadeldiaservidor.Controllers
                     DiaSemana = r.DiaSemana,
                     Sonido = r.Sonido,
                     Color = r.Color,
+                    Activo = r.Activo, // 🆕
                     RutinaId = r.RutinaId,
                     RutinaNombre = r.Rutina.Nombre
                 })
@@ -60,6 +67,7 @@ namespace rutinadeldiaservidor.Controllers
                     DiaSemana = r.DiaSemana,
                     Sonido = r.Sonido,
                     Color = r.Color,
+                    Activo = r.Activo, // 🆕
                     RutinaId = r.RutinaId,
                     RutinaNombre = r.Rutina.Nombre
                 })
@@ -68,24 +76,39 @@ namespace rutinadeldiaservidor.Controllers
             return recordatorio == null ? NotFound() : Ok(recordatorio);
         }
 
-
         // POST api/recordatorio/crearRecordatorio
         [HttpPost("crearRecordatorio")]
         public async Task<ActionResult<RecordatorioReadDTO>> Create(RecordatorioCreateDTO recordatorioDTO)
         {
+            // 🔍 Validar que si es Semanal, DiaSemana sea obligatorio
+            if (recordatorioDTO.Frecuencia.ToLower() == "semanal")
+            {
+                if (string.IsNullOrWhiteSpace(recordatorioDTO.DiaSemana))
+                {
+                    return BadRequest("Para frecuencia Semanal, debe especificar el día de la semana");
+                }
+
+                // 🆕 Validar que el día sea válido
+                var diasValidos = new[] { "lunes", "martes", "miércoles", "miercoles", "jueves", "viernes", "sábado", "sabado", "domingo" };
+                if (!diasValidos.Contains(recordatorioDTO.DiaSemana.ToLower().Trim()))
+                {
+                    return BadRequest("DiaSemana debe ser: Lunes, Martes, Miércoles, Jueves, Viernes, Sábado o Domingo");
+                }
+            }
+
             // Verificar que la rutina existe
             var rutina = await _context.Rutinas.FindAsync(recordatorioDTO.RutinaId);
             if (rutina == null)
                 return BadRequest("La rutina especificada no existe");
 
-            // 🎯 NUEVA VALIDACIÓN: Verificar límite de 5 recordatorios por rutina
+            // Verificar límite de 5 recordatorios por rutina
             var recordatoriosExistentes = await _context.Recordatorios
                 .Where(r => r.RutinaId == recordatorioDTO.RutinaId)
                 .CountAsync();
 
-            if (recordatoriosExistentes > 5)
+            if (recordatoriosExistentes >= 5)
             {
-                return BadRequest("No se pueden crear más de 5 recordatorios de frecuencia diaria para esta rutina");
+                return BadRequest("No se pueden crear más de 5 recordatorios para esta rutina");
             }
 
             var recordatorio = new Recordatorio
@@ -96,12 +119,16 @@ namespace rutinadeldiaservidor.Controllers
                 DiaSemana = recordatorioDTO.DiaSemana,
                 Sonido = recordatorioDTO.Sonido,
                 Color = recordatorioDTO.Color,
+                Activo = true,
                 RutinaId = recordatorioDTO.RutinaId,
                 Rutina = rutina
             };
 
             _context.Recordatorios.Add(recordatorio);
             await _context.SaveChangesAsync();
+
+            // 🚀 PROGRAMAR AUTOMÁTICAMENTE CON HANGFIRE
+            await _recordatorioService.ProgramarRecordatorioAsync(recordatorio.Id);
 
             var recordatorioReadDTO = new RecordatorioReadDTO
             {
@@ -112,6 +139,7 @@ namespace rutinadeldiaservidor.Controllers
                 DiaSemana = recordatorio.DiaSemana,
                 Sonido = recordatorio.Sonido,
                 Color = recordatorio.Color,
+                Activo = recordatorio.Activo,
                 RutinaId = recordatorio.RutinaId,
                 RutinaNombre = rutina.Nombre
             };
@@ -141,9 +169,22 @@ namespace rutinadeldiaservidor.Controllers
             recordatorioExistente.DiaSemana = recordatorioDTO.DiaSemana;
             recordatorioExistente.Sonido = recordatorioDTO.Sonido;
             recordatorioExistente.Color = recordatorioDTO.Color;
+            recordatorioExistente.Activo = recordatorioDTO.Activo; // 🆕
             recordatorioExistente.RutinaId = recordatorioDTO.RutinaId;
 
             await _context.SaveChangesAsync();
+
+            // 🔄 RE-PROGRAMAR CON HANGFIRE
+            if (recordatorioDTO.Activo)
+            {
+                await _recordatorioService.ActualizarProgramacionAsync(id);
+            }
+            else
+            {
+                // Si se desactiva, cancelar la programación
+                await _recordatorioService.CancelarProgramacionAsync(id);
+            }
+
             return NoContent();
         }
 
@@ -152,10 +193,15 @@ namespace rutinadeldiaservidor.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var recordatorio = await _context.Recordatorios.FindAsync(id);
-            if (recordatorio == null) return NotFound();
+            if (recordatorio == null) 
+                return NotFound();
+
+            // ❌ CANCELAR PROGRAMACIÓN ANTES DE ELIMINAR
+            await _recordatorioService.CancelarProgramacionAsync(id);
 
             _context.Recordatorios.Remove(recordatorio);
             await _context.SaveChangesAsync();
+            
             return NoContent();
         }
 
@@ -175,6 +221,7 @@ namespace rutinadeldiaservidor.Controllers
                     DiaSemana = r.DiaSemana,
                     Sonido = r.Sonido,
                     Color = r.Color,
+                    Activo = r.Activo, // 🆕
                     RutinaId = r.RutinaId,
                     RutinaNombre = r.Rutina.Nombre
                 })
@@ -183,51 +230,95 @@ namespace rutinadeldiaservidor.Controllers
             return recordatorios.Any() ? Ok(recordatorios) : NotFound();
         }
 
-
-        // 📬 Enviar recordatorio programado manualmente
+        // 📬 Enviar recordatorio programado MANUALMENTE (para pruebas)
         [HttpPost("enviarProgramado/{recordatorioId}")]
         public async Task<IActionResult> EnviarRecordatorioProgramado(int recordatorioId)
         {
-            var recordatorio = await _context.Recordatorios
-                .Include(r => r.Rutina)
-                    .ThenInclude(rutina => rutina.Infante)
-                .FirstOrDefaultAsync(r => r.Id == recordatorioId);
+            // 🔄 USAR EL SERVICIO EN LUGAR DE CÓDIGO DUPLICADO
+            await _recordatorioService.EnviarRecordatorioAsync(recordatorioId);
+            return Ok(new { mensaje = $"✅ Recordatorio enviado manualmente" });
+        }
 
-            if (recordatorio == null)
-                return NotFound(new { mensaje = "❌ Recordatorio no encontrado" });
+        // 🔄 Re-programar todos los recordatorios activos (útil después de reiniciar servidor)
+        [HttpPost("reprogramarTodos")]
+        public async Task<IActionResult> ReprogramarTodos()
+        {
+            var recordatoriosActivos = await _context.Recordatorios
+                .Where(r => r.Activo)
+                .ToListAsync();
 
-            var infante = recordatorio.Rutina?.Infante;
-            if (infante == null)
-                return BadRequest(new { mensaje = "⚠️ El recordatorio no tiene un usuario asociado" });
-
-            var infanteId = infante.Id.ToString();
-
-            // 🔍 Buscar conexiones activas del usuario
-            if (ConnectionStore.Connections.TryGetValue(infanteId, out var connectionIds))
+            foreach (var recordatorio in recordatoriosActivos)
             {
-                var notificacion = new RecordatorioNotificacionDto
-                {
-                    Id = recordatorio.Id,
-                    Descripcion = recordatorio.Descripcion,
-                    Hora = recordatorio.Hora,
-                    Sonido = recordatorio.Sonido,
-                    Color = recordatorio.Color,
-                    RutinaId = recordatorio.RutinaId,
-                };
-
-                foreach (var connectionId in connectionIds)
-                {
-                    await _hubContext.Clients.Client(connectionId).SendAsync(
-                        "ReceiveNotification",
-                        notificacion
-                    );
-                }
-
-                return Ok(new { mensaje = $"✅ Recordatorio enviado al usuario {infanteId}" });
+                await _recordatorioService.ProgramarRecordatorioAsync(recordatorio.Id);
             }
 
-            // ❌ Usuario desconectado
-            return Ok(new { mensaje = $"⚠️ Usuario {infanteId} no conectado. No se pudo enviar el recordatorio." });
+            return Ok(new { 
+                mensaje = $"✅ {recordatoriosActivos.Count} recordatorios reprogramados" 
+            });
+        }
+
+        // 🎯 Activar/Desactivar recordatorio
+        [HttpPatch("toggleActivo/{id}")]
+        public async Task<IActionResult> ToggleActivo(int id)
+        {
+            var recordatorio = await _context.Recordatorios.FindAsync(id);
+            if (recordatorio == null)
+                return NotFound();
+
+            recordatorio.Activo = !recordatorio.Activo;
+            await _context.SaveChangesAsync();
+
+            if (recordatorio.Activo)
+            {
+                await _recordatorioService.ProgramarRecordatorioAsync(id);
+            }
+            else
+            {
+                await _recordatorioService.CancelarProgramacionAsync(id);
+            }
+
+            return Ok(new { 
+                mensaje = recordatorio.Activo 
+                    ? "✅ Recordatorio activado y programado" 
+                    : "⏸️ Recordatorio desactivado" 
+            });
+        }
+
+        // 🧹 Limpiar jobs huérfanos de Hangfire
+        [HttpPost("limpiarJobsHuerfanos")]
+        public async Task<IActionResult> LimpiarJobsHuerfanos()
+        {
+            var recordatoriosIds = await _context.Recordatorios
+                .Where(r => !string.IsNullOrEmpty(r.HangfireJobId))
+                .Select(r => new { r.Id, r.HangfireJobId })
+                .ToListAsync();
+
+            int jobsEliminados = 0;
+
+            // Intentar eliminar todos los jobs de recordatorios que ya no existen
+            // Recorrer IDs del 1 al 1000 (ajusta según tu caso)
+            for (int i = 1; i <= 1000; i++)
+            {
+                var jobId = $"recordatorio_{i}";
+                
+                // Si el ID no existe en la BD, intentar eliminarlo de Hangfire
+                if (!recordatoriosIds.Any(r => r.Id == i))
+                {
+                    try
+                    {
+                        RecurringJob.RemoveIfExists(jobId);
+                        jobsEliminados++;
+                    }
+                    catch
+                    {
+                        // Ignorar errores si el job no existe
+                    }
+                }
+            }
+
+            return Ok(new { 
+                mensaje = $"🧹 Se intentó limpiar jobs del 1 al 1000. Operación completada." 
+            });
         }
     }
 }

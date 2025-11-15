@@ -2,6 +2,8 @@ using rutinadeldiaservidor.Services;
 using SignalRReminder.Hubs;
 using Microsoft.EntityFrameworkCore;
 using rutinadeldiaservidor.Data;
+using Hangfire;
+using Hangfire.PostgreSql;
 
 namespace rutinadeldiaservidor
 {
@@ -38,7 +40,28 @@ namespace rutinadeldiaservidor
 
             builder.Services.AddSignalR();
 
+            builder.Services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UsePostgreSqlStorage(options =>
+                    options.UseNpgsqlConnection(
+                        builder.Configuration.GetConnectionString("DefaultConnection")),
+                    new PostgreSqlStorageOptions
+                    {
+                        QueuePollInterval = TimeSpan.FromSeconds(1), // 🔄 CAMBIAR ESTO (era TimeSpan.Zero)
+                        PrepareSchemaIfNecessary = true,
+                        SchemaName = "hangfire"
+                    }));
+            builder.Services.AddHangfireServer();
+
+            // 🆕 Registrar servicio
+            builder.Services.AddScoped<IRecordatorioService, RecordatorioService>();
+
             var app = builder.Build();
+
+            app.UseHangfireDashboard("/hangfire");
+
 
             // ✅ UseCors debe ir ANTES de otros middlewares
             app.UseCors("AllowReactApp");

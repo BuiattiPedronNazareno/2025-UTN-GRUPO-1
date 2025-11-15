@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace rutinadeldiaservidor.Models
 {
-    // DTO para leer recordatorios (respuesta)
     public class RecordatorioReadDTO
     {
         public int Id { get; set; }
@@ -12,36 +11,51 @@ namespace rutinadeldiaservidor.Models
         public string DiaSemana { get; set; } = string.Empty;
         public string Sonido { get; set; } = string.Empty;
         public string Color { get; set; } = string.Empty;
+        public bool Activo { get; set; } // 🆕
         public int RutinaId { get; set; }
         public string RutinaNombre { get; set; } = string.Empty;
     }
 
-    // DTO para crear recordatorios (entrada)
     public class RecordatorioCreateDTO
     {
         [Required]
         public string Descripcion { get; set; } = string.Empty;
-        public string Frecuencia { get; set; } = string.Empty;
+
         [Required]
-        public string Hora { get; set; } = string.Empty;
-        public string DiaSemana { get; set; } = string.Empty;
+        public string Frecuencia { get; set; } = string.Empty; // "Diaria" o "Semanal"
+
+        [Required]
+        [RegularExpression(@"^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$",
+            ErrorMessage = "Formato de hora inválido. Use HH:mm (ej: 09:30)")]
+        public string Hora { get; set; } = string.Empty; // "09:30"
+
+        // 🔄 CAMBIAR A STRING REQUERIDO CONDICIONALMENTE
+        public string DiaSemana { get; set; } = string.Empty; // "0" a "6" (requerido si Frecuencia es "Semanal")
+
         public string Sonido { get; set; } = string.Empty;
         public string Color { get; set; } = string.Empty;
+
         [Required]
         public int RutinaId { get; set; }
     }
 
-    // DTO para actualizar recordatorios (entrada)
     public class RecordatorioUpdateDTO
     {
         [Required]
         public string Descripcion { get; set; } = string.Empty;
-        public string Frecuencia { get; set; } = string.Empty;
+
         [Required]
+        public string Frecuencia { get; set; } = string.Empty;
+
+        [Required]
+        [RegularExpression(@"^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$")]
         public string Hora { get; set; } = string.Empty;
+
         public string DiaSemana { get; set; } = string.Empty;
         public string Sonido { get; set; } = string.Empty;
         public string Color { get; set; } = string.Empty;
+        public bool Activo { get; set; } = true; // 🆕
+
         [Required]
         public int RutinaId { get; set; }
     }
@@ -56,3 +70,4 @@ namespace rutinadeldiaservidor.Models
         public int RutinaId { get; set; }
     }
 }
+

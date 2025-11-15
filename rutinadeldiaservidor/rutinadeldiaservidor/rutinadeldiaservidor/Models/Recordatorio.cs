@@ -7,20 +7,22 @@ namespace rutinadeldiaservidor.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }  // PK
-        
+        public int Id { get; set; }
+
         public required string Descripcion { get; set; }
-        public required string Frecuencia { get; set; }
-        public required string Hora { get; set; }
-        public required string DiaSemana { get; set; }
+        public required string Frecuencia { get; set; } // "Diaria" o "Semanal"
+        public required string Hora { get; set; } // "09:30" formato HH:mm
+        public required string DiaSemana { get; set; } // "0" a "6" (0=Domingo)
         public required string Sonido { get; set; }
         public required string Color { get; set; }
-        
-        // 🔑 FK hacia Rutina
+
+        // 🆕 AGREGAR ESTOS DOS CAMPOS
+        public bool Activo { get; set; } = true;
+        public string? HangfireJobId { get; set; }
+
         [ForeignKey("Rutina")]
         public int RutinaId { get; set; }
-        
-        // Propiedad de navegación - Requerida (un recordatorio siempre pertenece a una rutina)
+
         public required Rutina Rutina { get; set; }
     }
 }
